@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investissements Admin - CryptoBoost</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>CryptoBoost</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="auth.js"></script>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    
 </head>
-<body class="bg-gray-900 text-white">
+<body>
+    
     <!-- Header -->
     <header class="bg-gray-800 shadow-lg">
         <nav class="container mx-auto px-6 py-4">
@@ -457,7 +458,7 @@
         function addBonus(invId) {
             const bonus = prompt('Montant du bonus ($) :');
             if (bonus) {
-                showAlert(`Bonus de $${bonus} ajouté`, 'success');
+                showAlert(`Bonus de ${bonus} ajouté`, 'success');
             }
         }
 
@@ -478,5 +479,10 @@
             document.getElementById(modalId).classList.add('hidden');
         }
     </script>
+
+    <script src="app.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+    <script src="auth.js"></script>
+    <script src="auth.js"></script>
 </body>
 </html>
