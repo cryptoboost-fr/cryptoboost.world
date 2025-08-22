@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres Admin - CryptoBoost</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="auth.js"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="crypto-logo mr-3">₿</div>
+                    <div class="text-2xl font-bold brand-text">CryptoBoost Admin</div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="user-name text-sm"></span>
+                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg">Déconnexion</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800 min-h-screen">
+            <nav class="p-6">
+                <ul class="space-y-2">
+                    <li><a href="admin.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Dashboard</a></li>
+                    <li><a href="admin-users.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Utilisateurs</a></li>
+                    <li><a href="admin-transactions.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Transactions</a></li>
+                    <li><a href="admin-investments.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Investissements</a></li>
+                    <li><a href="admin-wallets.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Portefeuilles</a></li>
+                    <li><a href="admin-reports.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Rapports</a></li>
+                    <li><a href="admin-settings.html" class="nav-btn bg-blue-600 text-white block px-4 py-2 rounded">Paramètres</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <h1 class="text-3xl font-bold mb-8">Paramètres Système</h1>
+
+            <!-- Settings Tabs -->
+            <div class="mb-8">
+                <div class="border-b border-gray-700">
+                    <nav class="-mb-px flex space-x-8">
+                        <button onclick="showTab('general')" class="settings-tab active py-2 px-1 border-b-2 border-blue-500 font-medium text-sm">Général</button>
+                        <button onclick="showTab('security')" class="settings-tab py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-400 hover:text-white">Sécurité</button>
+                        <button onclick="showTab('fees')" class="settings-tab py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-400 hover:text-white">Frais</button>
+                        <button onclick="showTab('notifications')" class="settings-tab py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-400 hover:text-white">Notifications</button>
+                        <button onclick="showTab('api')" class="settings-tab py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-400 hover:text-white">API</button>
+                        <button onclick="showTab('backup')" class="settings-tab py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-400 hover:text-white">Sauvegarde</button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- General Settings -->
+            <div id="general-tab" class="tab-content">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                        <h2 class="text-xl font-bold mb-6">Configuration Générale</h2>
+                        <form onsubmit="saveGeneralSettings(event)">
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Nom de la Plateforme</label>
+                                    <input type="text" id="platform-name" class="form-input w-full" value="CryptoBoost">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">URL de Base</label>
+                                    <input type="url" id="base-url" class="form-input w-full" value="https://cryptoboost.com">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Email Support</label>
+                                    <input type="email" id="support-email" class="form-input w-full" value="support@cryptoboost.com">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Fuseau Horaire</label>
+                                    <select id="timezone" class="form-input w-full">
+                                        <option value="UTC">UTC</option>
+                                        <option value="Europe/Paris" selected>Europe/Paris</option>
+                                        <option value="America/New_York">America/New_York</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Langue par Défaut</label>
+                                    <select id="default-language" class="form-input w-full">
+                                        <option value="fr" selected>Français</option>
+                                        <option value="en">English</option>
+                                        <option value="es">Español</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn-primary w-full">Sauvegarder</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                        <h2 class="text-xl font-bold mb-6">Limites Système</h2>
+                        <form onsubmit="saveLimits(event)">
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Dépôt Minimum ($)</label>
+                                    <input type="number" id="min-deposit" class="form-input w-full" value="10">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Dépôt Maximum ($)</label>
+                                    <input type="number" id="max-deposit" class="form-input w-full" value="100000">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Retrait Minimum ($)</label>
+                                    <input type="number" id="min-withdrawal" class="form-input w-full" value="20">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Retrait Maximum Quotidien ($)</label>
+                                    <input type="number" id="max-daily-withdrawal" class="form-input w-full" value="50000">
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="kyc-required" class="mr-2" checked>
+                                    <label for="kyc-required" class="text-sm">KYC Requis pour les Retraits</label>
+                                </div>
+                                <button type="submit" class="btn-primary w-full">Sauvegarder</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Settings -->
+            <div id="security-tab" class="tab-content hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                        <h2 class="text-xl font-bold mb-6">Sécurité des Comptes</h2>
+                        <div class="space-y-6">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <label class="font-medium">Authentification 2FA Obligatoire</label>
+                                    <p class="text-sm text-gray-400">Forcer 2FA pour tous les utilisateurs</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="force-2fa">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <label class="font-medium">Vérification Email</label>
+                                    <p class="text-sm text-gray-400">Vérifier l'email à l'inscription</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="email-verification" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Durée Session (minutes)</label>
+                                <input type="number" id="session-duration" class="form-input w-full" value="60">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Tentatives de Connexion Max</label>
+                                <input type="number" id="max-login-attempts" class="form-input w-full" value="5">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                        <h2 class="text-xl font-bold mb-6">Sécurité des Transactions</h2>
+                        <div class="space-y-6">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <label class="font-medium">Validation Manuelle</label>
+                                    <p class="text-sm text-gray-400">Valider manuellement les gros montants</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="manual-validation" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Seuil Validation Manuelle ($)</label>
+                                <input type="number" id="manual-threshold" class="form-input w-full" value="10000">
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <label class="font-medium">Détection Anti-Fraude</label>
+                                    <p class="text-sm text-gray-400">Système automatique de détection</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="fraud-detection" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fees Settings -->
+            <div id="fees-tab" class="tab-content hidden">
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h2 class="text-xl font-bold mb-6">Configuration des Frais</h2>
+                    <form onsubmit="saveFeesSettings(event)">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <h3 class="text-lg font-semibold">Frais de Transaction</h3>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Dépôt (%)</label>
+                                    <input type="number" step="0.01" id="deposit-fee" class="form-input w-full" value="0.5">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Retrait (%)</label>
+                                    <input type="number" step="0.01" id="withdrawal-fee" class="form-input w-full" value="1.0">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Échange (%)</label>
+                                    <input type="number" step="0.01" id="exchange-fee" class="form-input w-full" value="0.1">
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-6">
+                                <h3 class="text-lg font-semibold">Frais d'Investissement</h3>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Commission Performance (%)</label>
+                                    <input type="number" step="0.01" id="performance-fee" class="form-input w-full" value="20">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Frais de Gestion Annuels (%)</label>
+                                    <input type="number" step="0.01" id="management-fee" class="form-input w-full" value="2">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Frais de Sortie Anticipée (%)</label>
+                                    <input type="number" step="0.01" id="early-exit-fee" class="form-input w-full" value="5">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary mt-6">Sauvegarder les Frais</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Notifications Settings -->
+            <div id="notifications-tab" class="tab-content hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                        <h2 class="text-xl font-bold mb-6">Notifications Email</h2>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Serveur SMTP</label>
+                                <input type="text" id="smtp-server" class="form-input w-full" value="smtp.gmail.com">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Port SMTP</label>
+                                <input type="number" id="smtp-port" class="form-input w-full" value="587">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Email Expéditeur</label>
+                                <input type="email" id="sender-email" class="form-input w-full" value="noreply@cryptoboost.com">
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <label class="font-medium">Notifications Automatiques</label>
+                                    <p class="text-sm text-gray-400">Envoyer les notifications système</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="auto-notifications" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                        <h2 class="text-xl font-bold mb-6">Alertes Admin</h2>
+                        <div class="space-y-6">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <label class="font-medium">Transactions Importantes</label>
+                                    <p class="text-sm text-gray-400">Alertes pour montants > $10,000</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="high-value-alerts" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <label class="font-medium">Nouveaux Utilisateurs</label>
+                                    <p class="text-sm text-gray-400">Notification à chaque inscription</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="new-user-alerts">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <label class="font-medium">Erreurs Système</label>
+                                    <p class="text-sm text-gray-400">Alertes pour erreurs critiques</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="system-error-alerts" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Settings -->
+            <div id="api-tab" class="tab-content hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                        <h2 class="text-xl font-bold mb-6">Configuration API</h2>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">CoinAPI Clé</label>
+                                <input type="password" id="coinapi-key" class="form-input w-full" placeholder="Votre clé API CoinAPI">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Limite Requêtes/Minute</label>
+                                <input type="number" id="api-rate-limit" class="form-input w-full" value="100">
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <label class="font-medium">API Publique Activée</label>
+                                    <p class="text-sm text-gray-400">Permettre l'accès API externe</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="public-api-enabled">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <button onclick="testAPIConnection()" class="btn-secondary w-full">Tester Connexion API</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                        <h2 class="text-xl font-bold mb-6">Clés API Actives</h2>
+                        <div class="space-y-4">
+                            <div class="bg-gray-700 rounded-lg p-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-semibold">API Key #1</span>
+                                    <span class="status-badge status-active">Actif</span>
+                                </div>
+                                <p class="text-sm text-gray-400 mb-2">sk_live_abc123...def456</p>
+                                <div class="flex justify-between text-sm">
+                                    <span>Dernière utilisation: Il y a 2h</span>
+                                    <button onclick="revokeAPIKey('1')" class="text-red-400 hover:text-red-300">Révoquer</button>
+                                </div>
+                            </div>
+                            <button onclick="generateAPIKey()" class="btn-primary w-full">Générer Nouvelle Clé</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backup Settings -->
+            <div id="backup-tab" class="tab-content hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                        <h2 class="text-xl font-bold mb-6">Sauvegarde Automatique</h2>
+                        <div class="space-y-6">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <label class="font-medium">Sauvegarde Automatique</label>
+                                    <p class="text-sm text-gray-400">Sauvegarde quotidienne des données</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="auto-backup" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Fréquence</label>
+                                <select id="backup-frequency" class="form-input w-full">
+                                    <option value="daily" selected>Quotidienne</option>
+                                    <option value="weekly">Hebdomadaire</option>
+                                    <option value="monthly">Mensuelle</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Heure de Sauvegarde</label>
+                                <input type="time" id="backup-time" class="form-input w-full" value="02:00">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Rétention (jours)</label>
+                                <input type="number" id="backup-retention" class="form-input w-full" value="30">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                        <h2 class="text-xl font-bold mb-6">Sauvegardes Récentes</h2>
+                        <div class="space-y-4 mb-6">
+                            <div class="bg-gray-700 rounded-lg p-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-semibold">Sauvegarde Complète</span>
+                                    <span class="status-badge status-active">Succès</span>
+                                </div>
+                                <p class="text-sm text-gray-400">15/01/2024 02:00 - 245 MB</p>
+                            </div>
+                            <div class="bg-gray-700 rounded-lg p-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-semibold">Sauvegarde Complète</span>
+                                    <span class="status-badge status-active">Succès</span>
+                                </div>
+                                <p class="text-sm text-gray-400">14/01/2024 02:00 - 243 MB</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <button onclick="createBackup()" class="btn-primary w-full">Créer Sauvegarde Maintenant</button>
+                            <button onclick="restoreBackup()" class="btn-secondary w-full">Restaurer Sauvegarde</button>
+                            <button onclick="downloadBackup()" class="btn-secondary w-full">Télécharger Dernière Sauvegarde</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!protectPage('admin')) return;
+            updateUserDisplay();
+            loadSettings();
+        });
+
+        function loadSettings() {
+            // Load current settings from localStorage or API
+        }
+
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.settings-tab').forEach(btn => {
+                btn.classList.remove('active', 'border-blue-500', 'text-white');
+                btn.classList.add('border-transparent', 'text-gray-400');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+            
+            // Add active class to clicked tab button
+            event.target.classList.add('active', 'border-blue-500', 'text-white');
+            event.target.classList.remove('border-transparent', 'text-gray-400');
+        }
+
+        function saveGeneralSettings(event) {
+            event.preventDefault();
+            showAlert('Paramètres généraux sauvegardés', 'success');
+        }
+
+        function saveLimits(event) {
+            event.preventDefault();
+            showAlert('Limites système sauvegardées', 'success');
+        }
+
+        function saveFeesSettings(event) {
+            event.preventDefault();
+            showAlert('Configuration des frais sauvegardée', 'success');
+        }
+
+        function testAPIConnection() {
+            showAlert('Test de connexion API...', 'info');
+            setTimeout(() => {
+                showAlert('Connexion API réussie!', 'success');
+            }, 2000);
+        }
+
+        function generateAPIKey() {
+            const newKey = 'sk_live_' + Math.random().toString(36).substring(2, 15);
+            showAlert(`Nouvelle clé générée: ${newKey}`, 'success');
+        }
+
+        function revokeAPIKey(keyId) {
+            if (confirm('Êtes-vous sûr de vouloir révoquer cette clé API ?')) {
+                showAlert('Clé API révoquée', 'success');
+            }
+        }
+
+        function createBackup() {
+            showAlert('Création de la sauvegarde...', 'info');
+            setTimeout(() => {
+                showAlert('Sauvegarde créée avec succès!', 'success');
+            }, 3000);
+        }
+
+        function restoreBackup() {
+            if (confirm('Êtes-vous sûr de vouloir restaurer une sauvegarde ? Cette action est irréversible.')) {
+                showAlert('Restauration en cours...', 'info');
+            }
+        }
+
+        function downloadBackup() {
+            showAlert('Téléchargement de la sauvegarde...', 'info');
+        }
+    </script>
+</body>
+</html>

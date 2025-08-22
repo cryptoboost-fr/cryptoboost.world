@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plans d'Investissement - CryptoBoost</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <a href="index.html" class="logo">
+                    <img src="assets/logo.svg" alt="CryptoBoost">
+                </a>
+                <div class="nav-links">
+                    <a href="about.html">À propos</a>
+                    <a href="plans.html" class="active">Plans</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="client-dashboard.html" class="btn-primary">Accéder à mon compte</a>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            <section class="hero">
+                <h1>Nos Plans d'Investissement</h1>
+                <p>Découvrez nos plans adaptés à tous les profils d'investisseurs</p>
+            </section>
+
+            <section class="investment-plans">
+                <div class="plan-card" data-plan="starter">
+                    <h3>Débutant</h3>
+                    <div class="plan-details">
+                        <p class="return">5-8% ROI</p>
+                        <p class="min">Min: 50€</p>
+                        <p class="duration">3-12 mois</p>
+                    </div>
+                    <button class="btn-primary simulate-btn" data-plan="starter">Simuler</button>
+                </div>
+
+                <div class="plan-card" data-plan="standard">
+                    <h3>Standard</h3>
+                    <div class="plan-details">
+                        <p class="return">8-12% ROI</p>
+                        <p class="min">Min: 500€</p>
+                        <p class="duration">6-24 mois</p>
+                    </div>
+                    <button class="btn-primary simulate-btn" data-plan="standard">Simuler</button>
+                </div>
+
+                <div class="plan-card featured" data-plan="premium">
+                    <h3>Premium</h3>
+                    <div class="plan-details">
+                        <p class="return">12-18% ROI</p>
+                        <p class="min">Min: 2000€</p>
+                        <p class="duration">12-36 mois</p>
+                    </div>
+                    <button class="btn-primary simulate-btn" data-plan="premium">Simuler</button>
+                </div>
+
+                <div class="plan-card" data-plan="vip">
+                    <h3>VIP</h3>
+                    <div class="plan-details">
+                        <p class="return">18-25% ROI</p>
+                        <p class="min">Min: 10000€</p>
+                        <p class="duration">24-36 mois</p>
+                    </div>
+                    <button class="btn-primary simulate-btn" data-plan="vip">Simuler</button>
+                </div>
+            </section>
+
+            <section class="simulator" id="investment-simulator">
+                <h2>Simulateur de Rendement</h2>
+                <div class="simulator-form">
+                    <div class="form-group">
+                        <label for="investment-amount">Montant (€)</label>
+                        <input type="number" id="investment-amount" min="50" step="50">
+                    </div>
+                    <div class="form-group">
+                        <label for="investment-duration">Durée (mois)</label>
+                        <input type="number" id="investment-duration" min="3" max="36" step="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="investment-plan">Plan</label>
+                        <select id="investment-plan">
+                            <option value="starter">Débutant (5-8%)</option>
+                            <option value="standard">Standard (8-12%)</option>
+                            <option value="premium">Premium (12-18%)</option>
+                            <option value="vip">VIP (18-25%)</option>
+                        </select>
+                    </div>
+                    <button id="calculate-roi" class="btn-primary">Calculer</button>
+                </div>
+                <div id="simulation-results" class="hidden">
+                    <h3>Résultats de la simulation</h3>
+                    <div class="results-grid">
+                        <div class="result-item">
+                            <span class="label">Investissement</span>
+                            <span class="value" id="result-investment">0€</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="label">Rendement estimé</span>
+                            <span class="value" id="result-roi">0%</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="label">Gains potentiels</span>
+                            <span class="value" id="result-gains">0€</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="label">Total estimé</span>
+                            <span class="value" id="result-total">0€</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>CryptoBoost</h4>
+                    <p>Votre partenaire de confiance pour l'investissement crypto</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Liens rapides</h4>
+                    <a href="about.html">À propos</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Légal</h4>
+                    <a href="cgu.html">CGU</a>
+                    <a href="privacy.html">Confidentialité</a>
+                    <a href="cookies.html">Cookies</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 CryptoBoost. Tous droits réservés.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = new CryptoBoostApp();
+            app.initializePlanSimulator();
+        });
+    </script>
+</body>
+</html>

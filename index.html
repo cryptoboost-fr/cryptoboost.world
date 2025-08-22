@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoBoost — IA de Trading Crypto Automatisé</title>
+    <!-- Titre principal: CryptoBoost -->
+    <meta name="description" content="Maximisez vos profits crypto avec notre IA de trading automatisé. Plans dès 250€, +15% à +40% de gains.">
+    <link rel="canonical" href="https://cryptoboost.world/">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="alternate icon" href="assets/favicon.svg">
+    <meta property="og:title" content="CryptoBoost — IA de Trading Crypto Automatisé">
+    <meta property="og:description" content="Plans d'investissement crypto, échanges internes, tableaux de bord en EUR.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cryptoboost.world/">
+    <meta property="og:image" content="https://cryptoboost.world/assets/hero-grid.svg">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                600: '#3B82F6'
+              }
+            }
+          }
+        }
+      }
+    </script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Core System -->
+    <script src="auth.js"></script>
+    <script src="crypto-api.js"></script>
+    <script src="functions/ui-manager.js" type="module"></script>
+    <script src="app.js" defer></script>
+    
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, rgba(102,126,234,0.95) 0%, rgba(118,75,162,0.95) 100%), url('assets/hero-grid.svg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Phase 1: Ajouter le skybox et gradient mesh */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--mesh-bg);
+            opacity: 0.3;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .gradient-bg::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 80%, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            animation: skyboxRotate 20s linear infinite;
+            transform-style: preserve-3d;
+            opacity: 0.2;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .gradient-purple {
+            background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%);
+        }
+        .gradient-blue {
+            background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+        }
+        .gradient-green {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .hidden { display: none; }
+        .crypto-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 12px;
+        }
+        .btc-icon { background: linear-gradient(135deg, #F7931A 0%, #FF8C00 100%); }
+        .eth-icon { background: linear-gradient(135deg, #627EEA 0%, #4169E1 100%); }
+        .usdt-icon { background: linear-gradient(135deg, #26A17B 0%, #009688 100%); }
+        .usdc-icon { background: linear-gradient(135deg, #2775CA 0%, #1976D2 100%); }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-pending { background: #FEF3C7; color: #92400E; }
+        .status-completed { background: #D1FAE5; color: #065F46; }
+        .status-failed { background: #FEE2E2; color: #991B1B; }
+        
+        .chart-container {
+            height: 200px;
+            background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-placeholder {
+            color: #6B7280;
+            text-align: center;
+        }
+        
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        
+        .notification-dot {
+            width: 8px;
+            height: 8px;
+            background: #EF4444;
+            border-radius: 50%;
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-gray-800/80 backdrop-blur shadow-lg sticky top-0 z-40">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <img src="assets/logo.svg" alt="CryptoBoost" class="h-8 w-auto mr-3"/>
+                    <div class="text-2xl font-bold brand-text">CryptoBoost</div>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="#home" class="hover:text-blue-400 transition-colors">Accueil</a>
+                    <a href="#features" class="hover:text-blue-400 transition-colors">Fonctionnalités</a>
+                    <a href="#plans" class="hover:text-blue-400 transition-colors">Plans</a>
+                    <a href="#contact" class="hover:text-blue-400 transition-colors">Contact</a>
+                </div>
+                <div class="space-x-4 hidden md:block">
+                    <button onclick="showLogin()" class="btn-primary btn-liquid">
+                        Connexion
+                    </button>
+                    <button onclick="showRegister()" class="btn-success">
+                        Inscription
+                    </button>
+                </div>
+                <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center p-2 rounded bg-gray-700 hover:bg-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+            </div>
+        </nav>
+        <!-- Mobile menu -->
+        <div id="mobileMenu" class="mobile-menu fixed top-0 left-0 w-64 h-full bg-gray-800 z-50 p-6 card">
+            <div class="flex items-center justify-between mb-6">
+                <div class="text-xl font-bold">CryptoBoost</div>
+                <button id="mobileMenuClose" class="p-2 rounded btn-outline">✕</button>
+            </div>
+            <nav class="space-y-4">
+                <a href="#home" class="block hover:text-blue-400">Accueil</a>
+                <a href="#features" class="block hover:text-blue-400">Fonctionnalités</a>
+                <a href="#plans" class="block hover:text-blue-400">Plans</a>
+                <a href="#contact" class="block hover:text-blue-400">Contact</a>
+                <div class="pt-4 space-y-2">
+                    <button onclick="showLogin(); toggleMobileMenu(false)" class="w-full btn-primary">Connexion</button>
+                    <button onclick="showRegister(); toggleMobileMenu(false)" class="w-full btn-success">Inscription</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Home Section -->
+        <section id="home" class="gradient-bg py-24 relative overflow-hidden hero-section noise-texture">
+            <div class="absolute inset-0 opacity-10">
+                <div class="float absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-xl"></div>
+                <div class="float absolute bottom-20 right-10 w-48 h-48 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-xl" style="animation-delay: -2s;"></div>
+            </div>
+            <div class="container mx-auto px-6 text-center relative z-10">
+                <h1 class="text-5xl md:text-6xl font-extrabold mb-6 fade-in">
+                    IA de Trading Crypto <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Automatisé</span>
+                </h1>
+                <p class="text-xl md:text-2xl mb-10 bounce-in text-white/90" style="animation-delay: 0.2s;">
+                    Plans d'investissement, échanges internes et tableaux de bord en EUR.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12">
+                    <div class="glass-effect p-6 card-hover slide-in" style="animation-delay: 0.3s;">
+                        <h3 class="text-2xl font-bold text-yellow-400 glow-pulse">2500+</h3>
+                        <p class="text-white/80">Utilisateurs Actifs</p>
+                    </div>
+                    <div class="glass-effect p-6 card-hover slide-in" style="animation-delay: 0.4s;">
+                        <h3 class="text-2xl font-bold text-green-400 glow-pulse">+25%</h3>
+                        <p class="text-white/80">Gains Moyens</p>
+                    </div>
+                    <div class="glass-effect p-6 card-hover slide-in" style="animation-delay: 0.5s;">
+                        <h3 class="text-2xl font-bold text-blue-400 glow-pulse">24/7</h3>
+                        <p class="text-white/80">Trading Automatique</p>
+                    </div>
+                    <div class="glass-effect p-6 card-hover slide-in" style="animation-delay: 0.6s;">
+                        <h3 class="text-2xl font-bold text-purple-400 glow-pulse">4</h3>
+                        <p class="text-white/80">Cryptos Supportées</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 bg-gray-800">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl font-bold text-center mb-12">Contact</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-gray-700 rounded-lg p-6 card-hover card">
+                        <h3 class="text-xl font-bold mb-4">Nous écrire</h3>
+                        <form onsubmit="createSupportTicket(event)">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Sujet</label>
+                                    <select id="ticket-subject" class="w-full px-3 py-2 bg-gray-600 rounded">
+                                        <option value="technical">Problème Technique</option>
+                                        <option value="transaction">Question Transaction</option>
+                                        <option value="account">Compte Utilisateur</option>
+                                        <option value="other">Autre</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Message</label>
+                                    <textarea id="ticket-message" rows="4" class="w-full px-3 py-2 bg-gray-600 rounded" placeholder="Décrivez votre demande..."></textarea>
+                                </div>
+                                <button type="submit" class="btn-success">Envoyer</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-6 card-hover card">
+                        <h3 class="text-xl font-bold mb-4">Coordonnées</h3>
+                        <ul class="space-y-3 text-gray-300">
+                            <li>Email: support@cryptoboost.world</li>
+                            <li>Domain: cryptoboost.world</li>
+                            <li>Disponibilité: 24/7</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section id="stats" class="py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
+            <!-- Animated background elements -->
+            <div class="absolute top-20 left-20 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl animate-float"></div>
+            <div class="absolute bottom-20 right-20 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl animate-float-delayed"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl animate-gentle-float"></div>
+
+            <div class="container mx-auto px-6 relative z-10">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient">Chiffres Clés</h2>
+                    <p class="text-xl text-gray-300 max-w-3xl mx-auto">Notre plateforme en constante évolution, au service de milliers d'investisseurs</p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+                    <div class="text-center glass-effect rounded-2xl p-8 card-hover fade-in">
+                        <div class="text-4xl md:text-5xl font-bold text-blue-400 mb-2 glow-pulse">15,000+</div>
+                        <div class="text-lg font-semibold text-white mb-1">Utilisateurs Actifs</div>
+                        <div class="text-sm text-gray-400">Investisseurs satisfaits</div>
+                    </div>
+
+                    <div class="text-center glass-effect rounded-2xl p-8 card-hover fade-in-delayed">
+                        <div class="text-4xl md:text-5xl font-bold text-green-400 mb-2 glow-pulse">€2.5M+</div>
+                        <div class="text-lg font-semibold text-white mb-1">Volume Quotidien</div>
+                        <div class="text-sm text-gray-400">Transactions traitées</div>
+                    </div>
+
+                    <div class="text-center glass-effect rounded-2xl p-8 card-hover fade-in" style="animation-delay: 0.4s;">
+                        <div class="text-4xl md:text-5xl font-bold text-purple-400 mb-2 glow-pulse">99.9%</div>
+                        <div class="text-lg font-semibold text-white mb-1">Uptime</div>
+                        <div class="text-sm text-gray-400">Fiabilité système</div>
+                    </div>
+
+                    <div class="text-center glass-effect rounded-2xl p-8 card-hover fade-in" style="animation-delay: 0.6s;">
+                        <div class="text-4xl md:text-5xl font-bold text-orange-400 mb-2 glow-pulse">24/7</div>
+                        <div class="text-lg font-semibold text-white mb-1">Support</div>
+                        <div class="text-sm text-gray-400">Assistance disponible</div>
+                    </div>
+                </div>
+
+                <!-- Advanced Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="glass-effect rounded-2xl p-8 text-center">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                            <span class="text-2xl">⚡</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Trading Ultra-Rapide</h3>
+                        <p class="text-gray-300 mb-4">Exécution des ordres en millisecondes avec notre infrastructure de pointe</p>
+                        <div class="text-2xl font-bold text-blue-400">0.5ms</div>
+                        <div class="text-sm text-gray-400">Temps d'exécution moyen</div>
+                    </div>
+
+                    <div class="glass-effect rounded-2xl p-8 text-center">
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                            <span class="text-2xl">🔒</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Sécurité Bancaire</h3>
+                        <p class="text-gray-300 mb-4">Protection de niveau bancaire avec chiffrement AES-256 et authentification multi-facteurs</p>
+                        <div class="text-2xl font-bold text-green-400">AES-256</div>
+                        <div class="text-sm text-gray-400">Chiffrement de niveau enterprise</div>
+                    </div>
+
+                    <div class="glass-effect rounded-2xl p-8 text-center">
+                        <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                            <span class="text-2xl">🤖</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">IA Avancée</h3>
+                        <p class="text-gray-300 mb-4">Algorithmes de machine learning pour optimiser vos stratégies d'investissement</p>
+                        <div class="text-2xl font-bold text-purple-400">95%</div>
+                        <div class="text-sm text-gray-400">Précision des prédictions</div>
+                    </div>
+                </div>
+
+                <!-- Trust indicators -->
+                <div class="mt-16 text-center">
+                    <div class="flex flex-wrap justify-center gap-8 text-gray-400">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span>Plateforme Vérifiée</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                            <span>Conformité Réglementaire</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                            <span>Support Premium 24/7</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                            <span>Technologie Blockchain</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section id="testimonials" class="py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
+            <!-- Animated background elements -->
+            <div class="absolute top-20 left-20 w-32 h-32 bg-green-500/10 rounded-full blur-3xl animate-float"></div>
+            <div class="absolute bottom-20 right-20 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl animate-float-delayed"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl animate-gentle-float"></div>
+
+            <div class="container mx-auto px-6 relative z-10">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient">Témoignages</h2>
+                    <p class="text-xl text-gray-300 max-w-3xl mx-auto">Découvrez ce que disent nos utilisateurs satisfaits de leur expérience avec CryptoBoost</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                    <div class="glass-effect rounded-2xl p-8 card-hover fade-in">
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                M
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-semibold text-white">Marc Dubois</h4>
+                                <p class="text-sm text-gray-400">Investisseur Particulier</p>
+                                <div class="flex text-yellow-400 mt-1">
+                                    <span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span>
+                                </div>
+                            </div>
+                        </div>
+                        <blockquote class="text-gray-300 mb-6">
+                            "Depuis que j'utilise CryptoBoost, mes rendements ont augmenté de 40%. L'IA est impressionnante et le support est réactif. Une plateforme vraiment professionnelle !"
+                        </blockquote>
+                        <div class="text-sm text-gray-400">
+                            <strong>+40% de rendement</strong> en 6 mois
+                        </div>
+                    </div>
+
+                    <div class="glass-effect rounded-2xl p-8 card-hover fade-in-delayed">
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                S
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-semibold text-white">Sophie Laurent</h4>
+                                <p class="text-sm text-gray-400">Trader Expérimenté</p>
+                                <div class="flex text-yellow-400 mt-1">
+                                    <span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span>
+                                </div>
+                            </div>
+                        </div>
+                        <blockquote class="text-gray-300 mb-6">
+                            "L'interface est intuitive et les analyses en temps réel sont d'une précision remarquable. J'ai pu diversifier mon portefeuille sans stress grâce aux outils d'IA."
+                        </blockquote>
+                        <div class="text-sm text-gray-400">
+                            <strong>Portfolio diversifié</strong> sur 4 cryptos
+                        </div>
+                    </div>
+
+                    <div class="glass-effect rounded-2xl p-8 card-hover fade-in" style="animation-delay: 0.4s;">
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                A
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-semibold text-white">Antoine Moreau</h4>
+                                <p class="text-sm text-gray-400">Débutant en Crypto</p>
+                                <div class="flex text-yellow-400 mt-1">
+                                    <span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span>
+                                </div>
+                            </div>
+                        </div>
+                        <blockquote class="text-gray-300 mb-6">
+                            "Parfait pour les débutants ! Les tutoriels sont clairs et l'assistance 24/7 m'a beaucoup aidé. J'ai gagné confiance dans mes investissements."
+                        </blockquote>
+                        <div class="text-sm text-gray-400">
+                            <strong>Apprentissage rapide</strong> et sécurisé
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats comparison -->
+                <div class="glass-effect rounded-2xl p-8 text-center mb-16">
+                    <h3 class="text-2xl font-bold mb-8 text-white">Résultats de nos utilisateurs</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                        <div>
+                            <div class="text-3xl font-bold text-blue-400 mb-2">85%</div>
+                            <div class="text-sm text-gray-400">Augmentation moyenne des profits</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-green-400 mb-2">0.5ms</div>
+                            <div class="text-sm text-gray-400">Temps d'exécution des trades</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-purple-400 mb-2">99.9%</div>
+                            <div class="text-sm text-gray-400">Taux de disponibilité</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-orange-400 mb-2">24/7</div>
+                            <div class="text-sm text-gray-400">Support disponible</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trust badges -->
+                <div class="text-center">
+                    <div class="flex flex-wrap justify-center gap-8 mb-8">
+                        <div class="glass-effect rounded-xl px-6 py-3 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                                <span class="text-white text-sm">✓</span>
+                            </div>
+                            <span class="text-white font-medium">Plateforme Vérifiée</span>
+                        </div>
+                        <div class="glass-effect rounded-xl px-6 py-3 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                <span class="text-white text-sm">🔒</span>
+                            </div>
+                            <span class="text-white font-medium">Sécurité Bancaire</span>
+                        </div>
+                        <div class="glass-effect rounded-xl px-6 py-3 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                                <span class="text-white text-sm">🤖</span>
+                            </div>
+                            <span class="text-white font-medium">IA Avancée</span>
+                        </div>
+                        <div class="glass-effect rounded-xl px-6 py-3 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+                                <span class="text-white text-sm">⚡</span>
+                            </div>
+                            <span class="text-white font-medium">Trading Ultra-Rapide</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-20 bg-gray-800 relative overflow-hidden">
+            <!-- Animated background elements -->
+            <div class="absolute top-10 left-10 w-20 h-20 bg-blue-500/10 rounded-full blur-3xl animate-float"></div>
+            <div class="absolute bottom-20 right-20 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl animate-float-delayed"></div>
+            <div class="absolute top-1/2 left-1/3 w-16 h-16 bg-cyan-500/10 rounded-full blur-2xl animate-gentle-float"></div>
+
+            <div class="container mx-auto px-6 relative z-10">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gradient">Fonctionnalités Avancées</h2>
+                    <p class="text-xl text-gray-300 max-w-3xl mx-auto">Découvrez notre plateforme de trading crypto de nouvelle génération avec des outils puissants et une interface intuitive</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                    <div class="glass-effect rounded-2xl p-8 card-hover fade-in">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                            <span class="text-2xl">🤖</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-center">IA Avancée</h3>
+                        <p class="text-gray-300 text-center mb-6">Algorithmes d'intelligence artificielle pour optimiser vos trades automatiquement avec prédictions précises</p>
+                        <div class="flex justify-center space-x-4 text-sm text-gray-400">
+                            <span class="bg-blue-500/20 px-3 py-1 rounded-full">Machine Learning</span>
+                            <span class="bg-purple-500/20 px-3 py-1 rounded-full">Auto-Trading</span>
+                        </div>
+                    </div>
+
+                    <div class="glass-effect rounded-2xl p-8 card-hover fade-in-delayed">
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                            <span class="text-2xl">💰</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-center">Multi-Crypto</h3>
+                        <p class="text-gray-300 text-center mb-6">Support complet pour BTC, ETH, USDT, USDC avec conversions automatiques et taux optimaux</p>
+                        <div class="flex justify-center space-x-4 text-sm text-gray-400">
+                            <span class="bg-green-500/20 px-3 py-1 rounded-full">4 Cryptos</span>
+                            <span class="bg-cyan-500/20 px-3 py-1 rounded-full">Auto-Convert</span>
+                        </div>
+                    </div>
+
+                    <div class="glass-effect rounded-2xl p-8 card-hover fade-in" style="animation-delay: 0.4s;">
+                        <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                            <span class="text-2xl">📊</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-center">Analytics Pro</h3>
+                        <p class="text-gray-300 text-center mb-6">Tableaux de bord détaillés avec rapports de performance en temps réel et analyses prédictives</p>
+                        <div class="flex justify-center space-x-4 text-sm text-gray-400">
+                            <span class="bg-orange-500/20 px-3 py-1 rounded-full">Real-Time</span>
+                            <span class="bg-red-500/20 px-3 py-1 rounded-full">Predictive</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Features Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="glass-effect rounded-xl p-6 text-center hover:scale-105 transition-all duration-300">
+                        <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center mb-4 mx-auto">
+                            <span class="text-lg">⚡</span>
+                        </div>
+                        <h4 class="font-semibold mb-2">Trading Ultra-Rapide</h4>
+                        <p class="text-sm text-gray-400">Exécution en millisecondes</p>
+                    </div>
+
+                    <div class="glass-effect rounded-xl p-6 text-center hover:scale-105 transition-all duration-300">
+                        <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center mb-4 mx-auto">
+                            <span class="text-lg">🔒</span>
+                        </div>
+                        <h4 class="font-semibold mb-2">Sécurité Bancaire</h4>
+                        <p class="text-sm text-gray-400">Chiffrement de niveau enterprise</p>
+                    </div>
+
+                    <div class="glass-effect rounded-xl p-6 text-center hover:scale-105 transition-all duration-300">
+                        <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 mx-auto">
+                            <span class="text-lg">📱</span>
+                        </div>
+                        <h4 class="font-semibold mb-2">Mobile First</h4>
+                        <p class="text-sm text-gray-400">Optimisé pour tous les appareils</p>
+                    </div>
+
+                    <div class="glass-effect rounded-xl p-6 text-center hover:scale-105 transition-all duration-300">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mb-4 mx-auto">
+                            <span class="text-lg">🎯</span>
+                        </div>
+                        <h4 class="font-semibold mb-2">Support 24/7</h4>
+                        <p class="text-sm text-gray-400">Assistance instantanée</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Plans Section -->
+        <section id="plans" class="py-20 bg-gray-900">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl font-bold text-center mb-12">Plans d'Investissement</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="bg-gray-800 rounded-lg p-6 card-hover card">
+                        <h3 class="text-xl font-bold mb-4 text-green-400">Débutant</h3>
+                        <p class="text-3xl font-bold mb-4">5-8%</p>
+                        <p class="mb-4">Rendement mensuel</p>
+                        <ul class="space-y-2 text-sm">
+                            <li>✓ Trading automatique</li>
+                            <li>✓ Support 24/7</li>
+                            <li>✓ Rapports mensuels</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-6 card-hover card">
+                        <h3 class="text-xl font-bold mb-4 text-blue-400">Standard</h3>
+                        <p class="text-3xl font-bold mb-4">8-12%</p>
+                        <p class="mb-4">Rendement mensuel</p>
+                        <ul class="space-y-2 text-sm">
+                            <li>✓ IA avancée</li>
+                            <li>✓ Multi-crypto</li>
+                            <li>✓ Analytics détaillés</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-6 card-hover border-2 border-yellow-400 card">
+                        <h3 class="text-xl font-bold mb-4 text-yellow-400">Premium</h3>
+                        <p class="text-3xl font-bold mb-4">12-18%</p>
+                        <p class="mb-4">Rendement mensuel</p>
+                        <ul class="space-y-2 text-sm">
+                            <li>✓ Stratégies premium</li>
+                            <li>✓ Gestionnaire dédié</li>
+                            <li>✓ Accès prioritaire</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-6 card-hover card">
+                        <h3 class="text-xl font-bold mb-4 text-purple-400">VIP</h3>
+                        <p class="text-3xl font-bold mb-4">18-25%</p>
+                        <p class="mb-4">Rendement mensuel</p>
+                        <ul class="space-y-2 text-sm">
+                            <li>✓ Algorithmes exclusifs</li>
+                            <li>✓ Support VIP</li>
+                            <li>✓ Formations privées</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-10 bg-gray-800 rounded-lg p-6 card">
+                    <h3 class="text-2xl font-bold mb-4">Simulateur (Public)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                        <div>
+                            <label class="block text-sm mb-2">Montant (€)</label>
+                            <input id="sim-amount" type="number" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="500">
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2">Durée (jours)</label>
+                            <input id="sim-duration" type="number" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="30">
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2">Plan</label>
+                            <select id="sim-plan" class="w-full px-3 py-2 bg-gray-700 rounded">
+                                <option value="beginner" data-min="5" data-max="8">Débutant (5–8%)</option>
+                                <option value="standard" data-min="8" data-max="12">Standard (8–12%)</option>
+                                <option value="premium" data-min="12" data-max="18">Premium (12–18%)</option>
+                                <option value="vip" data-min="18" data-max="25">VIP (18–25%)</option>
+                            </select>
+                        </div>
+                        <button id="sim-calc" class="btn-primary">Calculer</button>
+                    </div>
+                    <div id="sim-result" class="mt-4 text-gray-300">Entrez vos paramètres pour estimer les gains.</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800">
+        <div class="container mx-auto px-6 py-8 text-sm text-gray-400">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center">
+                    <img src="assets/logo.svg" alt="CryptoBoost" class="h-6 w-auto mr-2"/>
+                    <span>© <span id="year"></span> CryptoBoost. Tous droits réservés.</span>
+                </div>
+                <div class="flex gap-6">
+                    <a href="/privacy.html" class="hover:text-gray-200">Confidentialité</a>
+                    <a href="/cgu.html" class="hover:text-gray-200">CGU</a>
+                    <a href="/cookies.html" class="hover:text-gray-200">Cookies</a>
+                    <a href="/about.html" class="hover:text-gray-200">À propos</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-gray-800 rounded-lg p-8 max-w-md w-full mx-4 card">
+            <h2 class="text-2xl font-bold mb-6">Connexion</h2>
+            <form onsubmit="login(); return false;">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Email</label>
+                    <input type="email" id="email" class="w-full px-3 py-2 bg-gray-700 rounded-lg" required>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-2">Mot de passe</label>
+                    <input type="password" id="password" class="w-full px-3 py-2 bg-gray-700 rounded-lg" required>
+                </div>
+                <div class="flex space-x-4">
+                    <button type="submit" class="flex-1 btn-primary">
+                        Se connecter
+                    </button>
+                    <button type="button" onclick="hideLogin()" class="flex-1 btn-outline">
+                        Annuler
+                    </button>
+                </div>
+                <div class="mt-4 text-sm text-gray-300 text-center">
+                    Pas de compte ? <button type="button" onclick="hideLogin(); showRegister();" class="text-blue-400 hover:text-blue-300">Créer un compte</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-gray-800 rounded-lg p-8 max-w-md w-full mx-4 card">
+            <h2 class="text-2xl font-bold mb-6">Inscription</h2>
+            <form onsubmit="handleRegister(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Nom complet</label>
+                    <input type="text" id="regName" class="w-full px-3 py-2 bg-gray-700 rounded-lg" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Email</label>
+                    <input type="email" id="regEmail" class="w-full px-3 py-2 bg-gray-700 rounded-lg" required>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-2">Mot de passe</label>
+                    <input type="password" id="regPassword" class="w-full px-3 py-2 bg-gray-700 rounded-lg" required>
+                </div>
+                <div class="flex space-x-4">
+                    <button type="submit" class="flex-1 btn-primary">
+                        Créer mon compte
+                    </button>
+                    <button type="button" onclick="hideRegister()" class="flex-1 btn-outline">
+                        Annuler
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Exchange Modal -->
+    <div id="exchangeModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-lg mx-4 card">
+            <h3 class="text-xl font-bold mb-4">Échange</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm mb-1">Depuis</label>
+                    <select id="ex-from" class="w-full px-3 py-2 bg-gray-700 rounded">
+                        <option>BTC</option>
+                        <option>ETH</option>
+                        <option>USDT</option>
+                        <option>USDC</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm mb-1">Vers</label>
+                    <select id="ex-to" class="w-full px-3 py-2 bg-gray-700 rounded">
+                        <option>USDT</option>
+                        <option>USDC</option>
+                        <option>BTC</option>
+                        <option>ETH</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm mb-1">Montant</label>
+                    <input id="ex-amount" type="number" step="any" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="0.0">
+                </div>
+            </div>
+            <div id="ex-preview" class="mt-4 text-sm text-gray-300"></div>
+            <div id="ex-fee-note" class="mt-1 text-xs text-gray-400"></div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="confirmExchange()" class="flex-1 btn-primary">Confirmer</button>
+                <button onclick="closeExchangeModal()" class="flex-1 btn-outline">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div id="withdrawModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-lg mx-4 card">
+            <h3 class="text-xl font-bold mb-4">Retrait</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm mb-1">Actif</label>
+                    <select id="wd-asset" class="w-full px-3 py-2 bg-gray-700 rounded">
+                        <option>BTC</option>
+                        <option>ETH</option>
+                        <option>USDT</option>
+                        <option>USDC</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm mb-1">Montant</label>
+                    <input id="wd-amount" type="number" step="any" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="0.0">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm mb-1">Adresse de destination</label>
+                    <input id="wd-address" type="text" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="Adresse wallet">
+                </div>
+            </div>
+            <div id="wd-preview" class="mt-4 text-sm text-gray-300"></div>
+            <div id="wd-fee-note" class="mt-1 text-xs text-gray-400"></div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="confirmWithdraw()" class="flex-1 btn-primary">Confirmer</button>
+                <button onclick="closeWithdrawModal()" class="flex-1 btn-outline">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deposit Modal -->
+    <div id="depositModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-lg mx-4 card">
+            <h3 class="text-xl font-bold mb-4">Dépôt</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm mb-1">Actif</label>
+                    <select id="dp-asset" class="w-full px-3 py-2 bg-gray-700 rounded">
+                        <option>BTC</option>
+                        <option>ETH</option>
+                        <option>USDT</option>
+                        <option>USDC</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm mb-1">Montant</label>
+                    <input id="dp-amount" type="number" step="any" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="0.0">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm mb-1">Adresse de dépôt</label>
+                    <div class="bg-gray-700 rounded p-3 flex items-center justify-between">
+                        <span id="dp-address" class="font-mono text-sm">—</span>
+                        <button onclick="copyDepositAddress()" class="text-blue-400 hover:text-blue-300">Copier</button>
+                    </div>
+                    <div class="mt-2 text-xs text-gray-400">Référence: <span id="dp-ref" class="font-mono">—</span></div>
+                    <div class="mt-4"><div id="dp-qr" class="bg-white p-2 rounded inline-block"></div></div>
+                    <p class="text-xs text-gray-400 mt-2">Envoyez uniquement l'actif sélectionné. Les fonds seront crédités après validation par un administrateur.</p>
+                </div>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="confirmDeposit()" class="flex-1 btn-primary">Créer demande</button>
+                <button onclick="closeDepositModal()" class="flex-1 btn-outline">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden">
+        <div class="container mx-auto px-6 py-8">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold">Dashboard</h1>
+                <div class="flex space-x-4">
+                    <nav class="hidden md:flex space-x-4">
+                        <button onclick="showPage('dashboard')" class="nav-btn bg-blue-600 px-3 py-1 rounded">Dashboard</button>
+                        <button onclick="showPage('wallets')" class="nav-btn hover:bg-gray-700 px-3 py-1 rounded">Wallets</button>
+                        <button onclick="showPage('transactions')" class="nav-btn hover:bg-gray-700 px-3 py-1 rounded">Transactions</button>
+                        <button onclick="showPage('investments')" class="nav-btn hover:bg-gray-700 px-3 py-1 rounded">Investissements</button>
+                        <button onclick="showPage('profile')" class="nav-btn hover:bg-gray-700 px-3 py-1 rounded">Profil</button>
+                        <button onclick="showPage('support')" class="nav-btn hover:bg-gray-700 px-3 py-1 rounded relative">Support
+                            <span id="notif-count" class="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-1 hidden"></span>
+                        </button>
+                    </nav>
+                    <button onclick="logout()" class="btn-danger px-4 py-2 rounded-lg">
+                        Déconnexion
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Wallets -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="card glass-effect p-6 card-hover fade-in">
+                    <div class="flex items-center mb-4">
+                        <div class="crypto-icon btc-icon mr-3 tooltip" data-tooltip="Bitcoin">₿</div>
+                        <h3 class="text-lg font-bold">Bitcoin (BTC)</h3>
+                    </div>
+                    <p class="text-2xl font-bold" id="btc-balance">0.00000000</p>
+                    <p class="text-sm text-gray-400">≈ <span class="text-green-400 font-semibold">0,00 €</span></p>
+                    <div class="mt-2 flex items-center">
+                        <span class="status-indicator status-online"></span>
+                        <span class="text-xs text-green-400">+2.5% 24h</span>
+                    </div>
+                </div>
+                <div class="card glass-effect p-6 card-hover fade-in" style="animation-delay: 0.1s;">
+                    <div class="flex items-center mb-4">
+                        <div class="crypto-icon eth-icon mr-3 tooltip" data-tooltip="Ethereum">Ξ</div>
+                        <h3 class="text-lg font-bold">Ethereum (ETH)</h3>
+                    </div>
+                    <p class="text-2xl font-bold" id="eth-balance">0.00000000</p>
+                    <p class="text-sm text-gray-400">≈ <span class="text-green-400 font-semibold">0,00 €</span></p>
+                    <div class="mt-2 flex items-center">
+                        <span class="status-indicator status-error"></span>
+                        <span class="text-xs text-red-400">-1.2% 24h</span>
+                    </div>
+                </div>
+                <div class="card glass-effect p-6 card-hover fade-in" style="animation-delay: 0.2s;">
+                    <div class="flex items-center mb-4">
+                        <div class="crypto-icon usdt-icon mr-3 tooltip" data-tooltip="Tether USD">₮</div>
+                        <h3 class="text-lg font-bold">USDT</h3>
+                    </div>
+                    <p class="text-2xl font-bold" id="usdt-balance">0.00</p>
+                    <p class="text-sm text-gray-400">≈ <span class="text-green-400 font-semibold">0,00 €</span></p>
+                    <div class="mt-2 flex items-center">
+                        <span class="status-indicator status-info"></span>
+                        <span class="text-xs text-gray-400">0.0% 24h</span>
+                    </div>
+                </div>
+                <div class="card glass-effect p-6 card-hover fade-in" style="animation-delay: 0.3s;">
+                    <div class="flex items-center mb-4">
+                        <div class="crypto-icon usdc-icon mr-3 tooltip" data-tooltip="USD Coin">$</div>
+                        <h3 class="text-lg font-bold">USDC</h3>
+                    </div>
+                    <p class="text-2xl font-bold" id="usdc-balance">0.00</p>
+                    <p class="text-sm text-gray-400">≈ <span class="text-green-400 font-semibold">0,00 €</span></p>
+                    <div class="mt-2 flex items-center">
+                        <span class="status-indicator status-info"></span>
+                        <span class="text-xs text-gray-400">0.0% 24h</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card glass-effect p-6 mb-8 scale-in">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <span class="status-indicator status-online mr-2"></span>
+                    Actions Rapides
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <button onclick="showDeposit()" class="btn-success py-4 rounded-lg card-hover nav-btn relative group">
+                        <div class="flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2 transition-transform group-hover:scale-110" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Dépôt
+                        </div>
+                    </button>
+                    <button onclick="showWithdraw()" class="btn-danger py-4 rounded-lg card-hover nav-btn relative group">
+                        <div class="flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2 transition-transform group-hover:scale-110" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                            Retrait
+                        </div>
+                    </button>
+                    <button onclick="showExchange()" class="btn-primary py-4 rounded-lg card-hover nav-btn relative group">
+                        <div class="flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2 transition-transform group-hover:scale-110" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M8 5a1 1 0 100 2h5.586l-1.293 1.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L13.586 5H8zM12 15a1 1 0 100-2H6.414l1.293-1.293a1 1 0 10-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L6.414 15H12z"/>
+                            </svg>
+                            Échange
+                        </div>
+                    </button>
+                    <button onclick="showInvest()" class="btn-warning py-4 rounded-lg card-hover nav-btn relative group">
+                        <div class="flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2 transition-transform group-hover:scale-110" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/>
+                            </svg>
+                            Investir
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="bg-gray-800 rounded-lg p-6 card">
+                <h2 class="text-xl font-bold mb-4">Transactions Récentes</h2>
+                <div class="text-xs text-gray-400 mb-3 crypto-last-updated">Mis à jour: —</div>
+                <div id="transactions-list" class="space-y-3">
+                    <p class="text-gray-400">Aucune transaction récente</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Content Pages -->
+        <div id="dashboard-content">
+            <!-- Wallets Page -->
+            <div id="wallets-page" class="hidden">
+                <div class="container mx-auto px-6 py-8">
+                    <h2 class="text-2xl font-bold mb-6">Mes Wallets</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-gray-800 rounded-lg p-6">
+                            <h3 class="text-lg font-bold mb-4">Soldes Détaillés</h3>
+                            <div class="space-y-4" id="detailed-wallets"></div>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg p-6">
+                            <h3 class="text-lg font-bold mb-4">Historique des Soldes</h3>
+                            <p class="text-gray-400">Graphique des évolutions (à implémenter)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Transactions Page -->
+            <div id="transactions-page" class="hidden">
+                <div class="container mx-auto px-6 py-8">
+                    <h2 class="text-2xl font-bold mb-6">Toutes les Transactions</h2>
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="flex space-x-4 items-center">
+                                <select id="tx-filter" class="bg-gray-700 rounded px-3 py-2">
+                                    <option value="all">Toutes</option>
+                                    <option value="deposit">Dépôts</option>
+                                    <option value="withdraw">Retraits</option>
+                                    <option value="exchange">Échanges</option>
+                                    <option value="invest">Investissements</option>
+                                </select>
+                                <input type="date" id="tx-date-from" class="bg-gray-700 rounded px-3 py-2">
+                                <input type="date" id="tx-date-to" class="bg-gray-700 rounded px-3 py-2">
+                                <select id="tx-crypto" class="bg-gray-700 rounded px-3 py-2">
+                                    <option value="">Toutes</option>
+                                    <option value="BTC">BTC</option>
+                                    <option value="ETH">ETH</option>
+                                    <option value="USDT">USDT</option>
+                                    <option value="USDC">USDC</option>
+                                </select>
+                            </div>
+                            <button onclick="exportTransactions()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">
+                                Exporter CSV
+                            </button>
+                        </div>
+                        <div id="all-transactions-list" class="space-y-3"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Investments Page -->
+            <div id="investments-page" class="hidden">
+                <div class="container mx-auto px-6 py-8">
+                    <h2 class="text-2xl font-bold mb-6">Mes Investissements</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-gray-800 rounded-lg p-6">
+                            <h3 class="text-lg font-bold mb-4">Investissements Actifs</h3>
+                            <div id="active-investments" class="space-y-3">
+                                <p class="text-gray-400">Aucun investissement actif</p>
+                            </div>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg p-6">
+                            <h3 class="text-lg font-bold mb-4">Performance</h3>
+                            <div class="space-y-4">
+                                <div class="flex justify-between">
+                                    <span>Total Investi:</span>
+                                    <span id="total-invested">$0.00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Gains Totaux:</span>
+                                    <span id="total-gains" class="text-green-400">$0.00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>ROI:</span>
+                                    <span id="roi-percentage" class="text-green-400">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Page -->
+            <div id="profile-page" class="hidden">
+                <div class="container mx-auto px-6 py-8">
+                    <h2 class="text-2xl font-bold mb-6">Mon Profil</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-gray-800 rounded-lg p-6">
+                            <h3 class="text-lg font-bold mb-4">Informations Personnelles</h3>
+                            <form onsubmit="updateProfile(event)">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Nom Complet</label>
+                                        <input type="text" id="profile-name" class="w-full px-3 py-2 bg-gray-700 rounded">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Email</label>
+                                        <input type="email" id="profile-email" class="w-full px-3 py-2 bg-gray-700 rounded">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Téléphone</label>
+                                        <input type="text" id="profile-phone" class="w-full px-3 py-2 bg-gray-700 rounded">
+                                    </div>
+                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Mettre à jour</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg p-6">
+                            <h3 class="text-lg font-bold mb-4">Sécurité</h3>
+                            <form onsubmit="changePassword(event)">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Mot de passe actuel</label>
+                                        <input type="password" id="current-password" class="w-full px-3 py-2 bg-gray-700 rounded">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Nouveau mot de passe</label>
+                                        <input type="password" id="new-password" class="w-full px-3 py-2 bg-gray-700 rounded">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Confirmer nouveau mot de passe</label>
+                                        <input type="password" id="confirm-password" class="w-full px-3 py-2 bg-gray-700 rounded">
+                                    </div>
+                                    <button type="submit" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded">
+                                        Changer le mot de passe
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Support Page -->
+            <div id="support-page" class="hidden">
+                <div class="container mx-auto px-6 py-8">
+                    <h2 class="text-2xl font-bold mb-6">Support Client</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-gray-800 rounded-lg p-6">
+                            <h3 class="text-lg font-bold mb-4">Nouveau Ticket</h3>
+                            <form onsubmit="createSupportTicket(event)">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Sujet</label>
+                                        <select id="ticket-subject" class="w-full px-3 py-2 bg-gray-700 rounded">
+                                            <option value="technical">Problème Technique</option>
+                                            <option value="transaction">Question Transaction</option>
+                                            <option value="account">Compte Utilisateur</option>
+                                            <option value="other">Autre</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">Message</label>
+                                        <textarea id="ticket-message" rows="4" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="Décrivez votre problème..."></textarea>
+                                    </div>
+                                    <button type="submit" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">
+                                        Envoyer Ticket
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg p-6">
+                            <h3 class="text-lg font-bold mb-4">Mes Tickets</h3>
+                            <div id="support-tickets" class="space-y-3">
+                                <p class="text-gray-400">Aucun ticket de support</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-6 mt-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold">Mes Notifications</h3>
+                            <select id="notif-type-filter" class="bg-gray-700 rounded px-3 py-2">
+                                <option value="">Tous types</option>
+                                <option value="TRANSACTION">TRANSACTION</option>
+                                <option value="SECURITY">SECURITY</option>
+                                <option value="SYSTEM">SYSTEM</option>
+                                <option value="MARKET">MARKET</option>
+                            </select>
+                        </div>
+                        <div id="notifications-list" class="space-y-3">
+                            <p class="text-gray-400">Chargement...</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-6 mt-6">
+                        <h3 class="text-lg font-bold mb-4">FAQ</h3>
+                        <div class="space-y-4">
+                            <div class="border-b border-gray-700 pb-4">
+                                <h4 class="font-medium mb-2">Comment effectuer un dépôt ?</h4>
+                                <p class="text-gray-400 text-sm">Utilisez le bouton "Dépôt" dans les actions rapides et suivez les instructions.</p>
+                            </div>
+                            <div class="border-b border-gray-700 pb-4">
+                                <h4 class="font-medium mb-2">Combien de temps prend un retrait ?</h4>
+                                <p class="text-gray-400 text-sm">Les retraits sont traités sous 24-48h ouvrables.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium mb-2">Comment contacter le support ?</h4>
+                                <p class="text-gray-400 text-sm">Créez un ticket ci-dessus ou envoyez un email à support@cryptoboost.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="crypto-api.js"></script>
+    <script src="app.js"></script>
+
+    <!-- Decorative assets preload -->
+    <link rel="preload" as="image" href="assets/hero-grid.svg">
+    <script>
+        (function(){
+            var y = document.getElementById('year');
+            if (y) { y.textContent = new Date().getFullYear(); }
+        })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</body>
+</html>

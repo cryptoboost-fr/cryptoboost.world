@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - CryptoBoost</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <a href="index.html" class="logo">
+                    <img src="assets/logo.svg" alt="CryptoBoost">
+                </a>
+                <div class="nav-links">
+                    <a href="about.html">À propos</a>
+                    <a href="plans.html">Plans</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="faq.html" class="active">FAQ</a>
+                    <a href="client-dashboard.html" class="btn-primary">Accéder à mon compte</a>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            <section class="hero faq-hero">
+                <h1>Questions Fréquentes</h1>
+                <p>Trouvez rapidement les réponses à vos questions</p>
+            </section>
+
+            <section class="faq-content">
+                <div class="faq-categories">
+                    <button class="category-btn active" data-category="general">Général</button>
+                    <button class="category-btn" data-category="account">Compte</button>
+                    <button class="category-btn" data-category="investment">Investissement</button>
+                    <button class="category-btn" data-category="security">Sécurité</button>
+                    <button class="category-btn" data-category="technical">Technique</button>
+                </div>
+
+                <div class="faq-section" id="general">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Qu'est-ce que CryptoBoost ?
+                            <span class="toggle-icon">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            CryptoBoost est une plateforme d'investissement en cryptomonnaies qui permet aux utilisateurs d'investir facilement dans le BTC, ETH, USDT et USDC via des plans d'investissement personnalisés.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Quelles cryptomonnaies sont disponibles ?
+                            <span class="toggle-icon">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            CryptoBoost gère actuellement quatre cryptomonnaies majeures : Bitcoin (BTC), Ethereum (ETH), Tether (USDT) et USD Coin (USDC).
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Comment sont calculés les frais ?
+                            <span class="toggle-icon">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Les frais d'échange sont fixés à 0,2% du montant de la transaction. Les frais de retrait varient selon la cryptomonnaie : BTC (0.0002), ETH (0.003), USDT/USDC (2).
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-section hidden" id="account">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Comment créer un compte ?
+                            <span class="toggle-icon">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            La création de compte est simple et rapide. Cliquez sur "Créer un compte", renseignez votre email et mot de passe, et commencez à investir immédiatement.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Y a-t-il une vérification KYC ?
+                            <span class="toggle-icon">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Non, CryptoBoost ne requiert pas de processus KYC pour le moment. Seuls un email et un mot de passe sont nécessaires.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-section hidden" id="investment">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Quels sont les plans disponibles ?
+                            <span class="toggle-icon">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Nous proposons 4 plans : Débutant (5-8%, min 50€), Standard (8-12%, min 500€), Premium (12-18%, min 2000€) et VIP (18-25%, min 10000€).
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Comment fonctionnent les rendements ?
+                            <span class="toggle-icon">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Les rendements sont calculés quotidiennement et dépendent du plan choisi. Ils sont basés sur la performance du marché et la durée d'investissement.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-section hidden" id="security">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Comment sont sécurisés mes fonds ?
+                            <span class="toggle-icon">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Vos fonds sont stockés dans des wallets sécurisés et toutes les transactions sont tracées et vérifiées par notre équipe.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            La double authentification est-elle disponible ?
+                            <span class="toggle-icon">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            La 2FA n'est pas disponible pour le moment mais nous travaillons à son implémentation future.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-section hidden" id="technical">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            D'où viennent les taux de change ?
+                            <span class="toggle-icon">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Les taux sont fournis en temps réel par CoinAPI, une source fiable de données crypto.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Que faire en cas de problème technique ?
+                            <span class="toggle-icon">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Contactez notre support technique via la section Support de votre espace client ou par email.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="contact-cta">
+                <h2>Vous ne trouvez pas la réponse ?</h2>
+                <p>Notre équipe support est là pour vous aider</p>
+                <a href="contact.html" class="btn-primary">Contactez-nous</a>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>CryptoBoost</h4>
+                    <p>Votre partenaire de confiance pour l'investissement crypto</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Liens rapides</h4>
+                    <a href="about.html">À propos</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Légal</h4>
+                    <a href="cgu.html">CGU</a>
+                    <a href="privacy.html">Confidentialité</a>
+                    <a href="cookies.html">Cookies</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 CryptoBoost. Tous droits réservés.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = new CryptoBoostApp();
+            app.initializeFAQ();
+        });
+    </script>
+</body>
+</html>

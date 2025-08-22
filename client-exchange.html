@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exchange - CryptoBoost</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body>
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/logo.svg" alt="CryptoBoost" class="logo">
+            </div>
+            <div class="sidebar-menu">
+                <a href="client-dashboard.html">
+                    <i class="icon-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="client-wallets.html">
+                    <i class="icon-wallet"></i>
+                    <span>Wallets</span>
+                </a>
+                <a href="client-exchange.html" class="active">
+                    <i class="icon-exchange"></i>
+                    <span>Exchange</span>
+                </a>
+                <a href="client-investments.html">
+                    <i class="icon-invest"></i>
+                    <span>Investissements</span>
+                </a>
+                <a href="client-transactions.html">
+                    <i class="icon-history"></i>
+                    <span>Historique</span>
+                </a>
+                <a href="client-notifications.html">
+                    <i class="icon-bell"></i>
+                    <span>Notifications</span>
+                </a>
+                <a href="client-profile.html">
+                    <i class="icon-user"></i>
+                    <span>Profil</span>
+                </a>
+                <a href="client-support.html">
+                    <i class="icon-support"></i>
+                    <span>Support</span>
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Exchange</h1>
+                <div class="user-menu">
+                    <div class="notifications">
+                        <i class="icon-bell"></i>
+                        <span class="badge" id="notifications-count">0</span>
+                    </div>
+                    <div class="user-info">
+                        <span id="user-email"></span>
+                        <button id="logout-btn">Déconnexion</button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="exchange-container">
+                <div class="exchange-form">
+                    <div class="exchange-rates">
+                        <div class="rate-update">
+                            Dernière mise à jour: <span id="last-update">--:--</span>
+                        </div>
+                        <div class="current-rates" id="current-rates">
+                            <!-- Taux mis à jour dynamiquement -->
+                        </div>
+                    </div>
+
+                    <div class="exchange-inputs">
+                        <div class="form-group">
+                            <label>De</label>
+                            <div class="input-with-select">
+                                <select id="from-currency">
+                                    <option value="BTC">Bitcoin (BTC)</option>
+                                    <option value="ETH">Ethereum (ETH)</option>
+                                    <option value="USDT">Tether (USDT)</option>
+                                    <option value="USDC">USD Coin (USDC)</option>
+                                </select>
+                                <input type="number" id="from-amount" step="0.00000001" min="0">
+                            </div>
+                            <span class="balance-info">Solde: <span id="from-balance">0</span></span>
+                        </div>
+
+                        <button id="swap-currencies" class="swap-btn">
+                            <i class="icon-swap"></i>
+                        </button>
+
+                        <div class="form-group">
+                            <label>Vers</label>
+                            <div class="input-with-select">
+                                <select id="to-currency">
+                                    <option value="ETH">Ethereum (ETH)</option>
+                                    <option value="BTC">Bitcoin (BTC)</option>
+                                    <option value="USDT">Tether (USDT)</option>
+                                    <option value="USDC">USD Coin (USDC)</option>
+                                </select>
+                                <input type="number" id="to-amount" step="0.00000001" min="0" readonly>
+                            </div>
+                            <span class="balance-info">Solde: <span id="to-balance">0</span></span>
+                        </div>
+                    </div>
+
+                    <div class="exchange-summary">
+                        <h3>Résumé de l'échange</h3>
+                        <div class="summary-item">
+                            <span>Taux de change</span>
+                            <span id="exchange-rate">1 BTC = -- ETH</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Frais (0.2%)</span>
+                            <span id="exchange-fee">--</span>
+                        </div>
+                        <div class="summary-item total">
+                            <span>Vous recevrez</span>
+                            <span id="final-amount">--</span>
+                        </div>
+                    </div>
+
+                    <button id="confirm-exchange" class="btn-primary btn-large" disabled>
+                        Confirmer l'échange
+                    </button>
+                </div>
+
+                <div class="recent-exchanges">
+                    <h2>Échanges récents</h2>
+                    <div class="exchange-history" id="exchange-history">
+                        <!-- Liste des échanges récents -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="crypto-api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = new CryptoBoostApp();
+            app.initializeExchange();
+        });
+    </script>
+</body>
+</html>

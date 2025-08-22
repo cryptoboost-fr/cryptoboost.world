@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investissements - CryptoBoost</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="auth.js"></script>
+    <script src="crypto-api.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body class="fade-in noise-texture">
+    <!-- Enhanced Header with Glass Morphism -->
+    <header class="glass-nav sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center group">
+                    <div class="crypto-logo mr-3 text-2xl float">₿</div>
+                    <div class="text-2xl font-bold text-gradient">CryptoBoost</div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-2 user-info">
+                        <div class="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center text-white font-semibold text-sm">
+                            <span class="user-avatar">U</span>
+                        </div>
+                        <span class="user-name text-sm font-medium"></span>
+                    </div>
+                    <button onclick="logout()" class="btn-secondary text-red-400 hover:text-red-300 btn-liquid">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                        Déconnexion
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Enhanced Sidebar with Glass Morphism -->
+    <aside class="w-64 glass-card min-h-screen border-r border-white/10 volumetric-shadow">
+        <div class="p-6">
+            <!-- User Profile Section -->
+            <div class="mb-8 text-center">
+                <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-accent flex items-center justify-center text-white font-bold text-xl shadow-glow-purple">
+                    <span class="user-avatar">U</span>
+                </div>
+                <h3 class="font-semibold text-white mb-1 user-name">Utilisateur</h3>
+                <p class="text-xs text-white/60">Client Premium</p>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="space-y-2">
+                <a href="client-dashboard.html" class="nav-link group">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v0"></path>
+                    </svg>
+                    Dashboard
+                </a>
+
+                <a href="client-wallets.html" class="nav-link group">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                    </svg>
+                    Portefeuilles
+                </a>
+
+                <a href="client-transactions.html" class="nav-link group">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 002-2h2a2 2 0 002 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 00-2-2h-2a2 2 0 00-2 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path>
+                    </svg>
+                    Transactions
+                </a>
+
+                <a href="client-investments.html" class="nav-link active group crypto-card-holo">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                    Investissements
+                </a>
+
+                <a href="client-profile.html" class="nav-link group">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    Profil
+                </a>
+
+                <a href="client-support.html" class="nav-link group">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Support
+                </a>
+
+                <a href="client-notifications.html" class="nav-link group">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM15 7H9a2 2 0 00-2 2v6a2 2 0 002 2h5l5 5V9a2 2 0 00-2-2z"></path>
+                    </svg>
+                    Notifications
+                </a>
+            </nav>
+
+            <!-- Quick Stats in Sidebar -->
+            <div class="mt-8 p-4 glass-card-strong rounded-xl volumetric-shadow">
+                <h4 class="font-semibold text-white mb-3">Performance</h4>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-white/70">Investissements:</span>
+                        <span class="text-white font-semibold">8</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-white/70">Total investi:</span>
+                        <span class="text-green-400 font-semibold">€15,000</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-white/70">Gains totaux:</span>
+                        <span class="text-blue-400 font-semibold">+€2,450</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-white/70">ROI moyen:</span>
+                        <span class="text-purple-400 font-semibold">16.3%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content with Enhanced Background -->
+    <main class="flex-1 p-8 relative overflow-hidden">
+        <!-- Background Effects -->
+        <div class="absolute inset-0 crypto-particles pointer-events-none"></div>
+        <div class="absolute inset-0 light-rays pointer-events-none"></div>
+
+        <!-- Enhanced Header Section -->
+        <div class="relative z-10 mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div class="flex-1">
+                    <h1 class="text-4xl font-bold text-gradient mb-2 magnetic-text">Centre d'Investissement Crypto</h1>
+                    <p class="text-white/70 text-lg mb-4">Découvrez des opportunités d'investissement structurées avec des rendements attractifs et sécurisés</p>
+
+                    <!-- Investment Opportunity Banner -->
+                    <div class="bg-gradient-to-r from-emerald-500/10 to-green-500/10 rounded-xl p-4 border border-white/10">
+                        <div class="flex items-start space-x-3">
+                            <div class="p-2 rounded-lg bg-emerald-500/20">
+                                <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-white mb-1">Investissement Intelligent</h3>
+                                <p class="text-white/70 text-sm">Nos plans d'investissement sont conçus par des experts crypto pour maximiser vos rendements tout en minimisant les risques.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="showNewInvestmentModal()" class="btn-primary btn-liquid px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                        <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                        📈 Nouvel Investissement
+                    </button>
+                    <button onclick="showInvestmentCalculator()" class="btn-secondary btn-liquid px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                        <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        🧮 Calculateur
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Investment Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="crypto-card-holo magnetic-card volumetric-shadow glass-card-strong p-6 rounded-2xl slide-up">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-xl bg-gradient-to-r from-blue-500/20 to-cyan-500/20">
+                        <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-gradient magnetic-text">€15,000</div>
+                        <div class="text-xs text-white/60">Capital Investi</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-white/60 text-sm">Investissements actifs</span>
+                    <span class="text-blue-400 text-sm font-semibold">8 actifs</span>
+                </div>
+            </div>
+
+            <div class="crypto-card-holo magnetic-card volumetric-shadow glass-card-strong p-6 rounded-2xl slide-up" style="animation-delay: 0.1s">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-xl bg-gradient-to-r from-green-500/20 to-emerald-500/20">
+                        <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-gradient magnetic-text">€17,450</div>
+                        <div class="text-xs text-white/60">Valeur Actuelle</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-white/60 text-sm">Performance 24h</span>
+                    <div class="flex items-center space-x-1">
+                        <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                        <span class="text-green-400 text-sm font-semibold">+1.2%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="crypto-card-holo magnetic-card volumetric-shadow glass-card-strong p-6 rounded-2xl slide-up" style="animation-delay: 0.2s">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-pink-500/20">
+                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-gradient magnetic-text">+€2,450</div>
+                        <div class="text-xs text-white/60">Gains Totaux</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-white/60 text-sm">Plus-value réalisée</span>
+                    <span class="text-purple-400 text-sm font-semibold">€1,850</span>
+                </div>
+            </div>
+
+            <div class="crypto-card-holo magnetic-card volumetric-shadow glass-card-strong p-6 rounded-2xl slide-up" style="animation-delay: 0.3s">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-xl bg-gradient-to-r from-orange-500/20 to-yellow-500/20">
+                        <svg class="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 002-2h2a2 2 0 002 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 00-2-2h-2a2 2 0 00-2 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path>
+                        </svg>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-gradient magnetic-text">16.3%</div>
+                        <div class="text-xs text-white/60">ROI Moyen</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-white/60 text-sm">Meilleure performance</span>
+                    <span class="text-orange-400 text-sm font-semibold">+28.7%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Educational Section - Investment Guide -->
+        <div class="crypto-card-holo volumetric-shadow glass-card-strong p-8 rounded-2xl mb-8 slide-up" style="animation-delay: 0.4s">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gradient mb-2 magnetic-text">Guide de l'Investissement Crypto</h2>
+                    <p class="text-white/60">Comprendre les bases pour investir intelligemment</p>
+                </div>
+                <div class="p-3 rounded-xl bg-gradient-emerald/20">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- What is Crypto Investment -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-white flex items-center">
+                        <span class="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center mr-3 text-sm">💡</span>
+                        Qu'est-ce qu'un investissement crypto ?
+                    </h3>
+                    <div class="space-y-3 text-sm text-white/70">
+                        <p><strong>Plan d'investissement structuré :</strong> Un contrat intelligent qui investit vos fonds selon une stratégie prédéfinie.</p>
+                        <p><strong>Rendements automatiques :</strong> Les gains sont calculés et distribués automatiquement selon le plan choisi.</p>
+                        <p><strong>Sécurité maximale :</strong> Vos fonds restent dans des portefeuilles sécurisés avec des audits réguliers.</p>
+                        <p><strong>Flexibilité :</strong> Différentes durées et niveaux de risque pour s'adapter à vos besoins.</p>
+                    </div>
+                </div>
+
+                <!-- Risk Management -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-white flex items-center">
+                        <span class="w-8 h-8 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 flex items-center justify-center mr-3 text-sm">⚠️</span>
+                        Gestion des risques
+                    </h3>
+                    <div class="space-y-3 text-sm text-white/70">
+                        <div class="flex justify-between items-center p-2 bg-red-500/10 rounded-lg">
+                            <span>Rendement Élevé (18-25%)</span>
+                            <span class="text-red-400 font-semibold">Risque Élevé</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-yellow-500/10 rounded-lg">
+                            <span>Rendement Modéré (8-12%)</span>
+                            <span class="text-yellow-400 font-semibold">Risque Modéré</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-green-500/10 rounded-lg">
+                            <span>Rendement Stable (5-8%)</span>
+                            <span class="text-green-400 font-semibold">Risque Faible</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Investment Tips -->
+            <div class="bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-xl p-4 border border-white/10">
+                <h4 class="font-semibold text-white mb-3 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                    Stratégies d'investissement recommandées
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                        <p class="text-purple-400 font-semibold mb-1">🎯 Diversification</p>
+                        <p class="text-white/70">Répartissez vos investissements sur différents plans pour équilibrer risques et rendements.</p>
+                    </div>
+                    <div>
+                        <p class="text-purple-400 font-semibold mb-1">⏰ Long terme</p>
+                        <p class="text-white/70">Les investissements à long terme (12-24 mois) offrent généralement de meilleurs rendements.</p>
+                    </div>
+                    <div>
+                        <p class="text-purple-400 font-semibold mb-1">📊 Suivi régulier</p>
+                        <p class="text-white/70">Surveillez vos performances et ajustez votre stratégie selon l'évolution du marché.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Investment Performance Overview -->
+        <div class="crypto-card-holo volumetric-shadow glass-card-strong p-8 rounded-2xl mb-8 slide-up" style="animation-delay: 0.5s">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gradient mb-2 magnetic-text">Aperçu des Performances</h2>
+                    <p class="text-white/60">Analyse de vos investissements actifs</p>
+                </div>
+                <div class="flex space-x-3">
+                    <button onclick="togglePerformanceView('chart')" class="px-4 py-2 rounded-lg bg-gradient-primary hover:shadow-lg transition-all duration-300 text-sm font-semibold">
+                        📊 Graphique
+                    </button>
+                    <button onclick="togglePerformanceView('table')" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all duration-300 text-sm font-semibold">
+                        📋 Tableau
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center p-6 rounded-xl bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-white/10">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-lg bg-gradient-primary flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                    </div>
+                    <div class="text-lg font-bold text-gradient mb-1">5</div>
+                    <div class="text-sm text-white/60">Investissements Actifs</div>
+                    <div class="text-xs text-blue-400 mt-1">3 en progression</div>
+                </div>
+                <div class="text-center p-6 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-white/10">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-lg bg-gradient-accent flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                    <div class="text-lg font-bold text-gradient mb-1">3</div>
+                    <div class="text-sm text-white/60">Terminés avec profit</div>
+                    <div class="text-xs text-green-400 mt-1">+€1,250 gains</div>
+                </div>
+                <div class="text-center p-6 rounded-xl bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-white/10">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-lg bg-gradient-to-r from-orange-500 to-yellow-500 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="text-lg font-bold text-gradient mb-1">2</div>
+                    <div class="text-sm text-white/60">En attente de maturité</div>
+                    <div class="text-xs text-yellow-400 mt-1">6-8 mois restants</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Investment Disclaimer and Info -->
+        <div class="crypto-card-holo volumetric-shadow glass-card-strong p-8 rounded-2xl mb-8 slide-up" style="animation-delay: 0.9s">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gradient mb-2 magnetic-text">Informations Importantes</h2>
+                    <p class="text-white/60">Comprendre les risques et conditions</p>
+                </div>
+                <div class="p-3 rounded-xl bg-gradient-orange/20">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Risk Warning -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-white flex items-center">
+                        <span class="w-8 h-8 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 flex items-center justify-center mr-3 text-sm">⚠️</span>
+                        Avertissement sur les risques
+                    </h3>
+                    <div class="space-y-3 text-sm text-white/70">
+                        <p><strong>Volatilité du marché :</strong> Les crypto-monnaies sont volatiles. La valeur peut fluctuer considérablement.</p>
+                        <p><strong>Risques technologiques :</strong> Les smart contracts et la technologie blockchain comportent des risques.</p>
+                        <p><strong>Risques réglementaires :</strong> L'environnement réglementaire peut évoluer et affecter vos investissements.</p>
+                        <p><strong>Risques de liquidité :</strong> Selon les plans, il peut y avoir des restrictions de retrait.</p>
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-white flex items-center">
+                        <span class="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center mr-3 text-sm">📋</span>
+                        Conditions générales
+                    </h3>
+                    <div class="space-y-3 text-sm text-white/70">
+                        <p><strong>Capital minimum :</strong> Varie selon le plan choisi (250€ à 25,000€).</p>
+                        <p><strong>Durée d'engagement :</strong> De 3 mois à 36 mois selon le plan.</p>
+                        <p><strong>Rendements :</strong> Calculés quotidiennement et versés selon les conditions du plan.</p>
+                        <p><strong>Frais de gestion :</strong> Inclus dans les rendements estimés.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Important Notice -->
+            <div class="bg-gradient-to-r from-red-500/10 to-orange-500/10 rounded-xl p-4 border border-red-500/20">
+                <div class="flex items-start space-x-3">
+                    <div class="p-2 rounded-lg bg-red-500/20">
+                        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-white mb-2">Avis de non-responsabilité</h4>
+                        <p class="text-white/70 text-sm">Les investissements crypto comportent des risques élevés, incluant la perte totale du capital investi. Les rendements passés ne garantissent pas les résultats futurs. Investissez uniquement des fonds que vous pouvez vous permettre de perdre et consultez un conseiller financier si nécessaire.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Investment Plans -->
+        <div class="crypto-card-holo volumetric-shadow glass-card-strong p-8 rounded-2xl mb-8 slide-up" style="animation-delay: 0.5s">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-gradient mb-2 magnetic-text">Plans d'Investissement Disponibles</h2>
+                    <p class="text-white/60">Choisissez le plan qui correspond à vos objectifs</p>
+                </div>
+                <div class="flex space-x-3">
+                    <button onclick="comparePlans()" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all duration-300 text-sm font-semibold">
+                        ⚖️ Comparer
+                    </button>
+                    <button onclick="showRiskCalculator()" class="px-4 py-2 rounded-lg bg-gradient-primary hover:shadow-lg transition-all duration-300 text-sm font-semibold">
+                        📊 Calculateur Risque
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Débutant Plan -->
+                <div class="crypto-card-holo magnetic-card volumetric-shadow glass-card-strong p-8 rounded-2xl slide-up" style="animation-delay: 0.6s">
+                    <div class="relative">
+                        <div class="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 flex items-center justify-center">
+                            <span class="text-white text-xs font-bold">✓</span>
+                        </div>
+                        <div class="text-center mb-6">
+                            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-green-500/20 to-emerald-500/20 flex items-center justify-center">
+                                <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gradient mb-2 magnetic-text">Débutant</h3>
+                            <div class="text-3xl font-bold text-green-400 mb-2">5-8%</div>
+                            <p class="text-white/60 text-sm">Rendement annuel</p>
+                        </div>
+
+                        <div class="space-y-3 mb-8">
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-white/5">
+                                <span class="text-white/70 text-sm">Minimum:</span>
+                                <span class="text-white font-semibold">€250</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-white/5">
+                                <span class="text-white/70 text-sm">Durée:</span>
+                                <span class="text-white font-semibold">3-6 mois</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-white/5">
+                                <span class="text-white/70 text-sm">Risque:</span>
+                                <span class="text-green-400 font-semibold">Faible</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-white/5">
+                                <span class="text-white/70 text-sm">Retrait:</span>
+                                <span class="text-blue-400 font-semibold">Flexible</span>
+                            </div>
+                        </div>
+
+                        <button onclick="selectPlan('debutant')" class="btn-primary btn-liquid w-full py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                            🚀 Choisir ce Plan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Standard Plan -->
+                <div class="crypto-card-holo magnetic-card volumetric-shadow glass-card-strong p-8 rounded-2xl slide-up" style="animation-delay: 0.7s">
+                    <div class="relative">
+                        <div class="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-cyan-500 flex items-center justify-center">
+                            <span class="text-white text-xs font-bold">⭐</span>
+                        </div>
+                        <div class="text-center mb-6">
+                            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
+                                <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gradient mb-2 magnetic-text">Standard</h3>
+                            <div class="text-3xl font-bold text-blue-400 mb-2">8-12%</div>
+                            <p class="text-white/60 text-sm">Rendement annuel</p>
+                        </div>
+
+                        <div class="space-y-3 mb-8">
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-white/5">
+                                <span class="text-white/70 text-sm">Minimum:</span>
+                                <span class="text-white font-semibold">€1,000</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-white/5">
+                                <span class="text-white/70 text-sm">Durée:</span>
+                                <span class="text-white font-semibold">6-12 mois</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-white/5">
+                                <span class="text-white/70 text-sm">Risque:</span>
+                                <span class="text-blue-400 font-semibold">Modéré</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-white/5">
+                                <span class="text-white/70 text-sm">Retrait:</span>
+                                <span class="text-yellow-400 font-semibold">30 jours</span>
+                            </div>
+                        </div>
+
+                        <button onclick="selectPlan('standard')" class="btn-primary btn-liquid w-full py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                            🚀 Choisir ce Plan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Premium Plan -->
+                <div class="crypto-card-holo magnetic-card volumetric-shadow glass-card-strong p-8 rounded-2xl slide-up" style="animation-delay: 0.8s">
+                    <div class="relative">
+                        <div class="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-gradient-to-r from-purple-400 to-pink-500 flex items-center justify-center">
+                            <span class="text-white text-xs font-bold">🔥</span>
+                        </div>
+                        <div class="text-center mb-6">
+                            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 flex items-center justify-center">
+                                <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gradient mb-2 magnetic-text">Premium</h3>
+                            <div class="text-3xl font-bold text-purple-400 mb-2">12-18%</div>
+                            <p class="text-white/60 text-sm">Rendement annuel</p>
+                        </div>
+
+                        <div class="space-y-3 mb-8">
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-white/5">
+                                <span class="text-white/70 text-sm">Minimum:</span>
+                                <span class="text-white font-semibold">€5,000</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-white/5">
+                                <span class="text-white/70 text-sm">Durée:</span>
+                                <span class="text-white font-semibold">12-24 mois</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-white/5">
+                                <span class="text-white/70 text-sm">Risque:</span>
+                                <span class="text-orange-400 font-semibold">Élevé</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-white/5">
+                                <span class="text-white/70 text-sm">Retrait:</span>
+                                <span class="text-red-400 font-semibold">60 jours</span>
+                            </div>
+                        </div>
+
+                        <button onclick="selectPlan('premium')" class="btn-primary btn-liquid w-full py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                            🚀 Choisir ce Plan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- VIP Plan -->
+                <div class="crypto-card-holo magnetic-card volumetric-shadow glass-card-strong p-8 rounded-2xl slide-up" style="animation-delay: 0.9s">
+                    <div class="relative">
+                        <div class="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center">
+                            <span class="text-white text-xs font-bold">👑</span>
+                        </div>
+                        <div class="text-center mb-6">
+                            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-yellow-500/20 to-orange-500/20 flex items-center justify-center">
+                                <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gradient mb-2 magnetic-text">VIP</h3>
+                            <div class="text-3xl font-bold text-yellow-400 mb-2">18-25%</div>
+                            <p class="text-white/60 text-sm">Rendement annuel</p>
+                        </div>
+
+                        <div class="space-y-3 mb-8">
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-white/5">
+                                <span class="text-white/70 text-sm">Minimum:</span>
+                                <span class="text-white font-semibold">€25,000</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-white/5">
+                                <span class="text-white/70 text-sm">Durée:</span>
+                                <span class="text-white font-semibold">24-36 mois</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-white/5">
+                                <span class="text-white/70 text-sm">Risque:</span>
+                                <span class="text-red-400 font-semibold">Très élevé</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-white/5">
+                                <span class="text-white/70 text-sm">Service:</span>
+                                <span class="text-yellow-400 font-semibold">VIP</span>
+                            </div>
+                        </div>
+
+                        <button onclick="selectPlan('vip')" class="btn-primary btn-liquid w-full py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                            👑 Choisir ce Plan
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Plan Comparison Table -->
+            <div class="mt-8 p-6 rounded-2xl bg-white/5">
+                <h3 class="text-lg font-bold text-white mb-4">Comparaison Rapide des Plans</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-white/10">
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-white/80">Caractéristique</th>
+                                <th class="text-center py-3 px-4 text-sm font-semibold text-green-400">Débutant</th>
+                                <th class="text-center py-3 px-4 text-sm font-semibold text-blue-400">Standard</th>
+                                <th class="text-center py-3 px-4 text-sm font-semibold text-purple-400">Premium</th>
+                                <th class="text-center py-3 px-4 text-sm font-semibold text-yellow-400">VIP</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <tr class="border-b border-white/5">
+                                <td class="py-2 px-4 text-white/70">Investissement minimum</td>
+                                <td class="py-2 px-4 text-center text-white">€250</td>
+                                <td class="py-2 px-4 text-center text-white">€1,000</td>
+                                <td class="py-2 px-4 text-center text-white">€5,000</td>
+                                <td class="py-2 px-4 text-center text-white">€25,000</td>
+                            </tr>
+                            <tr class="border-b border-white/5">
+                                <td class="py-2 px-4 text-white/70">Durée d'investissement</td>
+                                <td class="py-2 px-4 text-center text-white">3-6 mois</td>
+                                <td class="py-2 px-4 text-center text-white">6-12 mois</td>
+                                <td class="py-2 px-4 text-center text-white">12-24 mois</td>
+                                <td class="py-2 px-4 text-center text-white">24-36 mois</td>
+                            </tr>
+                            <tr class="border-b border-white/5">
+                                <td class="py-2 px-4 text-white/70">Rendement estimé</td>
+                                <td class="py-2 px-4 text-center text-green-400">5-8%</td>
+                                <td class="py-2 px-4 text-center text-blue-400">8-12%</td>
+                                <td class="py-2 px-4 text-center text-purple-400">12-18%</td>
+                                <td class="py-2 px-4 text-center text-yellow-400">18-25%</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 px-4 text-white/70">Support dédié</td>
+                                <td class="py-2 px-4 text-center text-gray-400">Standard</td>
+                                <td class="py-2 px-4 text-center text-blue-400">Prioritaire</td>
+                                <td class="py-2 px-4 text-center text-purple-400">VIP</td>
+                                <td class="py-2 px-4 text-center text-yellow-400">Concierge</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Active Investments -->
+        <div class="crypto-card-holo volumetric-shadow glass-card-strong p-8 rounded-2xl slide-up" style="animation-delay: 1.0s">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gradient mb-2 magnetic-text">Investissements Actifs</h2>
+                    <p class="text-white/60">Suivez vos investissements en cours</p>
+                </div>
+                <div class="flex space-x-3">
+                    <button onclick="refreshInvestments()" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all duration-300 text-sm font-semibold">
+                        🔄 Actualiser
+                    </button>
+                    <button onclick="exportInvestments()" class="px-4 py-2 rounded-lg bg-gradient-primary hover:shadow-lg transition-all duration-300 text-sm font-semibold">
+                        📊 Exporter
+                    </button>
+                </div>
+            </div>
+            <div class="overflow-x-auto bg-white/5 rounded-xl p-4">
+                <div class="overflow-x-auto">
+                    <table class="data-table w-full">
+                        <thead>
+                            <tr>
+                                <th>Plan</th>
+                                <th>Montant Initial</th>
+                                <th>Valeur Actuelle</th>
+                                <th>Gains</th>
+                                <th>ROI</th>
+                                <th>Date Début</th>
+                                <th>Date Fin</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="active-investments">
+                            <tr>
+                                <td><span class="status-badge status-active">Standard</span></td>
+                                <td>€3,000.00</td>
+                                <td>€3,450.00</td>
+                                <td class="text-green-400">+€450.00</td>
+                                <td class="text-green-400">+15.0%</td>
+                                <td>2023-07-15</td>
+                                <td>2024-07-15</td>
+                                <td><span class="status-badge status-completed">Actif</span></td>
+                                <td>
+                                    <div class="flex space-x-2">
+                                        <button onclick="viewInvestment('INV001')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                        <button onclick="withdrawInvestment('INV001')" class="text-red-400 hover:text-red-300">Retirer</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="status-badge status-pending">Premium</span></td>
+                                <td>€5,000.00</td>
+                                <td>€6,125.50</td>
+                                <td class="text-green-400">+€1,125.50</td>
+                                <td class="text-green-400">+22.5%</td>
+                                <td>2023-03-10</td>
+                                <td>2025-03-10</td>
+                                <td><span class="status-badge status-completed">Actif</span></td>
+                                <td>
+                                    <div class="flex space-x-2">
+                                        <button onclick="viewInvestment('INV002')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                        <button onclick="withdrawInvestment('INV002')" class="text-red-400 hover:text-red-300">Retirer</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Investment History -->
+            <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                <h2 class="text-xl font-bold mb-4">Historique des Investissements</h2>
+                <div class="overflow-x-auto">
+                    <table class="data-table w-full">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Plan</th>
+                                <th>Montant</th>
+                                <th>Gains Finaux</th>
+                                <th>ROI Final</th>
+                                <th>Date Début</th>
+                                <th>Date Fin</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody id="investment-history">
+                            <tr>
+                                <td>#INV003</td>
+                                <td><span class="status-badge status-active">Débutant</span></td>
+                                <td>€500.00</td>
+                                <td class="text-green-400">+€35.00</td>
+                                <td class="text-green-400">+7.0%</td>
+                                <td>2023-01-15</td>
+                                <td>2023-07-15</td>
+                                <td><span class="status-badge status-completed">Terminé</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Investment Modal -->
+    <div id="newInvestmentModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Nouvel Investissement</h2>
+                <button onclick="closeModal('newInvestmentModal')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <form onsubmit="createInvestment(event)">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Plan d'Investissement</label>
+                        <select id="investment-plan" class="form-input w-full" required>
+                            <option value="">Sélectionner un plan</option>
+                            <option value="debutant">Débutant (5-8% annuel)</option>
+                            <option value="standard">Standard (8-12% annuel)</option>
+                            <option value="premium">Premium (12-18% annuel)</option>
+                            <option value="vip">VIP (18-25% annuel)</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Montant d'Investissement</label>
+                        <input type="number" id="investment-amount" class="form-input w-full" min="250" step="0.01" required>
+                        <p class="text-sm text-gray-400 mt-1">Montant minimum: <span id="min-amount">€250</span></p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Durée d'Investissement</label>
+                        <select id="investment-duration" class="form-input w-full" required>
+                            <option value="">Sélectionner la durée</option>
+                            <option value="3">3 mois</option>
+                            <option value="6">6 mois</option>
+                            <option value="12">12 mois</option>
+                            <option value="24">24 mois</option>
+                        </select>
+                    </div>
+                    
+                    <div class="bg-gray-700 p-4 rounded-lg">
+                        <h3 class="font-bold mb-2">Estimation des Gains</h3>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-gray-400">Rendement estimé:</p>
+                                <p class="font-bold text-green-400" id="estimated-return">€0.00</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-400">ROI estimé:</p>
+                                <p class="font-bold text-blue-400" id="estimated-roi">0%</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" id="accept-terms" class="mr-3" required>
+                        <label for="accept-terms" class="text-sm">
+                            J'accepte les <a href="#" class="text-blue-400 hover:text-blue-300">conditions d'investissement</a> et je comprends les risques associés.
+                        </label>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <button type="submit" class="btn-primary flex-1">Créer l'Investissement</button>
+                        <button type="button" onclick="closeModal('newInvestmentModal')" class="btn-secondary flex-1">Annuler</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Investment Detail Modal -->
+    <div id="investmentDetailModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-3xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Détails de l'Investissement</h2>
+                <button onclick="closeModal('investmentDetailModal')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <div id="investment-details" class="space-y-6">
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">ID Investissement</label>
+                            <p class="text-lg font-semibold" id="detail-inv-id">#INV001</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Plan</label>
+                            <p class="text-lg font-semibold" id="detail-inv-plan">Standard</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Montant Initial</label>
+                            <p class="text-lg font-semibold" id="detail-inv-amount">€3,000.00</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Date de Début</label>
+                            <p class="text-lg font-semibold" id="detail-inv-start">2023-07-15</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Valeur Actuelle</label>
+                            <p class="text-lg font-semibold text-green-400" id="detail-inv-current">€3,450.00</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Gains Actuels</label>
+                            <p class="text-lg font-semibold text-green-400" id="detail-inv-gains">+€450.00</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">ROI Actuel</label>
+                            <p class="text-lg font-semibold text-green-400" id="detail-inv-roi">+15.0%</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Date de Fin</label>
+                            <p class="text-lg font-semibold" id="detail-inv-end">2024-07-15</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Performance Historique</h3>
+                    <div class="chart-container">
+                        <canvas id="investmentChart" width="600" height="300"></canvas>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <button onclick="downloadInvestmentReport()" class="btn-primary flex-1">Télécharger le Rapport</button>
+                    <button onclick="closeModal('investmentDetailModal')" class="btn-secondary flex-1">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!protectPage('client')) return;
+            updateUserDisplay();
+            loadInvestments();
+            setupEventListeners();
+        });
+
+        function loadInvestments() {
+            // Load investment data
+            updateInvestmentStats();
+        }
+
+        function updateInvestmentStats() {
+            // Update investment statistics
+        }
+
+        function setupEventListeners() {
+            document.getElementById('investment-plan').addEventListener('change', updateInvestmentEstimation);
+            document.getElementById('investment-amount').addEventListener('input', updateInvestmentEstimation);
+            document.getElementById('investment-duration').addEventListener('change', updateInvestmentEstimation);
+        }
+
+        function selectPlan(planType) {
+            showNewInvestmentModal();
+            document.getElementById('investment-plan').value = planType;
+            updateInvestmentEstimation();
+        }
+
+        function showNewInvestmentModal() {
+            document.getElementById('newInvestmentModal').classList.remove('hidden');
+        }
+
+        function updateInvestmentEstimation() {
+            const plan = document.getElementById('investment-plan').value;
+            const amount = parseFloat(document.getElementById('investment-amount').value) || 0;
+            const duration = parseInt(document.getElementById('investment-duration').value) || 0;
+            
+            const rates = {
+                debutant: { min: 5, max: 8, minAmount: 250 },
+                standard: { min: 8, max: 12, minAmount: 1000 },
+                premium: { min: 12, max: 18, minAmount: 5000 },
+                vip: { min: 18, max: 25, minAmount: 25000 }
+            };
+            
+            if (plan && rates[plan]) {
+                document.getElementById('min-amount').textContent = `€${rates[plan].minAmount}`;
+                
+                if (amount >= rates[plan].minAmount && duration > 0) {
+                    const avgRate = (rates[plan].min + rates[plan].max) / 2;
+                    const estimatedReturn = (amount * avgRate / 100) * (duration / 12);
+                    const roi = (estimatedReturn / amount) * 100;
+                    
+                    document.getElementById('estimated-return').textContent = `€${estimatedReturn.toFixed(2)}`;
+                    document.getElementById('estimated-roi').textContent = `${roi.toFixed(1)}%`;
+                }
+            }
+        }
+
+        function createInvestment(event) {
+            event.preventDefault();
+            
+            const plan = document.getElementById('investment-plan').value;
+            const amount = document.getElementById('investment-amount').value;
+            const duration = document.getElementById('investment-duration').value;
+            
+            showAlert('Investissement créé avec succès!', 'success');
+            closeModal('newInvestmentModal');
+            
+            // Reload investments
+            setTimeout(() => {
+                loadInvestments();
+            }, 1000);
+        }
+
+        function viewInvestment(invId) {
+            // Load investment details
+            document.getElementById('investmentDetailModal').classList.remove('hidden');
+        }
+
+        function withdrawInvestment(invId) {
+            if (confirm('Êtes-vous sûr de vouloir retirer cet investissement? Des frais peuvent s\'appliquer.')) {
+                showAlert('Demande de retrait soumise. Elle sera traitée sous 24-48h.', 'success');
+            }
+        }
+
+        function downloadInvestmentReport() {
+            showAlert('Téléchargement du rapport d\'investissement...', 'info');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

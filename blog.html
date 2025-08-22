@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - CryptoBoost</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <a href="index.html" class="logo">
+                    <img src="assets/logo.svg" alt="CryptoBoost">
+                </a>
+                <div class="nav-links">
+                    <a href="about.html">À propos</a>
+                    <a href="plans.html">Plans</a>
+                    <a href="blog.html" class="active">Blog</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="client-dashboard.html" class="btn-primary">Accéder à mon compte</a>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            <section class="hero blog-hero">
+                <h1>Blog CryptoBoost</h1>
+                <p>Actualités, analyses et conseils sur l'investissement crypto</p>
+            </section>
+
+            <section class="blog-grid">
+                <article class="blog-card">
+                    <img src="assets/blog/crypto-trends.jpg" alt="Tendances Crypto">
+                    <div class="blog-content">
+                        <span class="category">Analyse</span>
+                        <h2>Tendances Crypto 2025</h2>
+                        <p>Découvrez les principales tendances qui façonneront le marché des cryptomonnaies en 2025.</p>
+                        <div class="blog-meta">
+                            <span class="date">22 août 2025</span>
+                            <a href="article.html?id=trends-2025" class="read-more">Lire plus</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="blog-card">
+                    <img src="assets/blog/investment-guide.jpg" alt="Guide d'investissement">
+                    <div class="blog-content">
+                        <span class="category">Guide</span>
+                        <h2>Guide du Débutant</h2>
+                        <p>Comment débuter l'investissement en crypto de manière sécurisée ?</p>
+                        <div class="blog-meta">
+                            <span class="date">20 août 2025</span>
+                            <a href="article.html?id=beginner-guide" class="read-more">Lire plus</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="blog-card">
+                    <img src="assets/blog/security-tips.jpg" alt="Sécurité">
+                    <div class="blog-content">
+                        <span class="category">Sécurité</span>
+                        <h2>Sécuriser ses Investissements</h2>
+                        <p>Les meilleures pratiques pour protéger vos actifs cryptographiques.</p>
+                        <div class="blog-meta">
+                            <span class="date">18 août 2025</span>
+                            <a href="article.html?id=security-best-practices" class="read-more">Lire plus</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Articles supplémentaires -->
+            </section>
+
+            <div class="pagination">
+                <button class="btn-secondary" disabled>Précédent</button>
+                <span class="current-page">Page 1</span>
+                <button class="btn-secondary">Suivant</button>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>CryptoBoost</h4>
+                    <p>Votre partenaire de confiance pour l'investissement crypto</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Liens rapides</h4>
+                    <a href="about.html">À propos</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Légal</h4>
+                    <a href="cgu.html">CGU</a>
+                    <a href="privacy.html">Confidentialité</a>
+                    <a href="cookies.html">Cookies</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 CryptoBoost. Tous droits réservés.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = new CryptoBoostApp();
+            app.initializeBlog();
+        });
+    </script>
+</body>
+</html>

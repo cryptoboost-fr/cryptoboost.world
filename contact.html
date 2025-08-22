@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - CryptoBoost</title>
+    <meta name="description" content="Contactez l'équipe CryptoBoost. Support client, questions commerciales et assistance technique disponibles 24/7.">
+    
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="crypto-logo mr-3">₿</div>
+                    <div class="text-2xl font-bold brand-text">
+                        CryptoBoost
+                    </div>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="index.html" class="hover:text-blue-400 transition-colors">Accueil</a>
+                    <a href="about.html" class="hover:text-blue-400 transition-colors">À Propos</a>
+                    <a href="contact.html" class="text-blue-400">Contact</a>
+                    <a href="privacy.html" class="hover:text-blue-400 transition-colors">Confidentialité</a>
+                </div>
+                <div class="space-x-4">
+                    <a href="index.html#login" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                        Connexion
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12">
+        <!-- Hero Section -->
+        <section class="text-center mb-16">
+            <h1 class="text-5xl font-bold mb-6 gradient-bg bg-clip-text text-transparent">
+                Contactez-Nous
+            </h1>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                Notre équipe d'experts est disponible 24/7 pour répondre à toutes vos questions 
+                et vous accompagner dans votre parcours d'investissement crypto.
+            </p>
+        </section>
+
+        <!-- Contact Methods -->
+        <section class="mb-16">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect card-hover text-center">
+                    <div class="crypto-logo mx-auto mb-4" style="font-size: 3rem;">📧</div>
+                    <h3 class="text-xl font-bold mb-4">Email</h3>
+                    <p class="text-gray-300 mb-4">Réponse sous 2h en moyenne</p>
+                    <a href="mailto:support@cryptoboost.com" class="text-blue-400 hover:text-blue-300">
+                        support@cryptoboost.com
+                    </a>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect card-hover text-center">
+                    <div class="crypto-logo mx-auto mb-4" style="font-size: 3rem;">📞</div>
+                    <h3 class="text-xl font-bold mb-4">Téléphone</h3>
+                    <p class="text-gray-300 mb-4">Support disponible 24/7</p>
+                    <a href="tel:+33123456789" class="text-blue-400 hover:text-blue-300">
+                        +33 1 23 45 67 89
+                    </a>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect card-hover text-center">
+                    <div class="crypto-logo mx-auto mb-4" style="font-size: 3rem;">💬</div>
+                    <h3 class="text-xl font-bold mb-4">Chat Live</h3>
+                    <p class="text-gray-300 mb-4">Assistance instantanée</p>
+                    <button onclick="openLiveChat()" class="text-blue-400 hover:text-blue-300">
+                        Démarrer le chat
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Form -->
+        <section class="mb-16">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-gray-800 rounded-lg p-8 glass-effect">
+                    <h2 class="text-3xl font-bold text-center mb-8">Envoyez-nous un Message</h2>
+                    <form onsubmit="submitContactForm(event)" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Prénom *</label>
+                                <input type="text" id="firstName" required class="form-input w-full" placeholder="Votre prénom">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Nom *</label>
+                                <input type="text" id="lastName" required class="form-input w-full" placeholder="Votre nom">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Email *</label>
+                                <input type="email" id="email" required class="form-input w-full" placeholder="votre@email.com">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Téléphone</label>
+                                <input type="tel" id="phone" class="form-input w-full" placeholder="+33 1 23 45 67 89">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Sujet *</label>
+                            <select id="subject" required class="form-input w-full">
+                                <option value="">Sélectionnez un sujet</option>
+                                <option value="support">Support Technique</option>
+                                <option value="commercial">Question Commerciale</option>
+                                <option value="account">Problème de Compte</option>
+                                <option value="investment">Conseil d'Investissement</option>
+                                <option value="partnership">Partenariat</option>
+                                <option value="other">Autre</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Message *</label>
+                            <textarea id="message" required rows="6" class="form-input w-full" placeholder="Décrivez votre demande en détail..."></textarea>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="consent" required class="mr-3">
+                            <label for="consent" class="text-sm text-gray-300">
+                                J'accepte que mes données soient utilisées pour traiter ma demande selon notre 
+                                <a href="privacy.html" class="text-blue-400 hover:text-blue-300">politique de confidentialité</a>.
+                            </label>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn-primary px-8 py-3">
+                                Envoyer le Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-12">Questions Fréquentes</h2>
+            <div class="max-w-4xl mx-auto space-y-6">
+                <div class="bg-gray-800 rounded-lg glass-effect">
+                    <button onclick="toggleFAQ(1)" class="w-full p-6 text-left flex justify-between items-center">
+                        <span class="font-bold">Comment commencer à investir sur CryptoBoost ?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div id="faq-1" class="hidden px-6 pb-6">
+                        <p class="text-gray-300">
+                            Il suffit de créer un compte, vérifier votre identité, effectuer un dépôt minimum 
+                            et choisir votre plan d'investissement. Notre IA se charge du reste automatiquement.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800 rounded-lg glass-effect">
+                    <button onclick="toggleFAQ(2)" class="w-full p-6 text-left flex justify-between items-center">
+                        <span class="font-bold">Quel est le montant minimum pour investir ?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div id="faq-2" class="hidden px-6 pb-6">
+                        <p class="text-gray-300">
+                            Le montant minimum varie selon le plan : 250€ pour Débutant, 1000€ pour Standard, 
+                            5000€ pour Premium et 25000€ pour VIP.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800 rounded-lg glass-effect">
+                    <button onclick="toggleFAQ(3)" class="w-full p-6 text-left flex justify-between items-center">
+                        <span class="font-bold">Combien de temps prend un retrait ?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div id="faq-3" class="hidden px-6 pb-6">
+                        <p class="text-gray-300">
+                            Les retraits sont traités sous 24-48h ouvrables. Les retraits en crypto sont plus rapides 
+                            que les virements bancaires traditionnels.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800 rounded-lg glass-effect">
+                    <button onclick="toggleFAQ(4)" class="w-full p-6 text-left flex justify-between items-center">
+                        <span class="font-bold">Vos algorithmes sont-ils sécurisés ?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div id="faq-4" class="hidden px-6 pb-6">
+                        <p class="text-gray-300">
+                            Nos algorithmes utilisent un chiffrement de niveau militaire et sont audités régulièrement 
+                            par des experts en cybersécurité. Vos fonds sont protégés par une assurance.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800 rounded-lg glass-effect">
+                    <button onclick="toggleFAQ(5)" class="w-full p-6 text-left flex justify-between items-center">
+                        <span class="font-bold">Puis-je arrêter mon investissement à tout moment ?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div id="faq-5" class="hidden px-6 pb-6">
+                        <p class="text-gray-300">
+                            Oui, vous pouvez retirer vos fonds à tout moment. Cependant, nous recommandons de maintenir 
+                            vos investissements sur la durée prévue pour optimiser les rendements.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Office Info -->
+        <section class="mb-16">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div>
+                    <h2 class="text-3xl font-bold mb-6">Nos Bureaux</h2>
+                    <div class="space-y-6">
+                        <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                            <h3 class="text-xl font-bold mb-4 text-blue-400">Siège Social - Paris</h3>
+                            <div class="space-y-2 text-gray-300">
+                                <p>📍 123 Avenue des Champs-Élysées</p>
+                                <p>75008 Paris, France</p>
+                                <p>📞 +33 1 23 45 67 89</p>
+                                <p>🕒 Lun-Ven: 9h-18h</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                            <h3 class="text-xl font-bold mb-4 text-green-400">Bureau Technique - Lyon</h3>
+                            <div class="space-y-2 text-gray-300">
+                                <p>📍 45 Rue de la République</p>
+                                <p>69002 Lyon, France</p>
+                                <p>📞 +33 4 78 90 12 34</p>
+                                <p>🕒 Lun-Ven: 8h-17h</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h2 class="text-3xl font-bold mb-6">Horaires de Support</h2>
+                    <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">Support Email</span>
+                                <span class="text-green-400">24/7</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">Chat Live</span>
+                                <span class="text-green-400">24/7</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">Support Téléphonique</span>
+                                <span class="text-blue-400">9h-21h</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">Support VIP</span>
+                                <span class="text-purple-400">24/7 Prioritaire</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 pt-6 border-t border-gray-700">
+                            <h4 class="font-bold mb-3">Temps de Réponse Moyens</h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span>Email Standard:</span>
+                                    <span class="text-blue-400">< 2h</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Chat Live:</span>
+                                    <span class="text-green-400">< 30s</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Support VIP:</span>
+                                    <span class="text-purple-400">< 5min</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 mt-16">
+        <div class="container mx-auto px-6 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="crypto-logo mr-2">₿</div>
+                        <span class="text-xl font-bold brand-text">CryptoBoost</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">
+                        Plateforme de trading crypto automatisé par IA.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Liens Rapides</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="text-gray-400 hover:text-white">Accueil</a></li>
+                        <li><a href="about.html" class="text-gray-400 hover:text-white">À Propos</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Légal</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="privacy.html" class="text-gray-400 hover:text-white">Confidentialité</a></li>
+                        <li><a href="cookies.html" class="text-gray-400 hover:text-white">Cookies</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">CGU</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li>support@cryptoboost.com</li>
+                        <li>+33 1 23 45 67 89</li>
+                        <li>Paris, France</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 2024 CryptoBoost. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function submitContactForm(event) {
+            event.preventDefault();
+            
+            const formData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value
+            };
+            
+            // Simulate form submission
+            alert('Message envoyé avec succès! Nous vous répondrons sous 2h.');
+            event.target.reset();
+        }
+        
+        function toggleFAQ(id) {
+            const content = document.getElementById(`faq-${id}`);
+            const icon = content.previousElementSibling.querySelector('.faq-icon');
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.textContent = '-';
+            } else {
+                content.classList.add('hidden');
+                icon.textContent = '+';
+            }
+        }
+        
+        function openLiveChat() {
+            alert('Chat live à implémenter - Redirection vers le support...');
+        }
+    </script>
+</body>
+</html>

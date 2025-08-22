@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Politique des Cookies - CryptoBoost</title>
+    <meta name="description" content="Politique des cookies CryptoBoost. Gestion et paramétrage des cookies sur notre plateforme.">
+    
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="crypto-logo mr-3">₿</div>
+                    <div class="text-2xl font-bold brand-text">
+                        CryptoBoost
+                    </div>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="index.html" class="hover:text-blue-400 transition-colors">Accueil</a>
+                    <a href="about.html" class="hover:text-blue-400 transition-colors">À Propos</a>
+                    <a href="contact.html" class="hover:text-blue-400 transition-colors">Contact</a>
+                    <a href="privacy.html" class="hover:text-blue-400 transition-colors">Confidentialité</a>
+                </div>
+                <div class="space-x-4">
+                    <a href="index.html#login" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                        Connexion
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12">
+        <!-- Hero Section -->
+        <section class="text-center mb-16">
+            <h1 class="text-5xl font-bold mb-6 gradient-bg bg-clip-text text-transparent">
+                Politique des Cookies
+            </h1>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                Découvrez comment nous utilisons les cookies pour améliorer votre expérience 
+                sur CryptoBoost et comment vous pouvez les gérer.
+            </p>
+            <p class="text-sm text-gray-400 mt-4">Dernière mise à jour : 15 janvier 2024</p>
+        </section>
+
+        <!-- Cookie Banner Simulator -->
+        <section class="mb-12">
+            <div class="bg-gray-800 rounded-lg p-6 glass-effect border-l-4 border-blue-400">
+                <h2 class="text-xl font-bold mb-4 text-blue-400">🍪 Aperçu du Bandeau Cookies</h2>
+                <div class="bg-gray-700 rounded-lg p-4 border border-gray-600">
+                    <p class="text-sm text-gray-300 mb-4">
+                        Nous utilisons des cookies pour améliorer votre expérience. En continuant, vous acceptez notre utilisation des cookies.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="btn-primary text-sm px-4 py-2">Accepter Tout</button>
+                        <button class="bg-gray-600 hover:bg-gray-500 text-sm px-4 py-2 rounded">Personnaliser</button>
+                        <button class="bg-red-600 hover:bg-red-700 text-sm px-4 py-2 rounded">Refuser</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content -->
+        <div class="max-w-4xl mx-auto">
+            <!-- What are Cookies -->
+            <section class="mb-12">
+                <div class="bg-gray-800 rounded-lg p-8 glass-effect">
+                    <h2 class="text-2xl font-bold mb-6 text-blue-400">1. Qu'est-ce qu'un Cookie ?</h2>
+                    <p class="text-gray-300 mb-4">
+                        Un cookie est un petit fichier texte stocké sur votre appareil (ordinateur, tablette, smartphone) 
+                        lorsque vous visitez un site web. Les cookies permettent au site de mémoriser vos actions et 
+                        préférences pendant une période donnée.
+                    </p>
+                    <p class="text-gray-300">
+                        Sur CryptoBoost, nous utilisons les cookies pour sécuriser votre session, personnaliser votre 
+                        expérience et analyser l'utilisation de notre plateforme afin de l'améliorer continuellement.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Types of Cookies -->
+            <section class="mb-12">
+                <div class="bg-gray-800 rounded-lg p-8 glass-effect">
+                    <h2 class="text-2xl font-bold mb-6 text-green-400">2. Types de Cookies Utilisés</h2>
+                    
+                    <!-- Essential Cookies -->
+                    <div class="mb-8">
+                        <div class="flex items-center mb-4">
+                            <span class="status-badge status-active mr-3">Essentiels</span>
+                            <h3 class="text-xl font-bold">Cookies Strictement Nécessaires</h3>
+                        </div>
+                        <p class="text-gray-300 mb-4">
+                            Ces cookies sont indispensables au fonctionnement de notre plateforme. Ils ne peuvent pas être désactivés.
+                        </p>
+                        <div class="bg-gray-700 rounded-lg p-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <strong class="text-blue-400">auth_token</strong>
+                                    <p class="text-gray-300">Authentification utilisateur</p>
+                                    <p class="text-gray-400">Durée: Session</p>
+                                </div>
+                                <div>
+                                    <strong class="text-blue-400">csrf_token</strong>
+                                    <p class="text-gray-300">Protection contre les attaques CSRF</p>
+                                    <p class="text-gray-400">Durée: Session</p>
+                                </div>
+                                <div>
+                                    <strong class="text-blue-400">session_id</strong>
+                                    <p class="text-gray-300">Identification de session</p>
+                                    <p class="text-gray-400">Durée: 24h</p>
+                                </div>
+                                <div>
+                                    <strong class="text-blue-400">security_settings</strong>
+                                    <p class="text-gray-300">Paramètres de sécurité</p>
+                                    <p class="text-gray-400">Durée: 30 jours</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Functional Cookies -->
+                    <div class="mb-8">
+                        <div class="flex items-center mb-4">
+                            <span class="status-badge status-pending mr-3">Fonctionnels</span>
+                            <h3 class="text-xl font-bold">Cookies de Fonctionnalité</h3>
+                        </div>
+                        <p class="text-gray-300 mb-4">
+                            Ces cookies permettent d'améliorer les fonctionnalités et la personnalisation de notre site.
+                        </p>
+                        <div class="bg-gray-700 rounded-lg p-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <strong class="text-green-400">user_preferences</strong>
+                                    <p class="text-gray-300">Préférences d'affichage</p>
+                                    <p class="text-gray-400">Durée: 1 an</p>
+                                </div>
+                                <div>
+                                    <strong class="text-green-400">language</strong>
+                                    <p class="text-gray-300">Langue sélectionnée</p>
+                                    <p class="text-gray-400">Durée: 1 an</p>
+                                </div>
+                                <div>
+                                    <strong class="text-green-400">dashboard_layout</strong>
+                                    <p class="text-gray-300">Configuration du tableau de bord</p>
+                                    <p class="text-gray-400">Durée: 6 mois</p>
+                                </div>
+                                <div>
+                                    <strong class="text-green-400">notification_settings</strong>
+                                    <p class="text-gray-300">Paramètres de notifications</p>
+                                    <p class="text-gray-400">Durée: 1 an</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analytics Cookies -->
+                    <div class="mb-8">
+                        <div class="flex items-center mb-4">
+                            <span class="status-badge status-inactive mr-3">Analytiques</span>
+                            <h3 class="text-xl font-bold">Cookies d'Analyse</h3>
+                        </div>
+                        <p class="text-gray-300 mb-4">
+                            Ces cookies nous aident à comprendre comment vous utilisez notre site pour l'améliorer.
+                        </p>
+                        <div class="bg-gray-700 rounded-lg p-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <strong class="text-purple-400">_ga</strong>
+                                    <p class="text-gray-300">Google Analytics - Visiteurs uniques</p>
+                                    <p class="text-gray-400">Durée: 2 ans</p>
+                                </div>
+                                <div>
+                                    <strong class="text-purple-400">_gid</strong>
+                                    <p class="text-gray-300">Google Analytics - Sessions</p>
+                                    <p class="text-gray-400">Durée: 24h</p>
+                                </div>
+                                <div>
+                                    <strong class="text-purple-400">usage_stats</strong>
+                                    <p class="text-gray-300">Statistiques d'utilisation internes</p>
+                                    <p class="text-gray-400">Durée: 30 jours</p>
+                                </div>
+                                <div>
+                                    <strong class="text-purple-400">performance_metrics</strong>
+                                    <p class="text-gray-300">Métriques de performance</p>
+                                    <p class="text-gray-400">Durée: 7 jours</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cookie Management -->
+            <section class="mb-12">
+                <div class="bg-gray-800 rounded-lg p-8 glass-effect">
+                    <h2 class="text-2xl font-bold mb-6 text-yellow-400">3. Gestion de Vos Cookies</h2>
+                    
+                    <!-- Cookie Settings Panel -->
+                    <div class="bg-gray-700 rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-bold mb-4">Paramètres des Cookies</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <strong>Cookies Essentiels</strong>
+                                    <p class="text-sm text-gray-300">Nécessaires au fonctionnement du site</p>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-400 mr-2">Toujours actifs</span>
+                                    <div class="w-12 h-6 bg-green-500 rounded-full relative">
+                                        <div class="w-5 h-5 bg-white rounded-full absolute top-0.5 right-0.5"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <strong>Cookies Fonctionnels</strong>
+                                    <p class="text-sm text-gray-300">Améliorent votre expérience utilisateur</p>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-400 mr-2">Recommandé</span>
+                                    <div class="w-12 h-6 bg-blue-500 rounded-full relative cursor-pointer" onclick="toggleCookie('functional')">
+                                        <div id="functional-toggle" class="w-5 h-5 bg-white rounded-full absolute top-0.5 right-0.5 transition-transform"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <strong>Cookies Analytiques</strong>
+                                    <p class="text-sm text-gray-300">Nous aident à améliorer le site</p>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-400 mr-2">Optionnel</span>
+                                    <div class="w-12 h-6 bg-gray-500 rounded-full relative cursor-pointer" onclick="toggleCookie('analytics')">
+                                        <div id="analytics-toggle" class="w-5 h-5 bg-white rounded-full absolute top-0.5 left-0.5 transition-transform"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 flex gap-4">
+                            <button onclick="savePreferences()" class="btn-primary px-6 py-2">
+                                Sauvegarder les Préférences
+                            </button>
+                            <button onclick="acceptAll()" class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded">
+                                Accepter Tout
+                            </button>
+                            <button onclick="rejectAll()" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded">
+                                Refuser Tout
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Browser Settings -->
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Paramètres du Navigateur</h3>
+                        <p class="text-gray-300 mb-4">
+                            Vous pouvez également gérer les cookies directement dans votre navigateur :
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-gray-700 rounded-lg p-4">
+                                <h4 class="font-bold mb-2">Chrome</h4>
+                                <p class="text-sm text-gray-300">Paramètres → Confidentialité et sécurité → Cookies</p>
+                            </div>
+                            <div class="bg-gray-700 rounded-lg p-4">
+                                <h4 class="font-bold mb-2">Firefox</h4>
+                                <p class="text-sm text-gray-300">Options → Vie privée et sécurité → Cookies</p>
+                            </div>
+                            <div class="bg-gray-700 rounded-lg p-4">
+                                <h4 class="font-bold mb-2">Safari</h4>
+                                <p class="text-sm text-gray-300">Préférences → Confidentialité → Cookies</p>
+                            </div>
+                            <div class="bg-gray-700 rounded-lg p-4">
+                                <h4 class="font-bold mb-2">Edge</h4>
+                                <p class="text-sm text-gray-300">Paramètres → Cookies et autorisations de site</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Third Party Cookies -->
+            <section class="mb-12">
+                <div class="bg-gray-800 rounded-lg p-8 glass-effect">
+                    <h2 class="text-2xl font-bold mb-6 text-purple-400">4. Cookies Tiers</h2>
+                    
+                    <p class="text-gray-300 mb-6">
+                        Certains cookies sont placés par des services tiers que nous utilisons :
+                    </p>
+
+                    <div class="space-y-4">
+                        <div class="bg-gray-700 rounded-lg p-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-blue-400">Google Analytics</h3>
+                                    <p class="text-sm text-gray-300 mb-2">Service d'analyse de trafic web</p>
+                                    <p class="text-xs text-gray-400">Cookies: _ga, _gid, _gat</p>
+                                </div>
+                                <a href="https://policies.google.com/privacy" target="_blank" class="text-blue-400 text-sm hover:underline">
+                                    Politique de confidentialité
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-700 rounded-lg p-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-green-400">Cloudflare</h3>
+                                    <p class="text-sm text-gray-300 mb-2">Protection et optimisation du site</p>
+                                    <p class="text-xs text-gray-400">Cookies: __cflb, __cf_bm</p>
+                                </div>
+                                <a href="https://www.cloudflare.com/privacy/" target="_blank" class="text-blue-400 text-sm hover:underline">
+                                    Politique de confidentialité
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-700 rounded-lg p-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-yellow-400">Intercom</h3>
+                                    <p class="text-sm text-gray-300 mb-2">Service de chat et support client</p>
+                                    <p class="text-xs text-gray-400">Cookies: intercom-*</p>
+                                </div>
+                                <a href="https://www.intercom.com/legal/privacy" target="_blank" class="text-blue-400 text-sm hover:underline">
+                                    Politique de confidentialité
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact -->
+            <section class="mb-12">
+                <div class="bg-gray-800 rounded-lg p-8 glass-effect">
+                    <h2 class="text-2xl font-bold mb-6 text-pink-400">5. Questions sur les Cookies</h2>
+                    
+                    <p class="text-gray-300 mb-6">
+                        Si vous avez des questions concernant notre utilisation des cookies, n'hésitez pas à nous contacter :
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <p class="text-gray-300">📧 <strong>Email:</strong> cookies@cryptoboost.com</p>
+                            <p class="text-gray-300">📞 <strong>Téléphone:</strong> +33 1 23 45 67 89</p>
+                            <p class="text-gray-300">📍 <strong>Adresse:</strong> 123 Avenue des Champs-Élysées, 75008 Paris</p>
+                        </div>
+                        <div>
+                            <a href="contact.html" class="btn-primary inline-block px-6 py-3">
+                                Formulaire de Contact
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 mt-16">
+        <div class="container mx-auto px-6 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="crypto-logo mr-2">₿</div>
+                        <span class="text-xl font-bold brand-text">CryptoBoost</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">
+                        Plateforme de trading crypto automatisé par IA.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Liens Rapides</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="text-gray-400 hover:text-white">Accueil</a></li>
+                        <li><a href="about.html" class="text-gray-400 hover:text-white">À Propos</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Légal</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="privacy.html" class="text-gray-400 hover:text-white">Confidentialité</a></li>
+                        <li><a href="cookies.html" class="text-gray-400 hover:text-white">Cookies</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">CGU</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li>support@cryptoboost.com</li>
+                        <li>+33 1 23 45 67 89</li>
+                        <li>Paris, France</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 2024 CryptoBoost. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Cookie preferences state
+        let cookiePreferences = {
+            essential: true, // Always true
+            functional: true,
+            analytics: false
+        };
+
+        function toggleCookie(type) {
+            if (type === 'essential') return; // Cannot toggle essential cookies
+            
+            cookiePreferences[type] = !cookiePreferences[type];
+            updateToggleUI(type);
+        }
+
+        function updateToggleUI(type) {
+            const toggle = document.getElementById(`${type}-toggle`);
+            const container = toggle.parentElement;
+            
+            if (cookiePreferences[type]) {
+                toggle.style.transform = 'translateX(24px)';
+                container.classList.remove('bg-gray-500');
+                container.classList.add('bg-blue-500');
+            } else {
+                toggle.style.transform = 'translateX(0)';
+                container.classList.remove('bg-blue-500');
+                container.classList.add('bg-gray-500');
+            }
+        }
+
+        function savePreferences() {
+            localStorage.setItem('cookiePreferences', JSON.stringify(cookiePreferences));
+            alert('Préférences sauvegardées avec succès!');
+        }
+
+        function acceptAll() {
+            cookiePreferences = {
+                essential: true,
+                functional: true,
+                analytics: true
+            };
+            updateToggleUI('functional');
+            updateToggleUI('analytics');
+            savePreferences();
+        }
+
+        function rejectAll() {
+            cookiePreferences = {
+                essential: true,
+                functional: false,
+                analytics: false
+            };
+            updateToggleUI('functional');
+            updateToggleUI('analytics');
+            savePreferences();
+        }
+
+        // Initialize UI on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved preferences
+            const saved = localStorage.getItem('cookiePreferences');
+            if (saved) {
+                cookiePreferences = JSON.parse(saved);
+            }
+            
+            // Update UI
+            updateToggleUI('functional');
+            updateToggleUI('analytics');
+        });
+    </script>
+</body>
+</html>

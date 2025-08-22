@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support - CryptoBoost</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="auth.js"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="crypto-logo mr-3">₿</div>
+                    <div class="text-2xl font-bold brand-text">CryptoBoost</div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="user-name text-sm"></span>
+                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg">Déconnexion</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800 min-h-screen">
+            <nav class="p-6">
+                <ul class="space-y-2">
+                    <li><a href="client-dashboard.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Dashboard</a></li>
+                    <li><a href="client-wallets.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Portefeuilles</a></li>
+                    <li><a href="client-transactions.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Transactions</a></li>
+                    <li><a href="client-investments.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Investissements</a></li>
+                    <li><a href="client-profile.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Profil</a></li>
+                    <li><a href="client-support.html" class="nav-btn bg-blue-600 text-white block px-4 py-2 rounded">Support</a></li>
+                    <li><a href="client-notifications.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Notifications</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <h1 class="text-3xl font-bold mb-8">Centre de Support</h1>
+
+            <!-- Quick Actions -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect card-hover cursor-pointer" onclick="showNewTicketModal()">
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">🎫</div>
+                        <h3 class="text-xl font-bold mb-2">Nouveau Ticket</h3>
+                        <p class="text-gray-400">Créer une demande de support</p>
+                    </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect card-hover cursor-pointer" onclick="showLiveChat()">
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">💬</div>
+                        <h3 class="text-xl font-bold mb-2">Chat en Direct</h3>
+                        <p class="text-gray-400">Assistance immédiate</p>
+                    </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect card-hover cursor-pointer" onclick="showFAQ()">
+                    <div class="text-center">
+                        <div class="text-4xl mb-4">❓</div>
+                        <h3 class="text-xl font-bold mb-2">FAQ</h3>
+                        <p class="text-gray-400">Questions fréquentes</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">Tickets Ouverts</h3>
+                    <p class="text-3xl font-bold text-yellow-400" id="open-tickets">2</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">Tickets Résolus</h3>
+                    <p class="text-3xl font-bold text-green-400" id="resolved-tickets">15</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">Temps de Réponse</h3>
+                    <p class="text-3xl font-bold text-blue-400" id="response-time">< 2h</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">Satisfaction</h3>
+                    <p class="text-3xl font-bold text-purple-400" id="satisfaction">98%</p>
+                </div>
+            </div>
+
+            <!-- My Tickets -->
+            <div class="bg-gray-800 rounded-lg p-6 mb-8 glass-effect">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold">Mes Tickets de Support</h2>
+                    <div class="flex space-x-4">
+                        <select id="ticket-filter" class="form-input">
+                            <option value="">Tous les statuts</option>
+                            <option value="open">Ouverts</option>
+                            <option value="in-progress">En cours</option>
+                            <option value="resolved">Résolus</option>
+                            <option value="closed">Fermés</option>
+                        </select>
+                        <button onclick="showNewTicketModal()" class="btn-primary px-4 py-2 rounded-lg">+ Nouveau Ticket</button>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="data-table w-full">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Sujet</th>
+                                <th>Catégorie</th>
+                                <th>Priorité</th>
+                                <th>Statut</th>
+                                <th>Créé le</th>
+                                <th>Dernière Réponse</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tickets-table">
+                            <tr>
+                                <td>#SUP001</td>
+                                <td>Problème de retrait BTC</td>
+                                <td>Transaction</td>
+                                <td><span class="status-badge status-failed">Haute</span></td>
+                                <td><span class="status-badge status-pending">En cours</span></td>
+                                <td>2024-01-15</td>
+                                <td>Il y a 30min</td>
+                                <td>
+                                    <div class="flex space-x-2">
+                                        <button onclick="viewTicket('SUP001')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                        <button onclick="replyTicket('SUP001')" class="text-green-400 hover:text-green-300">Répondre</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#SUP002</td>
+                                <td>Question sur les frais</td>
+                                <td>Général</td>
+                                <td><span class="status-badge status-pending">Normale</span></td>
+                                <td><span class="status-badge status-active">Ouvert</span></td>
+                                <td>2024-01-14</td>
+                                <td>Il y a 2h</td>
+                                <td>
+                                    <div class="flex space-x-2">
+                                        <button onclick="viewTicket('SUP002')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                        <button onclick="replyTicket('SUP002')" class="text-green-400 hover:text-green-300">Répondre</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div id="faq-section" class="bg-gray-800 rounded-lg p-6 glass-effect">
+                <h2 class="text-xl font-bold mb-6">Questions Fréquemment Posées</h2>
+                <div class="space-y-4">
+                    <div class="bg-gray-700 rounded-lg">
+                        <button onclick="toggleFAQ(1)" class="w-full p-4 text-left flex justify-between items-center">
+                            <span class="font-semibold">Comment effectuer mon premier dépôt ?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div id="faq-1" class="hidden px-4 pb-4">
+                            <p class="text-gray-300">
+                                Pour effectuer votre premier dépôt, rendez-vous dans la section "Portefeuilles", 
+                                cliquez sur "Déposer", sélectionnez votre cryptomonnaie et suivez les instructions 
+                                pour obtenir votre adresse de dépôt.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-700 rounded-lg">
+                        <button onclick="toggleFAQ(2)" class="w-full p-4 text-left flex justify-between items-center">
+                            <span class="font-semibold">Combien de temps prend un retrait ?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div id="faq-2" class="hidden px-4 pb-4">
+                            <p class="text-gray-300">
+                                Les retraits sont généralement traités sous 24-48h ouvrables. Les retraits en 
+                                cryptomonnaies sont plus rapides que les virements bancaires traditionnels.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-700 rounded-lg">
+                        <button onclick="toggleFAQ(3)" class="w-full p-4 text-left flex justify-between items-center">
+                            <span class="font-semibold">Comment fonctionne le trading automatique ?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div id="faq-3" class="hidden px-4 pb-4">
+                            <p class="text-gray-300">
+                                Notre IA analyse les marchés 24/7 et exécute des trades selon votre profil de risque. 
+                                Vous pouvez activer/désactiver cette fonction dans vos préférences.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-700 rounded-lg">
+                        <button onclick="toggleFAQ(4)" class="w-full p-4 text-left flex justify-between items-center">
+                            <span class="font-semibold">Quels sont les frais appliqués ?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div id="faq-4" class="hidden px-4 pb-4">
+                            <p class="text-gray-300">
+                                Nos frais sont transparents : 0.1% sur les échanges, frais réseau pour les retraits, 
+                                et commission de performance de 20% sur les gains d'investissement uniquement.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-700 rounded-lg">
+                        <button onclick="toggleFAQ(5)" class="w-full p-4 text-left flex justify-between items-center">
+                            <span class="font-semibold">Comment sécuriser mon compte ?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div id="faq-5" class="hidden px-4 pb-4">
+                            <p class="text-gray-300">
+                                Activez l'authentification à deux facteurs (2FA), utilisez un mot de passe fort, 
+                                et ne partagez jamais vos identifiants. Vérifiez régulièrement votre historique de connexion.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Ticket Modal -->
+    <div id="newTicketModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Créer un Ticket de Support</h2>
+                <button onclick="closeModal('newTicketModal')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <form onsubmit="createTicket(event)">
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Catégorie</label>
+                            <select id="ticket-category" class="form-input w-full" required>
+                                <option value="">Sélectionner une catégorie</option>
+                                <option value="account">Compte</option>
+                                <option value="transaction">Transaction</option>
+                                <option value="investment">Investissement</option>
+                                <option value="technical">Technique</option>
+                                <option value="security">Sécurité</option>
+                                <option value="general">Général</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Priorité</label>
+                            <select id="ticket-priority" class="form-input w-full" required>
+                                <option value="low">Basse</option>
+                                <option value="normal" selected>Normale</option>
+                                <option value="high">Haute</option>
+                                <option value="urgent">Urgente</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Sujet</label>
+                        <input type="text" id="ticket-subject" class="form-input w-full" required placeholder="Décrivez brièvement votre problème">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Description</label>
+                        <textarea id="ticket-description" class="form-input w-full" rows="6" required placeholder="Décrivez votre problème en détail..."></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Pièces Jointes (optionnel)</label>
+                        <input type="file" id="ticket-attachments" class="form-input w-full" multiple accept="image/*,.pdf,.doc,.docx">
+                        <p class="text-sm text-gray-400 mt-1">Formats acceptés: Images, PDF, DOC. Taille max: 10MB par fichier.</p>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <button type="submit" class="btn-primary flex-1">Créer le Ticket</button>
+                        <button type="button" onclick="closeModal('newTicketModal')" class="btn-secondary flex-1">Annuler</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Ticket Detail Modal -->
+    <div id="ticketDetailModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-4xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Ticket #<span id="ticket-detail-id">SUP001</span></h2>
+                <button onclick="closeModal('ticketDetailModal')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Ticket Info -->
+                <div class="lg:col-span-1">
+                    <div class="bg-gray-700 rounded-lg p-4 space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Statut</label>
+                            <span class="status-badge status-pending" id="ticket-detail-status">En cours</span>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Priorité</label>
+                            <span class="status-badge status-failed" id="ticket-detail-priority">Haute</span>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Catégorie</label>
+                            <p id="ticket-detail-category">Transaction</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Créé le</label>
+                            <p id="ticket-detail-created">2024-01-15 14:30</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Dernière mise à jour</label>
+                            <p id="ticket-detail-updated">Il y a 30min</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Conversation -->
+                <div class="lg:col-span-2">
+                    <div class="bg-gray-700 rounded-lg p-4 mb-4" style="max-height: 400px; overflow-y: auto;">
+                        <div id="ticket-conversation" class="space-y-4">
+                            <div class="bg-gray-600 rounded-lg p-4">
+                                <div class="flex justify-between items-start mb-2">
+                                    <span class="font-semibold text-blue-400">Vous</span>
+                                    <span class="text-sm text-gray-400">2024-01-15 14:30</span>
+                                </div>
+                                <p class="text-gray-300">J'ai un problème avec mon retrait BTC. La transaction est bloquée depuis 2 heures.</p>
+                            </div>
+                            
+                            <div class="bg-gray-800 rounded-lg p-4">
+                                <div class="flex justify-between items-start mb-2">
+                                    <span class="font-semibold text-green-400">Support - Marie</span>
+                                    <span class="text-sm text-gray-400">2024-01-15 15:00</span>
+                                </div>
+                                <p class="text-gray-300">Bonjour, je vais vérifier votre transaction. Pouvez-vous me donner l'ID de la transaction ?</p>
+                            </div>
+                            
+                            <div class="bg-gray-600 rounded-lg p-4">
+                                <div class="flex justify-between items-start mb-2">
+                                    <span class="font-semibold text-blue-400">Vous</span>
+                                    <span class="text-sm text-gray-400">2024-01-15 15:05</span>
+                                </div>
+                                <p class="text-gray-300">Voici l'ID: TX123456789</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Reply Form -->
+                    <form onsubmit="replyToTicket(event)">
+                        <div class="space-y-4">
+                            <textarea id="ticket-reply" class="form-input w-full" rows="4" placeholder="Tapez votre réponse..."></textarea>
+                            <div class="flex justify-between items-center">
+                                <input type="file" id="reply-attachment" class="form-input" accept="image/*,.pdf,.doc,.docx">
+                                <button type="submit" class="btn-primary px-6 py-2 rounded-lg">Envoyer</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Chat Modal -->
+    <div id="liveChatModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Chat en Direct</h2>
+                <button onclick="closeModal('liveChatModal')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <div class="bg-gray-700 rounded-lg p-4 mb-4" style="height: 400px; overflow-y: auto;">
+                <div id="chat-messages" class="space-y-4">
+                    <div class="bg-gray-800 rounded-lg p-3">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-semibold text-green-400">Support Bot</span>
+                            <span class="text-sm text-gray-400">Maintenant</span>
+                        </div>
+                        <p class="text-gray-300">Bonjour ! Je suis là pour vous aider. Comment puis-je vous assister aujourd'hui ?</p>
+                    </div>
+                </div>
+            </div>
+            
+            <form onsubmit="sendChatMessage(event)">
+                <div class="flex space-x-4">
+                    <input type="text" id="chat-input" class="form-input flex-1" placeholder="Tapez votre message..." required>
+                    <button type="submit" class="btn-primary px-6 py-2 rounded-lg">Envoyer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!protectPage('client')) return;
+            updateUserDisplay();
+            loadSupportData();
+        });
+
+        function loadSupportData() {
+            // Load support tickets and stats
+        }
+
+        function showNewTicketModal() {
+            document.getElementById('newTicketModal').classList.remove('hidden');
+        }
+
+        function showLiveChat() {
+            document.getElementById('liveChatModal').classList.remove('hidden');
+        }
+
+        function showFAQ() {
+            document.getElementById('faq-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function createTicket(event) {
+            event.preventDefault();
+            
+            const category = document.getElementById('ticket-category').value;
+            const priority = document.getElementById('ticket-priority').value;
+            const subject = document.getElementById('ticket-subject').value;
+            const description = document.getElementById('ticket-description').value;
+            
+            showAlert('Ticket créé avec succès! Vous recevrez une réponse sous 2h.', 'success');
+            closeModal('newTicketModal');
+            
+            // Reset form
+            event.target.reset();
+        }
+
+        function viewTicket(ticketId) {
+            document.getElementById('ticketDetailModal').classList.remove('hidden');
+            document.getElementById('ticket-detail-id').textContent = ticketId;
+        }
+
+        function replyTicket(ticketId) {
+            viewTicket(ticketId);
+        }
+
+        function replyToTicket(event) {
+            event.preventDefault();
+            
+            const reply = document.getElementById('ticket-reply').value;
+            if (!reply.trim()) return;
+            
+            // Add reply to conversation
+            const conversation = document.getElementById('ticket-conversation');
+            const replyDiv = document.createElement('div');
+            replyDiv.className = 'bg-gray-600 rounded-lg p-4';
+            replyDiv.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <span class="font-semibold text-blue-400">Vous</span>
+                    <span class="text-sm text-gray-400">Maintenant</span>
+                </div>
+                <p class="text-gray-300">${reply}</p>
+            `;
+            conversation.appendChild(replyDiv);
+            
+            // Clear form
+            document.getElementById('ticket-reply').value = '';
+            
+            showAlert('Réponse envoyée!', 'success');
+        }
+
+        function sendChatMessage(event) {
+            event.preventDefault();
+            
+            const message = document.getElementById('chat-input').value;
+            if (!message.trim()) return;
+            
+            // Add user message
+            const chatMessages = document.getElementById('chat-messages');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'bg-gray-600 rounded-lg p-3';
+            userMsg.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <span class="font-semibold text-blue-400">Vous</span>
+                    <span class="text-sm text-gray-400">Maintenant</span>
+                </div>
+                <p class="text-gray-300">${message}</p>
+            `;
+            chatMessages.appendChild(userMsg);
+            
+            // Clear input
+            document.getElementById('chat-input').value = '';
+            
+            // Simulate bot response
+            setTimeout(() => {
+                const botMsg = document.createElement('div');
+                botMsg.className = 'bg-gray-800 rounded-lg p-3';
+                botMsg.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="font-semibold text-green-400">Support Bot</span>
+                        <span class="text-sm text-gray-400">Maintenant</span>
+                    </div>
+                    <p class="text-gray-300">Merci pour votre message. Un agent va vous répondre dans quelques instants.</p>
+                `;
+                chatMessages.appendChild(botMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1000);
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function toggleFAQ(id) {
+            const content = document.getElementById(`faq-${id}`);
+            const icon = content.previousElementSibling.querySelector('.faq-icon');
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.textContent = '-';
+            } else {
+                content.classList.add('hidden');
+                icon.textContent = '+';
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

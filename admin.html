@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoBoost Admin - Dashboard Administrateur</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="alternate icon" href="assets/favicon.svg">
+
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Authentication System -->
+    <script src="auth.js"></script>
+    <script src="crypto-api.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .gradient-purple {
+            background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%);
+        }
+        .gradient-blue {
+            background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+        }
+        .gradient-green {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        }
+        .gradient-red {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .nav-btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-active { background: #D1FAE5; color: #065F46; }
+        .status-pending { background: #FEF3C7; color: #92400E; }
+        .status-suspended { background: #FEE2E2; color: #991B1B; }
+        .chart-container {
+            height: 200px;
+            background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="fade-in noise-texture">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!protectPage || !protectPage('admin')) { return; }
+            try {
+                var user = getCurrentUser && getCurrentUser();
+                var el = document.getElementById('admin-name');
+                if (user && el) { el.textContent = user.name || user.email || 'Admin'; }
+            } catch (e) {}
+        });
+    </script>
+    <!-- Enhanced Admin Header -->
+    <header class="glass-nav sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center group">
+                    <div class="crypto-logo mr-3 text-2xl float">₿</div>
+                    <div class="text-2xl font-bold text-gradient">CryptoBoost Admin</div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-2 user-info">
+                        <div class="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center text-white font-semibold text-sm">
+                            <span class="user-avatar">A</span>
+                        </div>
+                        <div class="text-sm">
+                            <div class="text-white/70">Administrateur</div>
+                            <div class="text-white font-medium" id="admin-name">Admin</div>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="btn-secondary text-red-400 hover:text-red-300 btn-liquid">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                        Déconnexion
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Enhanced Admin Dashboard -->
+    <main class="relative">
+        <!-- Background Effects -->
+        <div class="absolute inset-0 crypto-particles pointer-events-none"></div>
+        <div class="absolute inset-0 light-rays pointer-events-none"></div>
+
+        <!-- Enhanced Header Section -->
+        <div class="relative z-10 mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div class="flex-1">
+                    <h1 class="text-4xl font-bold text-gradient mb-2 magnetic-text">Dashboard Administrateur</h1>
+                    <p class="text-white/70 text-lg mb-4">Centre de contrôle complet de CryptoBoost - Gestion avancée des clients</p>
+
+                    <!-- Quick Actions Banner -->
+                    <div class="bg-gradient-to-r from-emerald-500/10 to-green-500/10 rounded-xl p-4 border border-white/10">
+                        <div class="flex items-start space-x-3">
+                            <div class="p-2 rounded-lg bg-emerald-500/20">
+                                <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-white mb-1">Actions Rapides</h3>
+                                <p class="text-white/70 text-sm">Accès rapide aux fonctionnalités les plus utilisées</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="showAddUserModal()" class="btn-primary btn-liquid px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                        <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        + Nouvel Utilisateur
+                    </button>
+                    <button onclick="showSystemStatus()" class="btn-secondary btn-liquid px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                        <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 002-2h2a2 2 0 002 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 00-2-2h-2a2 2 0 00-2 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path>
+                        </svg>
+                        📊 Status Système
+                    </button>
+                    <button onclick="showEmergencyActions()" class="btn-secondary btn-liquid px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                        <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        🚨 Actions d'Urgence
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Navigation -->
+        <div class="mb-8">
+            <nav class="flex flex-wrap gap-3">
+                <button onclick="showAdminPage('dashboard')" class="admin-nav-btn btn-primary btn-liquid px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 whitespace-nowrap">
+                    <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v0"></path>
+                    </svg>
+                    📊 Dashboard
+                </button>
+                <button onclick="showAdminPage('users')" class="admin-nav-btn btn-secondary btn-liquid px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 whitespace-nowrap">
+                    <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                    </svg>
+                    👥 Gestion Clients
+                </button>
+                <button onclick="showAdminPage('transactions')" class="admin-nav-btn btn-secondary btn-liquid px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 whitespace-nowrap">
+                    <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 002-2h2a2 2 0 002 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 00-2-2h-2a2 2 0 00-2 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path>
+                    </svg>
+                    💳 Transactions
+                </button>
+                <button onclick="showAdminPage('investments')" class="admin-nav-btn btn-secondary btn-liquid px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 whitespace-nowrap">
+                    <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                    📈 Investissements
+                </button>
+                <button onclick="showAdminPage('support')" class="admin-nav-btn btn-secondary btn-liquid px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 whitespace-nowrap">
+                    <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    🎧 Support Client
+                </button>
+                <button onclick="showAdminPage('analytics')" class="admin-nav-btn btn-secondary btn-liquid px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 whitespace-nowrap">
+                    <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    📊 Analytics
+                </button>
+                <button onclick="showAdminPage('settings')" class="admin-nav-btn btn-secondary btn-liquid px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 whitespace-nowrap">
+                    <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    ⚙️ Configuration
+                </button>
+            </nav>
+        </div>
+
+        <!-- Enhanced Dashboard Overview -->
+        <div id="admin-dashboard-page" class="relative z-10">
+            <!-- Advanced Client Management Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Total Clients -->
+                <div class="crypto-card-holo magnetic-card volumetric-shadow glass-card-strong p-6 rounded-2xl slide-up">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 rounded-xl bg-gradient-to-r from-blue-500/20 to-cyan-500/20">
+                            <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-gradient magnetic-text">2,547</div>
+                            <div class="text-xs text-white/60">Clients Totaux</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-white/60 text-sm">Nouveaux ce mois</span>
+                        <div class="flex items-center space-x-1">
+                            <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                            <span class="text-green-400 text-sm font-semibold">+127</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <div class="flex justify-between text-xs text-white/50 mb-2">
+                            <span>Taux de conversion</span>
+                            <span>24.3%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-2 mt-2">
+                            <div class="bg-gradient-to-r from-blue-400 to-cyan-500 h-2 rounded-full" style="width: 24.3%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Clients -->
+                <div class="crypto-card-holo magnetic-card volumetric-shadow glass-card-strong p-6 rounded-2xl slide-up" style="animation-delay: 0.1s">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 rounded-xl bg-gradient-to-r from-green-500/20 to-emerald-500/20">
+                            <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-gradient magnetic-text">1,892</div>
+                            <div class="text-xs text-white/60">Clients Actifs</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-white/60 text-sm">Connexions 24h</span>
+                        <span class="text-green-400 text-sm font-semibold">1,247</span>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <div class="flex justify-between text-xs text-white/50 mb-2">
+                            <span>Taux d'activité</span>
+                            <span>74.2%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-2 mt-2">
+                            <div class="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full" style="width: 74.2%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Client Satisfaction -->
+                <div class="crypto-card-holo magnetic-card volumetric-shadow glass-card-strong p-6 rounded-2xl slide-up" style="animation-delay: 0.2s">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 rounded-xl bg-gradient-to-r from-yellow-500/20 to-orange-500/20">
+                            <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-gradient magnetic-text">4.7/5</div>
+                            <div class="text-xs text-white/60">Satisfaction Client</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-white/60 text-sm">Feedbacks positifs</span>
+                        <span class="text-yellow-400 text-sm font-semibold">92.4%</span>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <div class="flex justify-between text-xs text-white/50 mb-2">
+                            <span>Score NPS</span>
+                            <span>+42</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-2 mt-2">
+                            <div class="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 rounded-full" style="width: 84%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Support Tickets -->
+                <div class="crypto-card-holo magnetic-card volumetric-shadow glass-card-strong p-6 rounded-2xl slide-up" style="animation-delay: 0.3s">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-pink-500/20">
+                            <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-gradient magnetic-text">23</div>
+                            <div class="text-xs text-white/60">Tickets Support</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-white/60 text-sm">Temps de réponse</span>
+                        <span class="text-purple-400 text-sm font-semibold">2.3h</span>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <div class="flex justify-between text-xs text-white/50 mb-2">
+                            <span>Taux de résolution</span>
+                            <span>96.8%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-2 mt-2">
+                            <div class="bg-gradient-to-r from-purple-400 to-pink-500 h-2 rounded-full" style="width: 96.8%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">Revenus</p>
+                            <p class="text-2xl font-bold">€45,230</p>
+                        </div>
+                        <div class="bg-yellow-600 p-3 rounded-full">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-xs text-green-400">+22.1% ce mois</div>
+                </div>
+            </div>
+
+            <!-- Charts and Recent Activity -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-bold mb-4">Évolution des Revenus</h3>
+                    <div class="chart-container">
+                        <div class="text-gray-400 text-center">
+                            <svg class="w-16 h-16 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+                            </svg>
+                            <p>Graphique des revenus mensuels</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-bold mb-4">Activité Récente</h3>
+                    <div class="space-y-3" id="recent-activity">
+                        <div class="flex items-center justify-between p-3 bg-gray-700 rounded">
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-green-400 rounded-full mr-3"></div>
+                                <span class="text-sm">Nouveau utilisateur inscrit</span>
+                            </div>
+                            <span class="text-xs text-gray-400">Il y a 5 min</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-700 rounded">
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-blue-400 rounded-full mr-3"></div>
+                                <span class="text-sm">Transaction de $1,250 complétée</span>
+                            </div>
+                            <span class="text-xs text-gray-400">Il y a 12 min</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-700 rounded">
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-yellow-400 rounded-full mr-3"></div>
+                                <span class="text-sm">Retrait en attente de validation</span>
+                            </div>
+                            <span class="text-xs text-gray-400">Il y a 25 min</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Management Page -->
+        <div id="admin-users-page" class="hidden">
+            <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Gestion des Utilisateurs</h2>
+                    <button onclick="showAddUserModal()" class="btn-success px-4 py-2 rounded-lg">
+                        + Nouvel Utilisateur
+                    </button>
+                </div>
+                
+                <!-- Filters -->
+                <div class="flex space-x-4 mb-6">
+                    <select class="bg-gray-700 rounded px-3 py-2">
+                        <option>Tous les statuts</option>
+                        <option>Actif</option>
+                        <option>Suspendu</option>
+                        <option>En attente</option>
+                    </select>
+                    <select class="bg-gray-700 rounded px-3 py-2">
+                        <option>Tous les rôles</option>
+                        <option>Client</option>
+                        <option>Admin</option>
+                    </select>
+                    <input type="text" placeholder="Rechercher..." class="bg-gray-700 rounded px-3 py-2 flex-1">
+                </div>
+                
+                <!-- Users Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full data-table">
+                        <thead>
+                            <tr>
+                                <th class="text-left py-3">Utilisateur</th>
+                                <th class="text-left py-3">Email</th>
+                                <th class="text-left py-3">Rôle</th>
+                                <th class="text-left py-3">Statut</th>
+                                <th class="text-left py-3">Inscription</th>
+                                <th class="text-left py-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <tr>
+                                <td class="py-3">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+                                            <span class="text-sm font-bold">JD</span>
+                                        </div>
+                                        <span>John Doe</span>
+                                    </div>
+                                </td>
+                                <td class="py-3">john.doe@email.com</td>
+                                <td class="py-3">Client</td>
+                                <td class="py-3">
+                                    <span class="status-badge status-active">Actif</span>
+                                </td>
+                                <td class="py-3">15/01/2024</td>
+                                <td class="py-3">
+                                    <button class="text-blue-400 hover:text-blue-300 mr-2">Modifier</button>
+                                    <button class="text-red-400 hover:text-red-300">Suspendre</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit User Modal -->
+        <div id="adminEditUserModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+            <div class="bg-gray-800 rounded-lg p-6 w-full max-w-lg">
+                <h3 class="text-xl font-bold mb-4">Modifier l'utilisateur</h3>
+                <div class="space-y-3">
+                    <input id="edit-user-id" type="hidden">
+                    <div>
+                        <label class="block text-sm mb-1">Nom Complet</label>
+                        <input id="edit-user-name" class="w-full px-3 py-2 bg-gray-700 rounded">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Email</label>
+                        <input id="edit-user-email" class="w-full px-3 py-2 bg-gray-700 rounded">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm mb-1">Rôle</label>
+                            <select id="edit-user-role" class="w-full px-3 py-2 bg-gray-700 rounded">
+                                <option value="client">Client</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">Statut</label>
+                            <select id="edit-user-status" class="w-full px-3 py-2 bg-gray-700 rounded">
+                                <option value="active">Actif</option>
+                                <option value="suspended">Suspendu</option>
+                                <option value="pending">En attente</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Téléphone</label>
+                        <input id="edit-user-phone" class="w-full px-3 py-2 bg-gray-700 rounded">
+                    </div>
+                    <div class="flex gap-3 mt-4">
+                        <button onclick="saveUserEdit()" class="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Enregistrer</button>
+                        <button onclick="closeEditUser()" class="flex-1 bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded">Annuler</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Management Page -->
+        <div id="admin-transactions-page" class="hidden">
+            <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                <h2 class="text-2xl font-bold mb-6">Gestion des Transactions</h2>
+                
+                <!-- Transaction Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-gray-700 rounded-lg p-4">
+                        <p class="text-sm text-gray-400">Aujourd'hui</p>
+                        <p class="text-xl font-bold">$12,450</p>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-4">
+                        <p class="text-sm text-gray-400">Cette semaine</p>
+                        <p class="text-xl font-bold">$89,230</p>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-4">
+                        <p class="text-sm text-gray-400">Ce mois</p>
+                        <p class="text-xl font-bold">$345,670</p>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-4">
+                        <p class="text-sm text-gray-400">En attente</p>
+                        <p class="text-xl font-bold text-yellow-400">23</p>
+                    </div>
+                </div>
+                
+                <!-- Transactions Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full data-table">
+                        <thead>
+                            <tr>
+                                <th class="text-left py-3">ID</th>
+                                <th class="text-left py-3">Utilisateur</th>
+                                <th class="text-left py-3">Type</th>
+                                <th class="text-left py-3">Montant</th>
+                                <th class="text-left py-3">Statut</th>
+                                <th class="text-left py-3">Date</th>
+                                <th class="text-left py-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactions-table-body">
+                            <!-- Transactions will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction Detail Modal -->
+        <div id="adminTxDetail" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+            <div class="bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
+                <h3 class="text-xl font-bold mb-4">Détail Transaction</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm mb-1">ID</label>
+                        <input id="txd-id" class="w-full px-3 py-2 bg-gray-700 rounded" disabled>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Utilisateur</label>
+                        <input id="txd-user" class="w-full px-3 py-2 bg-gray-700 rounded" disabled>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Type</label>
+                        <input id="txd-type" class="w-full px-3 py-2 bg-gray-700 rounded" disabled>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Crypto</label>
+                        <input id="txd-crypto" class="w-full px-3 py-2 bg-gray-700 rounded" disabled>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Montant</label>
+                        <input id="txd-amount" class="w-full px-3 py-2 bg-gray-700 rounded" disabled>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Statut</label>
+                        <select id="txd-status" class="w-full px-3 py-2 bg-gray-700 rounded">
+                            <option value="pending">pending</option>
+                            <option value="awaiting_admin">awaiting_admin</option>
+                            <option value="sent">sent</option>
+                            <option value="completed">completed</option>
+                            <option value="rejected">rejected</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm mb-1">txHash</label>
+                        <input id="txd-hash" class="w-full px-3 py-2 bg-gray-700 rounded">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm mb-1">Raison de rejet</label>
+                        <input id="txd-reason" class="w-full px-3 py-2 bg-gray-700 rounded">
+                    </div>
+                </div>
+                <div class="flex gap-3 mt-4">
+                    <button onclick="saveTxDetail()" class="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Enregistrer</button>
+                    <button onclick="closeTxDetail()" class="flex-1 bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded">Fermer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other admin pages would be added here -->
+        <div id="admin-investments-page" class="hidden">
+            <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold">Plans d'Investissement</h2>
+                    <button onclick="processAccruals()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">Traiter les Gains</button>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2">
+                        <div id="plans-list" class="space-y-3"></div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Créer un Plan</h3>
+                        <div class="space-y-3">
+                            <input id="plan-name" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="Nom (ex. Standard)">
+                            <div class="grid grid-cols-2 gap-3">
+                                <input id="plan-roi-min" type="number" step="0.1" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="ROI min %">
+                                <input id="plan-roi-max" type="number" step="0.1" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="ROI max %">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <input id="plan-min-eur" type="number" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="Min €">
+                                <input id="plan-max-eur" type="number" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="Max €">
+                            </div>
+                            <input id="plan-duration" type="number" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="Durée (jours)">
+                            <select id="plan-ref-asset" class="w-full px-3 py-2 bg-gray-700 rounded">
+                                <option value="EUR">Actif de référence: EUR</option>
+                                <option value="USDT">Actif de référence: USDT</option>
+                                <option value="BTC">Actif de référence: BTC</option>
+                                <option value="ETH">Actif de référence: ETH</option>
+                                <option value="USDC">Actif de référence: USDC</option>
+                            </select>
+                            <button onclick="createPlan()" class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Créer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-800 rounded-lg p-6 glass-effect mt-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-bold">Souscriptions</h2>
+                    <div class="flex gap-3">
+                        <select id="sub-plan-filter" class="bg-gray-700 rounded px-3 py-2">
+                            <option value="">Tous les plans</option>
+                        </select>
+                        <select id="sub-status-filter" class="bg-gray-700 rounded px-3 py-2">
+                            <option value="">Tous statuts</option>
+                            <option value="ACTIVE">ACTIVE</option>
+                            <option value="CLOSED">CLOSED</option>
+                            <option value="CANCELLED">CANCELLED</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="subs-admin-list" class="space-y-3"></div>
+            </div>
+        </div>
+
+        <div id="admin-wallets-page" class="hidden">
+            <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                <h2 class="text-2xl font-bold mb-6">Portefeuilles (Agrégés Utilisateurs)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="p-4 bg-gray-700 rounded">
+                        <div class="text-sm text-gray-300 mb-1">Bitcoin (BTC)</div>
+                        <div class="text-2xl font-bold" id="agg-btc">0 BTC</div>
+                        <div class="text-sm text-gray-400" id="agg-btc-eur">≈ 0,00 €</div>
+                    </div>
+                    <div class="p-4 bg-gray-700 rounded">
+                        <div class="text-sm text-gray-300 mb-1">Ethereum (ETH)</div>
+                        <div class="text-2xl font-bold" id="agg-eth">0 ETH</div>
+                        <div class="text-sm text-gray-400" id="agg-eth-eur">≈ 0,00 €</div>
+                    </div>
+                    <div class="p-4 bg-gray-700 rounded">
+                        <div class="text-sm text-gray-300 mb-1">Tether (USDT)</div>
+                        <div class="text-2xl font-bold" id="agg-usdt">0 USDT</div>
+                        <div class="text-sm text-gray-400" id="agg-usdt-eur">≈ 0,00 €</div>
+                    </div>
+                    <div class="p-4 bg-gray-700 rounded">
+                        <div class="text-sm text-gray-300 mb-1">USD Coin (USDC)</div>
+                        <div class="text-2xl font-bold" id="agg-usdc">0 USDC</div>
+                        <div class="text-sm text-gray-400" id="agg-usdc-eur">≈ 0,00 €</div>
+                    </div>
+                </div>
+                <div class="bg-gray-700 rounded p-4">
+                    <h3 class="text-lg font-bold mb-3">Activité Récente</h3>
+                    <div id="wallet-activity" class="space-y-2">
+                        <p class="text-gray-400">Chargement...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="admin-reports-page" class="hidden">
+            <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                <h2 class="text-2xl font-bold mb-6">Rapports et Analytics</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button onclick="exportUsersCSV()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Exporter Utilisateurs</button>
+                    <button onclick="exportTransactionsCSV()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Exporter Transactions</button>
+                    <button onclick="exportSubscriptionsCSV()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Exporter Souscriptions</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="admin-settings-page" class="hidden">
+            <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                <h2 class="text-2xl font-bold mb-6">Paramètres Système</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm mb-1">Frais Échange (%)</label>
+                        <input id="set-exchange-fee" type="number" step="0.01" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="0.2">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Frais Retrait BTC</label>
+                        <input id="set-fee-btc" type="number" step="0.00000001" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="0.0002">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Frais Retrait ETH</label>
+                        <input id="set-fee-eth" type="number" step="0.0001" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="0.003">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Frais Retrait USDT</label>
+                        <input id="set-fee-usdt" type="number" step="0.01" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="2">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Frais Retrait USDC</label>
+                        <input id="set-fee-usdc" type="number" step="0.01" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="2">
+                    </div>
+                    <div class="md:col-span-2 mt-4">
+                        <h3 class="text-lg font-bold mb-2">Adresses de Dépôt (Wallet Master)</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm mb-1">Adresse BTC</label>
+                                <input id="set-addr-btc" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="Adresse BTC">
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-1">Adresse ETH</label>
+                                <input id="set-addr-eth" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="Adresse ETH">
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-1">Adresse USDT</label>
+                                <input id="set-addr-usdt" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="Adresse USDT">
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-1">Adresse USDC</label>
+                                <input id="set-addr-usdc" class="w-full px-3 py-2 bg-gray-700 rounded" placeholder="Adresse USDC">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex gap-3 flex-wrap">
+                        <button onclick="saveSettings()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">Enregistrer</button>
+                        <button onclick="testFunctions()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Tester Fonctions</button>
+                        <span id="functions-status" class="text-sm text-gray-300"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

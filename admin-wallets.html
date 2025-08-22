@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portefeuilles Admin - CryptoBoost</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="auth.js"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="crypto-logo mr-3">₿</div>
+                    <div class="text-2xl font-bold brand-text">CryptoBoost Admin</div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="user-name text-sm"></span>
+                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg">Déconnexion</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800 min-h-screen">
+            <nav class="p-6">
+                <ul class="space-y-2">
+                    <li><a href="admin.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Dashboard</a></li>
+                    <li><a href="admin-users.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Utilisateurs</a></li>
+                    <li><a href="admin-transactions.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Transactions</a></li>
+                    <li><a href="admin-investments.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Investissements</a></li>
+                    <li><a href="admin-wallets.html" class="nav-btn bg-blue-600 text-white block px-4 py-2 rounded">Portefeuilles</a></li>
+                    <li><a href="admin-reports.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Rapports</a></li>
+                    <li><a href="admin-settings.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Paramètres</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold">Gestion des Portefeuilles</h1>
+                <div class="flex space-x-4">
+                    <button onclick="rebalanceWallets()" class="btn-secondary px-4 py-2 rounded-lg">Rééquilibrer</button>
+                    <button onclick="showAddWalletModal()" class="btn-primary px-4 py-2 rounded-lg">Nouveau Portefeuille</button>
+                </div>
+            </div>
+
+            <!-- Platform Wallets Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect border-l-4 border-orange-500">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">Bitcoin (BTC)</h3>
+                        <div class="text-2xl">₿</div>
+                    </div>
+                    <p class="text-3xl font-bold text-orange-400">125.45 BTC</p>
+                    <p class="text-sm text-gray-400">≈ $5,398,650</p>
+                    <div class="mt-4 flex justify-between text-sm">
+                        <span class="text-green-400">Dépôts: 89.2 BTC</span>
+                        <span class="text-red-400">Retraits: 36.25 BTC</span>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect border-l-4 border-blue-500">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">Ethereum (ETH)</h3>
+                        <div class="text-2xl">Ξ</div>
+                    </div>
+                    <p class="text-3xl font-bold text-blue-400">2,847.89 ETH</p>
+                    <p class="text-sm text-gray-400">≈ $6,892,450</p>
+                    <div class="mt-4 flex justify-between text-sm">
+                        <span class="text-green-400">Dépôts: 1,956 ETH</span>
+                        <span class="text-red-400">Retraits: 892 ETH</span>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect border-l-4 border-green-500">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">Tether (USDT)</h3>
+                        <div class="text-2xl">₮</div>
+                    </div>
+                    <p class="text-3xl font-bold text-green-400">1,245,680 USDT</p>
+                    <p class="text-sm text-gray-400">≈ $1,245,680</p>
+                    <div class="mt-4 flex justify-between text-sm">
+                        <span class="text-green-400">Dépôts: 892K USDT</span>
+                        <span class="text-red-400">Retraits: 456K USDT</span>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect border-l-4 border-purple-500">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">USD Coin (USDC)</h3>
+                        <div class="text-2xl">$</div>
+                    </div>
+                    <p class="text-3xl font-bold text-purple-400">892,340 USDC</p>
+                    <p class="text-sm text-gray-400">≈ $892,340</p>
+                    <div class="mt-4 flex justify-between text-sm">
+                        <span class="text-green-400">Dépôts: 654K USDC</span>
+                        <span class="text-red-400">Retraits: 238K USDC</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wallet Management -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Hot Wallets -->
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h2 class="text-xl font-bold mb-6">Portefeuilles Chauds (Trading)</h2>
+                    <div class="space-y-4">
+                        <div class="bg-gray-700 rounded-lg p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-semibold">BTC Hot Wallet</span>
+                                <span class="status-badge status-active">Actif</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-2">1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</p>
+                            <div class="flex justify-between">
+                                <span>Solde: 15.67 BTC</span>
+                                <button onclick="manageWallet('btc-hot')" class="text-blue-400 hover:text-blue-300">Gérer</button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-700 rounded-lg p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-semibold">ETH Hot Wallet</span>
+                                <span class="status-badge status-active">Actif</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-2">0x742d35Cc6634C0532925a3b8D4C0532925a3b8D4</p>
+                            <div class="flex justify-between">
+                                <span>Solde: 456.89 ETH</span>
+                                <button onclick="manageWallet('eth-hot')" class="text-blue-400 hover:text-blue-300">Gérer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cold Wallets -->
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h2 class="text-xl font-bold mb-6">Portefeuilles Froids (Stockage)</h2>
+                    <div class="space-y-4">
+                        <div class="bg-gray-700 rounded-lg p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-semibold">BTC Cold Storage</span>
+                                <span class="status-badge status-pending">Sécurisé</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-2">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</p>
+                            <div class="flex justify-between">
+                                <span>Solde: 109.78 BTC</span>
+                                <button onclick="manageWallet('btc-cold')" class="text-blue-400 hover:text-blue-300">Gérer</button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-700 rounded-lg p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-semibold">ETH Cold Storage</span>
+                                <span class="status-badge status-pending">Sécurisé</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-2">0x8ba1f109551bD432803012645Hac136c22C501e</p>
+                            <div class="flex justify-between">
+                                <span>Solde: 2,391 ETH</span>
+                                <button onclick="manageWallet('eth-cold')" class="text-blue-400 hover:text-blue-300">Gérer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Wallet Activity -->
+            <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold">Activité des Portefeuilles</h2>
+                    <div class="flex space-x-4">
+                        <select id="wallet-filter" class="form-input">
+                            <option value="">Tous les portefeuilles</option>
+                            <option value="hot">Portefeuilles chauds</option>
+                            <option value="cold">Portefeuilles froids</option>
+                        </select>
+                        <button onclick="exportWalletActivity()" class="btn-secondary px-4 py-2 rounded-lg">Exporter</button>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="data-table w-full">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Portefeuille</th>
+                                <th>Type</th>
+                                <th>Montant</th>
+                                <th>Hash Transaction</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wallet-activity-table">
+                            <tr>
+                                <td>2024-01-15 14:30</td>
+                                <td>BTC Hot Wallet</td>
+                                <td><span class="status-badge status-active">Réception</span></td>
+                                <td class="text-green-400">+0.5 BTC</td>
+                                <td class="font-mono text-sm">a1b2c3d4...e5f6g7h8</td>
+                                <td><span class="status-badge status-active">Confirmé</span></td>
+                                <td>
+                                    <button onclick="viewTransaction('a1b2c3d4')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2024-01-15 13:15</td>
+                                <td>ETH Hot Wallet</td>
+                                <td><span class="status-badge status-failed">Envoi</span></td>
+                                <td class="text-red-400">-2.5 ETH</td>
+                                <td class="font-mono text-sm">x9y8z7w6...v5u4t3s2</td>
+                                <td><span class="status-badge status-active">Confirmé</span></td>
+                                <td>
+                                    <button onclick="viewTransaction('x9y8z7w6')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2024-01-15 12:00</td>
+                                <td>BTC Cold Storage</td>
+                                <td><span class="status-badge status-pending">Transfert</span></td>
+                                <td class="text-blue-400">50 BTC</td>
+                                <td class="font-mono text-sm">m3n2o1p0...q9r8s7t6</td>
+                                <td><span class="status-badge status-pending">En cours</span></td>
+                                <td>
+                                    <button onclick="viewTransaction('m3n2o1p0')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Wallet Management Modal -->
+    <div id="walletManagementModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-4xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Gestion Portefeuille - <span id="wallet-name">BTC Hot Wallet</span></h2>
+                <button onclick="closeModal('walletManagementModal')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Wallet Info -->
+                <div class="space-y-6">
+                    <div class="bg-gray-700 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4">Informations</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400">Adresse</label>
+                                <p class="font-mono text-sm break-all">1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400">Type</label>
+                                <p>Portefeuille Chaud (Hot Wallet)</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400">Solde Actuel</label>
+                                <p class="text-2xl font-bold text-orange-400">15.67 BTC</p>
+                                <p class="text-sm text-gray-400">≈ $674,520</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400">Statut</label>
+                                <span class="status-badge status-active">Actif</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-700 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4">Sécurité</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span>Multi-signature</span>
+                                <span class="status-badge status-active">Activé</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>Sauvegarde</span>
+                                <span class="status-badge status-active">OK</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>Dernière vérification</span>
+                                <span>Il y a 2h</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="space-y-6">
+                    <div class="bg-gray-700 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4">Actions Rapides</h3>
+                        <div class="space-y-3">
+                            <button onclick="sendFromWallet()" class="btn-primary w-full">Envoyer des Fonds</button>
+                            <button onclick="generateAddress()" class="btn-secondary w-full">Générer Nouvelle Adresse</button>
+                            <button onclick="backupWallet()" class="btn-secondary w-full">Sauvegarder Portefeuille</button>
+                            <button onclick="freezeWallet()" class="btn-danger w-full">Geler Portefeuille</button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-700 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4">Statistiques (30j)</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Transactions entrantes:</span>
+                                <span class="text-green-400">156</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Transactions sortantes:</span>
+                                <span class="text-red-400">89</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Volume total:</span>
+                                <span>245.67 BTC</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Frais payés:</span>
+                                <span>0.0234 BTC</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Wallet Modal -->
+    <div id="addWalletModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Ajouter un Nouveau Portefeuille</h2>
+                <button onclick="closeModal('addWalletModal')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <form onsubmit="addWallet(event)">
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Nom du Portefeuille</label>
+                            <input type="text" id="wallet-name-input" class="form-input w-full" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Cryptomonnaie</label>
+                            <select id="wallet-crypto" class="form-input w-full" required>
+                                <option value="BTC">Bitcoin (BTC)</option>
+                                <option value="ETH">Ethereum (ETH)</option>
+                                <option value="USDT">Tether (USDT)</option>
+                                <option value="USDC">USD Coin (USDC)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Type</label>
+                            <select id="wallet-type" class="form-input w-full" required>
+                                <option value="hot">Portefeuille Chaud</option>
+                                <option value="cold">Portefeuille Froid</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Réseau</label>
+                            <select id="wallet-network" class="form-input w-full" required>
+                                <option value="mainnet">Mainnet</option>
+                                <option value="testnet">Testnet</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Adresse du Portefeuille</label>
+                        <input type="text" id="wallet-address" class="form-input w-full" required>
+                        <p class="text-sm text-gray-400 mt-1">Ou laissez vide pour générer automatiquement</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Clé Privée (optionnel)</label>
+                        <textarea id="wallet-private-key" class="form-input w-full" rows="3" placeholder="Clé privée ou seed phrase..."></textarea>
+                        <p class="text-sm text-red-400 mt-1">⚠️ Informations sensibles - stockage sécurisé requis</p>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" id="wallet-multisig" class="mr-2">
+                        <label for="wallet-multisig" class="text-sm">Activer Multi-signature</label>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <button type="submit" class="btn-primary flex-1">Créer le Portefeuille</button>
+                        <button type="button" onclick="closeModal('addWalletModal')" class="btn-secondary flex-1">Annuler</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!protectPage('admin')) return;
+            updateUserDisplay();
+            loadWalletData();
+        });
+
+        function loadWalletData() {
+            // Load wallet data and activity
+        }
+
+        function showAddWalletModal() {
+            document.getElementById('addWalletModal').classList.remove('hidden');
+        }
+
+        function addWallet(event) {
+            event.preventDefault();
+            showAlert('Portefeuille créé avec succès!', 'success');
+            closeModal('addWalletModal');
+            event.target.reset();
+        }
+
+        function manageWallet(walletId) {
+            document.getElementById('walletManagementModal').classList.remove('hidden');
+        }
+
+        function sendFromWallet() {
+            const amount = prompt('Montant à envoyer:');
+            const address = prompt('Adresse de destination:');
+            if (amount && address) {
+                showAlert('Transaction initiée', 'success');
+                closeModal('walletManagementModal');
+            }
+        }
+
+        function generateAddress() {
+            showAlert('Nouvelle adresse générée', 'success');
+        }
+
+        function backupWallet() {
+            showAlert('Sauvegarde créée avec succès', 'success');
+        }
+
+        function freezeWallet() {
+            if (confirm('Êtes-vous sûr de vouloir geler ce portefeuille ?')) {
+                showAlert('Portefeuille gelé', 'success');
+                closeModal('walletManagementModal');
+            }
+        }
+
+        function rebalanceWallets() {
+            if (confirm('Lancer le rééquilibrage automatique des portefeuilles ?')) {
+                showAlert('Rééquilibrage en cours...', 'info');
+                setTimeout(() => {
+                    showAlert('Rééquilibrage terminé avec succès', 'success');
+                }, 3000);
+            }
+        }
+
+        function viewTransaction(hash) {
+            showAlert(`Affichage de la transaction ${hash}`, 'info');
+        }
+
+        function exportWalletActivity() {
+            showAlert('Export de l\'activité en cours...', 'info');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

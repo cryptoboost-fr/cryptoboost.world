@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions - CryptoBoost</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="auth.js"></script>
+    <script src="crypto-api.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body class="fade-in noise-texture">
+    <!-- Enhanced Header with Glass Morphism -->
+    <header class="glass-nav sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center group">
+                    <div class="crypto-logo mr-3 text-2xl float">₿</div>
+                    <div class="text-2xl font-bold text-gradient">CryptoBoost</div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center space-x-2 user-info">
+                        <div class="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center text-white font-semibold text-sm">
+                            <span class="user-avatar">U</span>
+                        </div>
+                        <span class="user-name text-sm font-medium"></span>
+                    </div>
+                    <button onclick="logout()" class="btn-secondary text-red-400 hover:text-red-300 btn-liquid">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                        Déconnexion
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Enhanced Sidebar with Glass Morphism -->
+    <aside class="w-64 glass-card min-h-screen border-r border-white/10 volumetric-shadow">
+        <div class="p-6">
+            <!-- User Profile Section -->
+            <div class="mb-8 text-center">
+                <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-accent flex items-center justify-center text-white font-bold text-xl shadow-glow-purple">
+                    <span class="user-avatar">U</span>
+                </div>
+                <h3 class="font-semibold text-white mb-1 user-name">Utilisateur</h3>
+                <p class="text-xs text-white/60">Client Premium</p>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="space-y-2">
+                <a href="client-dashboard.html" class="nav-link group">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v0"></path>
+                    </svg>
+                    Dashboard
+                </a>
+
+                <a href="client-wallets.html" class="nav-link group">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                    </svg>
+                    Portefeuilles
+                </a>
+
+                <a href="client-transactions.html" class="nav-link active group crypto-card-holo">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 002-2h2a2 2 0 002 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 00-2-2h-2a2 2 0 00-2 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path>
+                    </svg>
+                    Transactions
+                </a>
+
+                <a href="client-investments.html" class="nav-link group">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                    Investissements
+                </a>
+
+                <a href="client-profile.html" class="nav-link group">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    Profil
+                </a>
+
+                <a href="client-support.html" class="nav-link group">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Support
+                </a>
+
+                <a href="client-notifications.html" class="nav-link group">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM15 7H9a2 2 0 00-2 2v6a2 2 0 002 2h5l5 5V9a2 2 0 00-2-2z"></path>
+                    </svg>
+                    Notifications
+                </a>
+            </nav>
+
+            <!-- Quick Stats in Sidebar -->
+            <div class="mt-8 p-4 glass-card-strong rounded-xl volumetric-shadow">
+                <h4 class="font-semibold text-white mb-3">Activité Récents</h4>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-white/70">Transactions 7j:</span>
+                        <span class="text-white font-semibold">24</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-white/70">Volume 7j:</span>
+                        <span class="text-green-400 font-semibold">€2,847</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-white/70">Taux de Succès:</span>
+                        <span class="text-blue-400 font-semibold">99.2%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content with Enhanced Background -->
+    <main class="flex-1 p-8 relative overflow-hidden">
+        <!-- Background Effects -->
+        <div class="absolute inset-0 crypto-particles pointer-events-none"></div>
+        <div class="absolute inset-0 light-rays pointer-events-none"></div>
+
+        <!-- Enhanced Header Section -->
+        <div class="relative z-10 mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div class="flex-1">
+                    <h1 class="text-4xl font-bold text-gradient mb-2 magnetic-text">Historique des Transactions</h1>
+                    <p class="text-white/70 text-lg mb-4">Suivez, analysez et gérez toutes vos transactions crypto avec transparence totale</p>
+
+                    <!-- Educational Banner -->
+                    <div class="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-xl p-4 border border-white/10">
+                        <div class="flex items-start space-x-3">
+                            <div class="p-2 rounded-lg bg-cyan-500/20">
+                                <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-white mb-1">Transparence Blockchain</h3>
+                                <p class="text-white/70 text-sm">Chaque transaction est enregistrée de manière immuable sur la blockchain, garantissant traçabilité et sécurité maximales.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="exportTransactions()" class="btn-primary btn-liquid px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                        <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        📊 Exporter
+                    </button>
+                    <button onclick="refreshTransactions()" class="btn-secondary btn-liquid px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                        <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        🔄 Actualiser
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Transaction Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="crypto-card-holo magnetic-card volumetric-shadow glass-card-strong p-6 rounded-2xl slide-up">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-xl bg-gradient-to-r from-blue-500/20 to-cyan-500/20">
+                        <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 002-2h2a2 2 0 002 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 00-2-2h-2a2 2 0 00-2 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path>
+                        </svg>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-gradient magnetic-text">127</div>
+                        <div class="text-xs text-white/60">Total Transactions</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-white/60 text-sm">Cette semaine</span>
+                    <div class="flex items-center space-x-1">
+                        <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                        <span class="text-green-400 text-sm font-semibold">+12%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="crypto-card-holo magnetic-card volumetric-shadow glass-card-strong p-6 rounded-2xl slide-up" style="animation-delay: 0.1s">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-xl bg-gradient-to-r from-green-500/20 to-emerald-500/20">
+                        <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-gradient magnetic-text">€45,230</div>
+                        <div class="text-xs text-white/60">Volume Total</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-white/60 text-sm">Moyenne/transaction</span>
+                    <span class="text-green-400 text-sm font-semibold">€356</span>
+                </div>
+            </div>
+
+            <div class="crypto-card-holo magnetic-card volumetric-shadow glass-card-strong p-6 rounded-2xl slide-up" style="animation-delay: 0.2s">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-xl bg-gradient-to-r from-yellow-500/20 to-orange-500/20">
+                        <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-gradient magnetic-text">3</div>
+                        <div class="text-xs text-white/60">En Attente</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-white/60 text-sm">Temps moyen</span>
+                    <span class="text-yellow-400 text-sm font-semibold">2.3 min</span>
+                </div>
+            </div>
+
+            <div class="crypto-card-holo magnetic-card volumetric-shadow glass-card-strong p-6 rounded-2xl slide-up" style="animation-delay: 0.3s">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-pink-500/20">
+                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-gradient magnetic-text">€125</div>
+                        <div class="text-xs text-white/60">Frais Totaux</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-white/60 text-sm">% du volume</span>
+                    <span class="text-purple-400 text-sm font-semibold">0.28%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Educational Section - Understanding Transactions -->
+        <div class="crypto-card-holo volumetric-shadow glass-card-strong p-8 rounded-2xl mb-8 slide-up" style="animation-delay: 0.4s">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gradient mb-2 magnetic-text">Guide des Transactions Crypto</h2>
+                    <p class="text-white/60">Comprendre les différents types d'opérations disponibles</p>
+                </div>
+                <div class="p-3 rounded-xl bg-gradient-accent/20">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <!-- Deposit -->
+                <div class="text-center p-6 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-green-400 mb-2">Dépôts</h3>
+                    <p class="text-white/70 text-sm mb-3">Ajoutez des fonds à votre portefeuille via virement bancaire ou crypto.</p>
+                    <div class="text-xs text-green-400">
+                        <span class="font-semibold">Temps:</span> 5-30 minutes
+                    </div>
+                </div>
+
+                <!-- Withdrawal -->
+                <div class="text-center p-6 rounded-xl bg-gradient-to-br from-red-500/10 to-pink-500/10 border border-red-500/20">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-red-400 mb-2">Retraits</h3>
+                    <p class="text-white/70 text-sm mb-3">Retirez vos fonds vers un compte bancaire ou un autre portefeuille.</p>
+                    <div class="text-xs text-red-400">
+                        <span class="font-semibold">Temps:</span> 1-3 jours ouvrés
+                    </div>
+                </div>
+
+                <!-- Exchange -->
+                <div class="text-center p-6 rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-purple-400 mb-2">Échanges</h3>
+                    <p class="text-white/70 text-sm mb-3">Convertissez vos crypto-monnaies instantanément à des taux compétitifs.</p>
+                    <div class="text-xs text-purple-400">
+                        <span class="font-semibold">Temps:</span> Instantané
+                    </div>
+                </div>
+
+                <!-- Investment -->
+                <div class="text-center p-6 rounded-xl bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/20">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-blue-400 mb-2">Investissements</h3>
+                    <p class="text-white/70 text-sm mb-3">Placez vos fonds dans des plans d'investissement structurés.</p>
+                    <div class="text-xs text-blue-400">
+                        <span class="font-semibold">Temps:</span> Selon le plan
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction Tips -->
+            <div class="bg-gradient-to-r from-orange-500/10 to-yellow-500/10 rounded-xl p-4 border border-white/10">
+                <h4 class="font-semibold text-white mb-3 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    Conseils pour des Transactions Sécurisées
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                        <p class="text-orange-400 font-semibold mb-1">🔍 Vérification</p>
+                        <p class="text-white/70">Vérifiez toujours les adresses de destination avant de valider une transaction.</p>
+                    </div>
+                    <div>
+                        <p class="text-orange-400 font-semibold mb-1">⏱️ Timing</p>
+                        <p class="text-white/70">Les retraits peuvent prendre plusieurs jours. Planifiez vos besoins de liquidité.</p>
+                    </div>
+                    <div>
+                        <p class="text-orange-400 font-semibold mb-1">💰 Frais</p>
+                        <p class="text-white/70">Les frais de réseau peuvent varier. Vérifiez les coûts avant de transacter.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Activity Overview -->
+        <div class="crypto-card-holo volumetric-shadow glass-card-strong p-8 rounded-2xl mb-8 slide-up" style="animation-delay: 0.5s">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gradient mb-2 magnetic-text">Aperçu de l'Activité</h2>
+                    <p class="text-white/60">Analyse de vos transactions récentes</p>
+                </div>
+                <div class="flex space-x-3">
+                    <button class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all duration-300 text-sm font-semibold">
+                        📈 Graphiques
+                    </button>
+                    <button class="px-4 py-2 rounded-lg bg-gradient-primary hover:shadow-lg transition-all duration-300 text-sm font-semibold">
+                        📊 Détails
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center p-6 rounded-xl bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-white/10">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-lg bg-gradient-primary flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                    </div>
+                    <div class="text-lg font-bold text-gradient mb-1">89</div>
+                    <div class="text-sm text-white/60">Dépôts</div>
+                    <div class="text-xs text-green-400 mt-1">68.2% du total</div>
+                </div>
+                <div class="text-center p-6 rounded-xl bg-gradient-to-br from-red-500/10 to-pink-500/10 border border-white/10">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                    </div>
+                    <div class="text-lg font-bold text-gradient mb-1">32</div>
+                    <div class="text-sm text-white/60">Retraits</div>
+                    <div class="text-xs text-blue-400 mt-1">25.2% du total</div>
+                </div>
+                <div class="text-center p-6 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-white/10">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-lg bg-gradient-accent flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                        </svg>
+                    </div>
+                    <div class="text-lg font-bold text-gradient mb-1">6</div>
+                    <div class="text-sm text-white/60">Échanges</div>
+                    <div class="text-xs text-purple-400 mt-1">4.7% du total</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Advanced Filters -->
+        <div class="crypto-card-holo volumetric-shadow glass-card-strong p-8 rounded-2xl mb-8 slide-up" style="animation-delay: 0.5s">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gradient mb-2 magnetic-text">Filtres Avancés</h2>
+                    <p class="text-white/60">Affinez votre recherche de transactions</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleFilters()" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all duration-300 text-sm font-semibold">
+                        🔍 Filtrer
+                    </button>
+                    <button onclick="saveFilterPreset()" class="px-4 py-2 rounded-lg bg-gradient-primary hover:shadow-lg transition-all duration-300 text-sm font-semibold">
+                        💾 Sauvegarder
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-white/80">Type de Transaction</label>
+                    <select id="filter-type" class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300">
+                        <option value="">Tous les types</option>
+                        <option value="deposit">💰 Dépôts</option>
+                        <option value="withdraw">💸 Retraits</option>
+                        <option value="exchange">🔄 Échanges</option>
+                        <option value="investment">📈 Investissements</option>
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-white/80">Cryptomonnaie</label>
+                    <select id="filter-crypto" class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300">
+                        <option value="">Toutes les cryptos</option>
+                        <option value="BTC">₿ Bitcoin</option>
+                        <option value="ETH">Ξ Ethereum</option>
+                        <option value="USDT">₮ Tether</option>
+                        <option value="USDC">$ USD Coin</option>
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-white/80">Statut</label>
+                    <select id="filter-status" class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300">
+                        <option value="">Tous les statuts</option>
+                        <option value="pending">⏳ En attente</option>
+                        <option value="completed">✅ Confirmé</option>
+                        <option value="failed">❌ Échoué</option>
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-white/80">Date de début</label>
+                    <input type="date" id="filter-date-start" class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-white/80">Date de fin</label>
+                    <input type="date" id="filter-date-end" class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300">
+                </div>
+            </div>
+
+            <!-- Advanced Filter Options -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-white/80">Montant minimum (€)</label>
+                    <input type="number" id="filter-amount-min" placeholder="0" class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-white/80">Montant maximum (€)</label>
+                    <input type="number" id="filter-amount-max" placeholder="10000" class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-white/80">Trier par</label>
+                    <select id="filter-sort" class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300">
+                        <option value="date-desc">📅 Date (récent d'abord)</option>
+                        <option value="date-asc">📅 Date (ancien d'abord)</option>
+                        <option value="amount-desc">💰 Montant (élevé d'abord)</option>
+                        <option value="amount-asc">💰 Montant (faible d'abord)</option>
+                        <option value="type">🔄 Type</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-3">
+                <button onclick="applyFilters()" class="btn-primary btn-liquid px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                    <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    🔍 Appliquer les Filtres
+                </button>
+                <button onclick="resetFilters()" class="btn-secondary btn-liquid px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+                    <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    🔄 Réinitialiser
+                </button>
+                <button onclick="exportFilteredTransactions()" class="px-6 py-3 rounded-xl bg-gradient-accent hover:shadow-lg transition-all duration-300 font-semibold">
+                    <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    📊 Exporter Résultats
+                </button>
+            </div>
+        </div>
+
+        <!-- Enhanced Transactions Table -->
+        <div class="crypto-card-holo volumetric-shadow glass-card-strong p-8 rounded-2xl slide-up" style="animation-delay: 0.6s">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-gradient mb-2 magnetic-text">Historique des Transactions</h2>
+                    <p class="text-white/60">Détail complet de toutes vos activités</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-white/60">Afficher:</span>
+                        <select id="page-size" class="px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300">
+                            <option value="10">10</option>
+                            <option value="25" selected>25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="toggleView('table')" id="view-table-btn" class="px-3 py-2 rounded-lg bg-gradient-primary text-white text-sm font-semibold transition-all duration-300">
+                            📊 Tableau
+                        </button>
+                        <button onclick="toggleView('cards')" id="view-cards-btn" class="px-3 py-2 rounded-lg bg-white/10 text-white/60 text-sm font-semibold hover:bg-white/20 transition-all duration-300">
+                            🃏 Cartes
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Summary -->
+            <div class="bg-white/5 rounded-xl p-4 mb-6">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="text-sm text-white/60">
+                            <span id="results-count">0</span> transaction(s) trouvée(s)
+                        </div>
+                        <div class="text-sm text-white/60">
+                            Page <span id="current-page">1</span> sur <span id="total-pages">1</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button onclick="previousPage()" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm transition-all duration-300">
+                            ← Précédent
+                        </button>
+                        <button onclick="nextPage()" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm transition-all duration-300">
+                            Suivant →
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto bg-white/5 rounded-xl p-4">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-white/10">
+                            <th class="text-left py-4 px-4 text-sm font-semibold text-white/80">ID Transaction</th>
+                            <th class="text-left py-4 px-4 text-sm font-semibold text-white/80">Date & Heure</th>
+                            <th class="text-left py-4 px-4 text-sm font-semibold text-white/80">Type</th>
+                            <th class="text-left py-4 px-4 text-sm font-semibold text-white/80">Cryptomonnaie</th>
+                            <th class="text-right py-4 px-4 text-sm font-semibold text-white/80">Montant</th>
+                            <th class="text-right py-4 px-4 text-sm font-semibold text-white/80">Valeur EUR</th>
+                            <th class="text-right py-4 px-4 text-sm font-semibold text-white/80">Frais</th>
+                            <th class="text-center py-4 px-4 text-sm font-semibold text-white/80">Statut</th>
+                            <th class="text-center py-4 px-4 text-sm font-semibold text-white/80">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-table">
+                        <tr class="hover:bg-white/5 transition-all duration-300 border-b border-white/5">
+                            <td class="py-4 px-4">
+                                <div class="font-mono text-sm font-semibold text-gradient">#TX001</div>
+                                <div class="text-xs text-white/40">15 Jan 2024</div>
+                            </td>
+                            <td class="py-4 px-4">
+                                <div class="text-white font-semibold">14:30</div>
+                                <div class="text-xs text-white/40">2 min ago</div>
+                            </td>
+                            <td class="py-4 px-4">
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border border-green-500/30">
+                                    💰 Dépôt
+                                </span>
+                            </td>
+                            <td class="py-4 px-4">
+                                <div class="flex items-center">
+                                    <div class="crypto-icon btc-icon mr-3 text-lg">₿</div>
+                                    <div>
+                                        <div class="font-semibold text-white">Bitcoin</div>
+                                        <div class="text-xs text-white/60">BTC</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-4 px-4 text-right">
+                                <div class="text-white font-semibold">0.0345 BTC</div>
+                                <div class="text-xs text-white/60">≈ €1,000.00</div>
+                            </td>
+                            <td class="py-4 px-4 text-right">
+                                <div class="text-white font-semibold">€1,000.00</div>
+                                <div class="text-xs text-green-400">+€1,000.00</div>
+                            </td>
+                            <td class="py-4 px-4 text-right">
+                                <div class="text-white font-semibold">€2.50</div>
+                                <div class="text-xs text-white/60">0.25%</div>
+                            </td>
+                            <td class="py-4 px-4 text-center">
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border border-green-500/30">
+                                    ✅ Confirmé
+                                </span>
+                            </td>
+                            <td class="py-4 px-4 text-center">
+                                <div class="flex flex-col space-y-1">
+                                    <button onclick="viewTransaction('TX001')" class="px-3 py-1 rounded-lg bg-blue-500/20 text-blue-400 text-xs font-semibold hover:bg-blue-500/30 transition-all duration-300">
+                                        👁️ Voir
+                                    </button>
+                                    <button onclick="downloadReceipt('TX001')" class="px-3 py-1 rounded-lg bg-green-500/20 text-green-400 text-xs font-semibold hover:bg-green-500/30 transition-all duration-300">
+                                        📄 PDF
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-white/5 transition-all duration-300 border-b border-white/5">
+                            <td class="py-4 px-4">
+                                <div class="font-mono text-sm font-semibold text-gradient">#TX002</div>
+                                <div class="text-xs text-white/40">14 Jan 2024</div>
+                            </td>
+                            <td class="py-4 px-4">
+                                <div class="text-white font-semibold">09:15</div>
+                                <div class="text-xs text-white/40">1 day ago</div>
+                            </td>
+                            <td class="py-4 px-4">
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-400 border border-purple-500/30">
+                                    🔄 Échange
+                                </span>
+                            </td>
+                            <td class="py-4 px-4">
+                                <div class="flex items-center">
+                                    <div class="crypto-icon eth-icon mr-3 text-lg">Ξ</div>
+                                    <div>
+                                        <div class="font-semibold text-white">Ethereum → Bitcoin</div>
+                                        <div class="text-xs text-white/60">ETH → BTC</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-4 px-4 text-right">
+                                <div class="text-white font-semibold">1.5 ETH</div>
+                                <div class="text-xs text-white/60">→ 0.025 BTC</div>
+                            </td>
+                            <td class="py-4 px-4 text-right">
+                                <div class="text-white font-semibold">€2,500.00</div>
+                                <div class="text-xs text-blue-400">+€50.00 (2%)</div>
+                            </td>
+                            <td class="py-4 px-4 text-right">
+                                <div class="text-white font-semibold">€6.25</div>
+                                <div class="text-xs text-white/60">0.25%</div>
+                            </td>
+                            <td class="py-4 px-4 text-center">
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-400 border border-yellow-500/30">
+                                    ⏳ En attente
+                                </span>
+                            </td>
+                            <td class="py-4 px-4 text-center">
+                                <div class="flex flex-col space-y-1">
+                                    <button onclick="viewTransaction('TX002')" class="px-3 py-1 rounded-lg bg-blue-500/20 text-blue-400 text-xs font-semibold hover:bg-blue-500/30 transition-all duration-300">
+                                        👁️ Voir
+                                    </button>
+                                    <button onclick="cancelTransaction('TX002')" class="px-3 py-1 rounded-lg bg-red-500/20 text-red-400 text-xs font-semibold hover:bg-red-500/30 transition-all duration-300">
+                                        ❌ Annuler
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                                    </div>
+                                </td>
+                                <td>0.5 ETH</td>
+                                <td>€890.50</td>
+                                <td>€0.89</td>
+                                <td><span class="status-badge status-completed">Confirmé</span></td>
+                                <td>
+                                    <div class="flex space-x-2">
+                                        <button onclick="viewTransaction('TX002')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                        <button onclick="downloadReceipt('TX002')" class="text-green-400 hover:text-green-300">PDF</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#TX003</td>
+                                <td>2024-01-13 16:45</td>
+                                <td><span class="status-badge status-failed">Retrait</span></td>
+                                <td>
+                                    <div class="flex items-center">
+                                        <div class="crypto-icon usdt-icon mr-2">₮</div>
+                                        USDT
+                                    </div>
+                                </td>
+                                <td>500.00 USDT</td>
+                                <td>€500.00</td>
+                                <td>€5.00</td>
+                                <td><span class="status-badge status-pending">En attente</span></td>
+                                <td>
+                                    <div class="flex space-x-2">
+                                        <button onclick="viewTransaction('TX003')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                        <button onclick="cancelTransaction('TX003')" class="text-red-400 hover:text-red-300">Annuler</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex justify-between items-center mt-6">
+                    <div class="text-sm text-gray-400">
+                        Affichage de 1 à 25 sur 127 transactions
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="btn-secondary px-3 py-1 rounded" disabled>Précédent</button>
+                        <button class="btn-primary px-3 py-1 rounded">1</button>
+                        <button class="btn-secondary px-3 py-1 rounded">2</button>
+                        <button class="btn-secondary px-3 py-1 rounded">3</button>
+                        <button class="btn-secondary px-3 py-1 rounded">Suivant</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Transaction Detail Modal -->
+    <div id="transactionModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Détails de la Transaction</h2>
+                <button onclick="closeModal('transactionModal')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <div id="transaction-details" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">ID Transaction</label>
+                        <p class="text-lg font-semibold" id="detail-id">#TX001</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">Date</label>
+                        <p class="text-lg font-semibold" id="detail-date">2024-01-15 14:30</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">Type</label>
+                        <p class="text-lg font-semibold" id="detail-type">Dépôt</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">Statut</label>
+                        <p class="text-lg font-semibold" id="detail-status">Confirmé</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">Cryptomonnaie</label>
+                        <p class="text-lg font-semibold" id="detail-crypto">Bitcoin (BTC)</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">Montant</label>
+                        <p class="text-lg font-semibold" id="detail-amount">0.0345 BTC</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">Valeur EUR</label>
+                        <p class="text-lg font-semibold" id="detail-value">€1,000.00</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">Frais</label>
+                        <p class="text-lg font-semibold" id="detail-fees">€2.50</p>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2">Hash de Transaction</label>
+                    <div class="flex">
+                        <input type="text" id="detail-hash" class="form-input flex-1" value="0x1234567890abcdef..." readonly>
+                        <button onclick="copyHash()" class="btn-secondary ml-2">Copier</button>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2">Adresse</label>
+                    <div class="flex">
+                        <input type="text" id="detail-address" class="form-input flex-1" value="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa" readonly>
+                        <button onclick="copyAddress()" class="btn-secondary ml-2">Copier</button>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-4 mt-6">
+                    <button onclick="downloadReceipt()" class="btn-primary flex-1">Télécharger le Reçu</button>
+                    <button onclick="closeModal('transactionModal')" class="btn-secondary flex-1">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!protectPage('client')) return;
+            updateUserDisplay();
+            loadTransactions();
+            setupEventListeners();
+        });
+
+        function loadTransactions() {
+            // Load transaction data from API or localStorage
+            updateTransactionStats();
+        }
+
+        function updateTransactionStats() {
+            // Update transaction statistics
+        }
+
+        function setupEventListeners() {
+            document.getElementById('filter-type').addEventListener('change', applyFilters);
+            document.getElementById('filter-crypto').addEventListener('change', applyFilters);
+            document.getElementById('filter-status').addEventListener('change', applyFilters);
+            document.getElementById('page-size').addEventListener('change', changePageSize);
+        }
+
+        function applyFilters() {
+            const type = document.getElementById('filter-type').value;
+            const crypto = document.getElementById('filter-crypto').value;
+            const status = document.getElementById('filter-status').value;
+            const dateStart = document.getElementById('filter-date-start').value;
+            const dateEnd = document.getElementById('filter-date-end').value;
+            
+            // Apply filters to transaction table
+            showAlert('Filtres appliqués', 'success');
+        }
+
+        function resetFilters() {
+            document.getElementById('filter-type').value = '';
+            document.getElementById('filter-crypto').value = '';
+            document.getElementById('filter-status').value = '';
+            document.getElementById('filter-date-start').value = '';
+            document.getElementById('filter-date-end').value = '';
+            applyFilters();
+        }
+
+        function changePageSize() {
+            const pageSize = document.getElementById('page-size').value;
+            // Reload table with new page size
+        }
+
+        function viewTransaction(txId) {
+            // Load transaction details
+            document.getElementById('transactionModal').classList.remove('hidden');
+        }
+
+        function downloadReceipt(txId) {
+            showAlert('Téléchargement du reçu PDF...', 'info');
+            // Generate and download PDF receipt
+        }
+
+        function cancelTransaction(txId) {
+            if (confirm('Êtes-vous sûr de vouloir annuler cette transaction?')) {
+                showAlert('Transaction annulée', 'success');
+                // Cancel transaction logic
+            }
+        }
+
+        function exportTransactions() {
+            showAlert('Export des transactions en cours...', 'info');
+            // Export transactions to CSV/Excel
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function copyHash() {
+            const hash = document.getElementById('detail-hash');
+            hash.select();
+            document.execCommand('copy');
+            showAlert('Hash copié!', 'success');
+        }
+
+        function copyAddress() {
+            const address = document.getElementById('detail-address');
+            address.select();
+            document.execCommand('copy');
+            showAlert('Adresse copiée!', 'success');
+        }
+    </script>
+</body>
+</html>
