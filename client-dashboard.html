@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Client - CryptoBoost</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="auth.js"></script>
+    <script src="crypto-api.js"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="crypto-logo mr-3">₿</div>
+                    <div class="text-2xl font-bold brand-text">CryptoBoost</div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="user-name text-sm"></span>
+                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg">Déconnexion</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800 min-h-screen">
+            <nav class="p-6">
+                <ul class="space-y-2">
+                    <li><a href="client-dashboard.html" class="nav-btn bg-blue-600 text-white block px-4 py-2 rounded">Dashboard</a></li>
+                    <li><a href="client-wallets.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Portefeuilles</a></li>
+                    <li><a href="client-transactions.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Transactions</a></li>
+                    <li><a href="client-investments.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Investissements</a></li>
+                    <li><a href="client-profile.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Profil</a></li>
+                    <li><a href="client-support.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Support</a></li>
+                    <li><a href="client-notifications.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Notifications</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Dashboard -->
+        <main class="flex-1 p-8">
+            <h1 class="text-3xl font-bold mb-8">Dashboard Client</h1>
+            
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">Solde Total</h3>
+                    <p class="text-3xl font-bold text-green-400" id="total-balance">€12,450.00</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">Gains Aujourd'hui</h3>
+                    <p class="text-3xl font-bold text-blue-400" id="daily-gains">+€245.30</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">Investissements Actifs</h3>
+                    <p class="text-3xl font-bold text-purple-400" id="active-investments">3</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">ROI Total</h3>
+                    <p class="text-3xl font-bold text-yellow-400" id="total-roi">+18.5%</p>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <button onclick="showDeposit()" class="btn-primary p-4 rounded-lg">💰 Déposer</button>
+                <button onclick="showWithdraw()" class="bg-red-600 hover:bg-red-700 p-4 rounded-lg">💸 Retirer</button>
+                <button onclick="showExchange()" class="bg-purple-600 hover:bg-purple-700 p-4 rounded-lg">🔄 Échanger</button>
+                <button onclick="showInvest()" class="bg-green-600 hover:bg-green-700 p-4 rounded-lg">📈 Investir</button>
+            </div>
+
+            <!-- Portfolio Chart -->
+            <div class="bg-gray-800 rounded-lg p-6 mb-8 glass-effect">
+                <h2 class="text-xl font-bold mb-4">Performance du Portefeuille</h2>
+                <div class="chart-container">
+                    <canvas id="portfolioChart" width="800" height="300"></canvas>
+                </div>
+            </div>
+
+            <!-- Portfolio Holdings -->
+            <div class="bg-gray-800 rounded-lg p-6 mb-8 glass-effect">
+                <h2 class="text-xl font-bold mb-4">Portefeuille</h2>
+                <div class="flex flex-wrap -mx-4">
+                    <div class="w-full md:w-1/2 xl:w-1/3 p-4">
+                        <div class="bg-gray-900 rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold">Bitcoin (BTC)</h3>
+                                <div class="text-2xl">₿</div>
+                            </div>
+                            <p class="text-3xl font-bold text-orange-400">0.12345678 BTC</p>
+                            <p class="text-sm text-gray-400" data-portfolio-crypto="BTC" data-balance="0.12345678">≈ $5,432.10</p>
+                            <div class="mt-2 text-sm">
+                                <span data-crypto="BTC" data-field="price">$43,000</span>
+                                <span class="ml-2" data-crypto="BTC" data-field="change">+2.5%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                <h2 class="text-xl font-bold mb-4">Transactions Récentes</h2>
+                <div class="overflow-x-auto">
+                    <table class="data-table w-full">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Montant</th>
+                                <th>Crypto</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-transactions">
+                            <tr>
+                                <td>2024-01-15 14:30</td>
+                                <td>Dépôt</td>
+                                <td>€1,000.00</td>
+                                <td>BTC</td>
+                                <td><span class="status-badge status-completed">Confirmé</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!protectPage('client')) return;
+            updateUserDisplay();
+            loadDashboardData();
+        });
+
+        function loadDashboardData() {
+            // Load user-specific dashboard data
+            const user = getCurrentUser();
+            // Implementation for loading dashboard data
+        }
+
+        function showDeposit() {
+            window.location.href = 'client-wallets.html?action=deposit';
+        }
+
+        function showWithdraw() {
+            window.location.href = 'client-wallets.html?action=withdraw';
+        }
+
+        function showExchange() {
+            window.location.href = 'client-wallets.html?action=exchange';
+        }
+
+        function showInvest() {
+            window.location.href = 'client-investments.html?action=new';
+        }
+    </script>
+</body>
+</html>

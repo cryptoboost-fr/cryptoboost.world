@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions Admin - CryptoBoost</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="auth.js"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="crypto-logo mr-3">₿</div>
+                    <div class="text-2xl font-bold brand-text">CryptoBoost Admin</div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="user-name text-sm"></span>
+                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg">Déconnexion</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800 min-h-screen">
+            <nav class="p-6">
+                <ul class="space-y-2">
+                    <li><a href="admin.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Dashboard</a></li>
+                    <li><a href="admin-users.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Utilisateurs</a></li>
+                    <li><a href="admin-transactions.html" class="nav-btn bg-blue-600 text-white block px-4 py-2 rounded">Transactions</a></li>
+                    <li><a href="admin-investments.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Investissements</a></li>
+                    <li><a href="admin-wallets.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Portefeuilles</a></li>
+                    <li><a href="admin-reports.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Rapports</a></li>
+                    <li><a href="admin-settings.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Paramètres</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold">Gestion des Transactions</h1>
+                <div class="flex space-x-4">
+                    <button onclick="exportTransactions()" class="btn-secondary px-4 py-2 rounded-lg">Exporter</button>
+                    <button onclick="showBulkActionsModal()" class="btn-primary px-4 py-2 rounded-lg">Actions en Lot</button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">Total Aujourd'hui</h3>
+                    <p class="text-2xl font-bold text-blue-400">$245,680</p>
+                    <p class="text-sm text-green-400">+12.5%</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">En Attente</h3>
+                    <p class="text-2xl font-bold text-yellow-400">23</p>
+                    <p class="text-sm text-gray-400">$45,230</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">Confirmées</h3>
+                    <p class="text-2xl font-bold text-green-400">156</p>
+                    <p class="text-sm text-gray-400">$198,450</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">Échouées</h3>
+                    <p class="text-2xl font-bold text-red-400">8</p>
+                    <p class="text-sm text-gray-400">$2,000</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">Frais Collectés</h3>
+                    <p class="text-2xl font-bold text-purple-400">$1,234</p>
+                    <p class="text-sm text-green-400">+8.2%</p>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-gray-800 rounded-lg p-6 mb-8 glass-effect">
+                <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Recherche</label>
+                        <input type="text" id="search-transactions" class="form-input w-full" placeholder="ID, utilisateur...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Type</label>
+                        <select id="type-filter" class="form-input w-full">
+                            <option value="">Tous</option>
+                            <option value="deposit">Dépôt</option>
+                            <option value="withdraw">Retrait</option>
+                            <option value="exchange">Échange</option>
+                            <option value="investment">Investissement</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Statut</label>
+                        <select id="status-filter" class="form-input w-full">
+                            <option value="">Tous</option>
+                            <option value="pending">En attente</option>
+                            <option value="confirmed">Confirmée</option>
+                            <option value="failed">Échouée</option>
+                            <option value="cancelled">Annulée</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Crypto</label>
+                        <select id="crypto-filter" class="form-input w-full">
+                            <option value="">Toutes</option>
+                            <option value="BTC">Bitcoin</option>
+                            <option value="ETH">Ethereum</option>
+                            <option value="USDT">Tether</option>
+                            <option value="USDC">USD Coin</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Montant Min</label>
+                        <input type="number" id="amount-min" class="form-input w-full" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Date</label>
+                        <input type="date" id="date-filter" class="form-input w-full">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Table -->
+            <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                <div class="overflow-x-auto">
+                    <table class="data-table w-full">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="select-all"></th>
+                                <th>ID Transaction</th>
+                                <th>Utilisateur</th>
+                                <th>Type</th>
+                                <th>Crypto</th>
+                                <th>Montant</th>
+                                <th>Frais</th>
+                                <th>Statut</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactions-table">
+                            <tr>
+                                <td><input type="checkbox" class="transaction-checkbox" data-id="TX001"></td>
+                                <td>TX001</td>
+                                <td>
+                                    <div class="flex items-center">
+                                        <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-2">
+                                            <span class="text-xs font-bold">JD</span>
+                                        </div>
+                                        <span>John Doe</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge status-active">Dépôt</span></td>
+                                <td>BTC</td>
+                                <td>0.5 BTC</td>
+                                <td>$25.00</td>
+                                <td><span class="status-badge status-pending">En attente</span></td>
+                                <td>2024-01-15 14:30</td>
+                                <td>
+                                    <div class="flex space-x-2">
+                                        <button onclick="viewTransaction('TX001')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                        <button onclick="approveTransaction('TX001')" class="text-green-400 hover:text-green-300">Approuver</button>
+                                        <button onclick="rejectTransaction('TX001')" class="text-red-400 hover:text-red-300">Rejeter</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="transaction-checkbox" data-id="TX002"></td>
+                                <td>TX002</td>
+                                <td>
+                                    <div class="flex items-center">
+                                        <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center mr-2">
+                                            <span class="text-xs font-bold">JS</span>
+                                        </div>
+                                        <span>Jane Smith</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge status-failed">Retrait</span></td>
+                                <td>ETH</td>
+                                <td>2.5 ETH</td>
+                                <td>$15.00</td>
+                                <td><span class="status-badge status-active">Confirmée</span></td>
+                                <td>2024-01-15 13:15</td>
+                                <td>
+                                    <div class="flex space-x-2">
+                                        <button onclick="viewTransaction('TX002')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                        <button onclick="downloadReceipt('TX002')" class="text-purple-400 hover:text-purple-300">Reçu</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="transaction-checkbox" data-id="TX003"></td>
+                                <td>TX003</td>
+                                <td>
+                                    <div class="flex items-center">
+                                        <div class="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center mr-2">
+                                            <span class="text-xs font-bold">MB</span>
+                                        </div>
+                                        <span>Mike Brown</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge status-pending">Échange</span></td>
+                                <td>USDT → BTC</td>
+                                <td>$10,000</td>
+                                <td>$10.00</td>
+                                <td><span class="status-badge status-failed">Échouée</span></td>
+                                <td>2024-01-15 12:45</td>
+                                <td>
+                                    <div class="flex space-x-2">
+                                        <button onclick="viewTransaction('TX003')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                        <button onclick="retryTransaction('TX003')" class="text-yellow-400 hover:text-yellow-300">Réessayer</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="flex justify-between items-center mt-6">
+                    <p class="text-gray-400">Affichage de 1-20 sur 1,847 transactions</p>
+                    <div class="flex space-x-2">
+                        <button class="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600">Précédent</button>
+                        <button class="px-3 py-1 bg-blue-600 text-white rounded">1</button>
+                        <button class="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600">2</button>
+                        <button class="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600">3</button>
+                        <button class="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600">Suivant</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Transaction Detail Modal -->
+    <div id="transactionDetailModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-4xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Détails Transaction #<span id="transaction-id">TX001</span></h2>
+                <button onclick="closeModal('transactionDetailModal')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Transaction Info -->
+                <div class="space-y-6">
+                    <div class="bg-gray-700 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4">Informations Générales</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Type:</span>
+                                <span class="status-badge status-active">Dépôt</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Statut:</span>
+                                <span class="status-badge status-pending">En attente</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Utilisateur:</span>
+                                <span>John Doe (#001)</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Date:</span>
+                                <span>15/01/2024 14:30</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-700 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4">Détails Financiers</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Cryptomonnaie:</span>
+                                <span>Bitcoin (BTC)</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Montant:</span>
+                                <span class="text-green-400">0.5 BTC</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Valeur USD:</span>
+                                <span>$21,500.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Frais:</span>
+                                <span>$25.00</span>
+                            </div>
+                            <div class="flex justify-between font-bold">
+                                <span>Total:</span>
+                                <span>$21,525.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Technical Details -->
+                <div class="space-y-6">
+                    <div class="bg-gray-700 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4">Détails Techniques</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <span class="text-gray-400 block">Hash Transaction:</span>
+                                <span class="text-sm font-mono break-all">a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-400 block">Adresse:</span>
+                                <span class="text-sm font-mono break-all">1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Confirmations:</span>
+                                <span>0/6</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Réseau:</span>
+                                <span>Bitcoin Mainnet</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-700 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4">Actions Admin</h3>
+                        <div class="space-y-3">
+                            <button onclick="approveTransaction('TX001')" class="btn-primary w-full">Approuver</button>
+                            <button onclick="rejectTransaction('TX001')" class="btn-danger w-full">Rejeter</button>
+                            <button onclick="addNote('TX001')" class="btn-secondary w-full">Ajouter une Note</button>
+                            <button onclick="downloadReceipt('TX001')" class="btn-secondary w-full">Télécharger Reçu</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Actions Modal -->
+    <div id="bulkActionsModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-lg">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Actions en Lot</h2>
+                <button onclick="closeModal('bulkActionsModal')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <div class="space-y-4">
+                <p class="text-gray-400">Sélectionnez une action à appliquer aux transactions sélectionnées:</p>
+                
+                <div class="space-y-3">
+                    <button onclick="bulkApprove()" class="w-full p-3 bg-green-600 hover:bg-green-700 rounded-lg text-left">
+                        <div class="font-semibold">Approuver Toutes</div>
+                        <div class="text-sm text-green-200">Approuver toutes les transactions sélectionnées</div>
+                    </button>
+                    
+                    <button onclick="bulkReject()" class="w-full p-3 bg-red-600 hover:bg-red-700 rounded-lg text-left">
+                        <div class="font-semibold">Rejeter Toutes</div>
+                        <div class="text-sm text-red-200">Rejeter toutes les transactions sélectionnées</div>
+                    </button>
+                    
+                    <button onclick="bulkExport()" class="w-full p-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-left">
+                        <div class="font-semibold">Exporter Sélection</div>
+                        <div class="text-sm text-blue-200">Exporter les transactions sélectionnées</div>
+                    </button>
+                </div>
+                
+                <button onclick="closeModal('bulkActionsModal')" class="btn-secondary w-full mt-6">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!protectPage('admin')) return;
+            updateUserDisplay();
+            loadTransactions();
+            setupSelectAll();
+        });
+
+        function loadTransactions() {
+            // Load transactions data
+        }
+
+        function setupSelectAll() {
+            document.getElementById('select-all').addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.transaction-checkbox');
+                checkboxes.forEach(cb => cb.checked = this.checked);
+            });
+        }
+
+        function viewTransaction(txId) {
+            document.getElementById('transaction-id').textContent = txId;
+            document.getElementById('transactionDetailModal').classList.remove('hidden');
+        }
+
+        function approveTransaction(txId) {
+            if (confirm('Approuver cette transaction ?')) {
+                showAlert('Transaction approuvée', 'success');
+                closeModal('transactionDetailModal');
+            }
+        }
+
+        function rejectTransaction(txId) {
+            if (confirm('Rejeter cette transaction ?')) {
+                showAlert('Transaction rejetée', 'success');
+                closeModal('transactionDetailModal');
+            }
+        }
+
+        function retryTransaction(txId) {
+            showAlert('Transaction relancée', 'info');
+        }
+
+        function downloadReceipt(txId) {
+            showAlert('Téléchargement du reçu...', 'info');
+        }
+
+        function exportTransactions() {
+            showAlert('Export en cours...', 'info');
+        }
+
+        function showBulkActionsModal() {
+            const selected = document.querySelectorAll('.transaction-checkbox:checked');
+            if (selected.length === 0) {
+                showAlert('Veuillez sélectionner au moins une transaction', 'warning');
+                return;
+            }
+            document.getElementById('bulkActionsModal').classList.remove('hidden');
+        }
+
+        function bulkApprove() {
+            const selected = document.querySelectorAll('.transaction-checkbox:checked');
+            showAlert(`${selected.length} transactions approuvées`, 'success');
+            closeModal('bulkActionsModal');
+        }
+
+        function bulkReject() {
+            const selected = document.querySelectorAll('.transaction-checkbox:checked');
+            if (confirm(`Rejeter ${selected.length} transactions ?`)) {
+                showAlert(`${selected.length} transactions rejetées`, 'success');
+                closeModal('bulkActionsModal');
+            }
+        }
+
+        function bulkExport() {
+            const selected = document.querySelectorAll('.transaction-checkbox:checked');
+            showAlert(`Export de ${selected.length} transactions...`, 'info');
+            closeModal('bulkActionsModal');
+        }
+
+        function addNote(txId) {
+            const note = prompt('Ajouter une note:');
+            if (note) {
+                showAlert('Note ajoutée', 'success');
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

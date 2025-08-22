@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions - CryptoBoost</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="auth.js"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="crypto-logo mr-3">₿</div>
+                    <div class="text-2xl font-bold brand-text">CryptoBoost</div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="user-name text-sm"></span>
+                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg">Déconnexion</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800 min-h-screen">
+            <nav class="p-6">
+                <ul class="space-y-2">
+                    <li><a href="client-dashboard.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Dashboard</a></li>
+                    <li><a href="client-wallets.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Portefeuilles</a></li>
+                    <li><a href="client-transactions.html" class="nav-btn bg-blue-600 text-white block px-4 py-2 rounded">Transactions</a></li>
+                    <li><a href="client-investments.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Investissements</a></li>
+                    <li><a href="client-profile.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Profil</a></li>
+                    <li><a href="client-support.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Support</a></li>
+                    <li><a href="client-notifications.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Notifications</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold">Mes Transactions</h1>
+                <button onclick="exportTransactions()" class="btn-primary px-6 py-2 rounded-lg">📊 Exporter</button>
+            </div>
+
+            <!-- Transaction Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">Total Transactions</h3>
+                    <p class="text-3xl font-bold text-blue-400" id="total-transactions">127</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">Volume Total</h3>
+                    <p class="text-3xl font-bold text-green-400" id="total-volume">€45,230.50</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">En Attente</h3>
+                    <p class="text-3xl font-bold text-yellow-400" id="pending-transactions">3</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">Frais Totaux</h3>
+                    <p class="text-3xl font-bold text-purple-400" id="total-fees">€125.45</p>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-gray-800 rounded-lg p-6 mb-8 glass-effect">
+                <h2 class="text-xl font-bold mb-4">Filtres</h2>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Type</label>
+                        <select id="filter-type" class="form-input w-full">
+                            <option value="">Tous</option>
+                            <option value="deposit">Dépôts</option>
+                            <option value="withdraw">Retraits</option>
+                            <option value="exchange">Échanges</option>
+                            <option value="investment">Investissements</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Crypto</label>
+                        <select id="filter-crypto" class="form-input w-full">
+                            <option value="">Toutes</option>
+                            <option value="BTC">Bitcoin</option>
+                            <option value="ETH">Ethereum</option>
+                            <option value="USDT">Tether</option>
+                            <option value="USDC">USD Coin</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Statut</label>
+                        <select id="filter-status" class="form-input w-full">
+                            <option value="">Tous</option>
+                            <option value="pending">En attente</option>
+                            <option value="completed">Confirmé</option>
+                            <option value="failed">Échoué</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Date de début</label>
+                        <input type="date" id="filter-date-start" class="form-input w-full">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Date de fin</label>
+                        <input type="date" id="filter-date-end" class="form-input w-full">
+                    </div>
+                </div>
+                <div class="mt-4 flex space-x-4">
+                    <button onclick="applyFilters()" class="btn-primary px-6 py-2 rounded-lg">Appliquer</button>
+                    <button onclick="resetFilters()" class="btn-secondary px-6 py-2 rounded-lg">Réinitialiser</button>
+                </div>
+            </div>
+
+            <!-- Transactions Table -->
+            <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold">Historique des Transactions</h2>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-400">Afficher:</span>
+                        <select id="page-size" class="form-input">
+                            <option value="10">10</option>
+                            <option value="25" selected>25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="data-table w-full">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Crypto</th>
+                                <th>Montant</th>
+                                <th>Valeur EUR</th>
+                                <th>Frais</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactions-table">
+                            <tr>
+                                <td>#TX001</td>
+                                <td>2024-01-15 14:30</td>
+                                <td><span class="status-badge status-active">Dépôt</span></td>
+                                <td>
+                                    <div class="flex items-center">
+                                        <div class="crypto-icon btc-icon mr-2">₿</div>
+                                        BTC
+                                    </div>
+                                </td>
+                                <td>0.0345 BTC</td>
+                                <td>€1,000.00</td>
+                                <td>€2.50</td>
+                                <td><span class="status-badge status-completed">Confirmé</span></td>
+                                <td>
+                                    <div class="flex space-x-2">
+                                        <button onclick="viewTransaction('TX001')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                        <button onclick="downloadReceipt('TX001')" class="text-green-400 hover:text-green-300">PDF</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#TX002</td>
+                                <td>2024-01-14 09:15</td>
+                                <td><span class="status-badge status-pending">Échange</span></td>
+                                <td>
+                                    <div class="flex items-center">
+                                        <div class="crypto-icon eth-icon mr-2">Ξ</div>
+                                        ETH → BTC
+                                    </div>
+                                </td>
+                                <td>0.5 ETH</td>
+                                <td>€890.50</td>
+                                <td>€0.89</td>
+                                <td><span class="status-badge status-completed">Confirmé</span></td>
+                                <td>
+                                    <div class="flex space-x-2">
+                                        <button onclick="viewTransaction('TX002')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                        <button onclick="downloadReceipt('TX002')" class="text-green-400 hover:text-green-300">PDF</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#TX003</td>
+                                <td>2024-01-13 16:45</td>
+                                <td><span class="status-badge status-failed">Retrait</span></td>
+                                <td>
+                                    <div class="flex items-center">
+                                        <div class="crypto-icon usdt-icon mr-2">₮</div>
+                                        USDT
+                                    </div>
+                                </td>
+                                <td>500.00 USDT</td>
+                                <td>€500.00</td>
+                                <td>€5.00</td>
+                                <td><span class="status-badge status-pending">En attente</span></td>
+                                <td>
+                                    <div class="flex space-x-2">
+                                        <button onclick="viewTransaction('TX003')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                        <button onclick="cancelTransaction('TX003')" class="text-red-400 hover:text-red-300">Annuler</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex justify-between items-center mt-6">
+                    <div class="text-sm text-gray-400">
+                        Affichage de 1 à 25 sur 127 transactions
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="btn-secondary px-3 py-1 rounded" disabled>Précédent</button>
+                        <button class="btn-primary px-3 py-1 rounded">1</button>
+                        <button class="btn-secondary px-3 py-1 rounded">2</button>
+                        <button class="btn-secondary px-3 py-1 rounded">3</button>
+                        <button class="btn-secondary px-3 py-1 rounded">Suivant</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Transaction Detail Modal -->
+    <div id="transactionModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Détails de la Transaction</h2>
+                <button onclick="closeModal('transactionModal')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <div id="transaction-details" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">ID Transaction</label>
+                        <p class="text-lg font-semibold" id="detail-id">#TX001</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">Date</label>
+                        <p class="text-lg font-semibold" id="detail-date">2024-01-15 14:30</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">Type</label>
+                        <p class="text-lg font-semibold" id="detail-type">Dépôt</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">Statut</label>
+                        <p class="text-lg font-semibold" id="detail-status">Confirmé</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">Cryptomonnaie</label>
+                        <p class="text-lg font-semibold" id="detail-crypto">Bitcoin (BTC)</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">Montant</label>
+                        <p class="text-lg font-semibold" id="detail-amount">0.0345 BTC</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">Valeur EUR</label>
+                        <p class="text-lg font-semibold" id="detail-value">€1,000.00</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400">Frais</label>
+                        <p class="text-lg font-semibold" id="detail-fees">€2.50</p>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2">Hash de Transaction</label>
+                    <div class="flex">
+                        <input type="text" id="detail-hash" class="form-input flex-1" value="0x1234567890abcdef..." readonly>
+                        <button onclick="copyHash()" class="btn-secondary ml-2">Copier</button>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2">Adresse</label>
+                    <div class="flex">
+                        <input type="text" id="detail-address" class="form-input flex-1" value="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa" readonly>
+                        <button onclick="copyAddress()" class="btn-secondary ml-2">Copier</button>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-4 mt-6">
+                    <button onclick="downloadReceipt()" class="btn-primary flex-1">Télécharger le Reçu</button>
+                    <button onclick="closeModal('transactionModal')" class="btn-secondary flex-1">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!protectPage('client')) return;
+            updateUserDisplay();
+            loadTransactions();
+            setupEventListeners();
+        });
+
+        function loadTransactions() {
+            // Load transaction data from API or localStorage
+            updateTransactionStats();
+        }
+
+        function updateTransactionStats() {
+            // Update transaction statistics
+        }
+
+        function setupEventListeners() {
+            document.getElementById('filter-type').addEventListener('change', applyFilters);
+            document.getElementById('filter-crypto').addEventListener('change', applyFilters);
+            document.getElementById('filter-status').addEventListener('change', applyFilters);
+            document.getElementById('page-size').addEventListener('change', changePageSize);
+        }
+
+        function applyFilters() {
+            const type = document.getElementById('filter-type').value;
+            const crypto = document.getElementById('filter-crypto').value;
+            const status = document.getElementById('filter-status').value;
+            const dateStart = document.getElementById('filter-date-start').value;
+            const dateEnd = document.getElementById('filter-date-end').value;
+            
+            // Apply filters to transaction table
+            showAlert('Filtres appliqués', 'success');
+        }
+
+        function resetFilters() {
+            document.getElementById('filter-type').value = '';
+            document.getElementById('filter-crypto').value = '';
+            document.getElementById('filter-status').value = '';
+            document.getElementById('filter-date-start').value = '';
+            document.getElementById('filter-date-end').value = '';
+            applyFilters();
+        }
+
+        function changePageSize() {
+            const pageSize = document.getElementById('page-size').value;
+            // Reload table with new page size
+        }
+
+        function viewTransaction(txId) {
+            // Load transaction details
+            document.getElementById('transactionModal').classList.remove('hidden');
+        }
+
+        function downloadReceipt(txId) {
+            showAlert('Téléchargement du reçu PDF...', 'info');
+            // Generate and download PDF receipt
+        }
+
+        function cancelTransaction(txId) {
+            if (confirm('Êtes-vous sûr de vouloir annuler cette transaction?')) {
+                showAlert('Transaction annulée', 'success');
+                // Cancel transaction logic
+            }
+        }
+
+        function exportTransactions() {
+            showAlert('Export des transactions en cours...', 'info');
+            // Export transactions to CSV/Excel
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function copyHash() {
+            const hash = document.getElementById('detail-hash');
+            hash.select();
+            document.execCommand('copy');
+            showAlert('Hash copié!', 'success');
+        }
+
+        function copyAddress() {
+            const address = document.getElementById('detail-address');
+            address.select();
+            document.execCommand('copy');
+            showAlert('Adresse copiée!', 'success');
+        }
+    </script>
+</body>
+</html>

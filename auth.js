@@ -1,0 +1,537 @@
+// CryptoBoost Authentication & Authorization System
+
+// Authentication Configuration
+const AUTH_CONFIG = {
+    admins: [
+        { 
+            email: 'admin@cryptoboost.com', 
+            password: 'admin123', 
+            name: 'Super Admin', 
+            role: 'admin', 
+            permissions: ['all'],
+            id: 'admin-1'
+        },
+        { 
+            email: 'support@cryptoboost.com', 
+            password: 'support123', 
+            name: 'Support Admin', 
+            role: 'admin', 
+            permissions: ['users', 'transactions', 'support'],
+            id: 'admin-2'
+        }
+    ],
+    clients: [
+        { 
+            email: 'client@cryptoboost.com', 
+            password: 'client123', 
+            name: 'John Doe', 
+            role: 'client', 
+            plan: 'Standard',
+            id: 'client-1'
+        },
+        { 
+            email: 'vip@cryptoboost.com', 
+            password: 'vip123', 
+            name: 'Jane Smith', 
+            role: 'client', 
+            plan: 'VIP',
+            id: 'client-2'
+        },
+        { 
+            email: 'demo@cryptoboost.com', 
+            password: 'demo123', 
+            name: 'Demo User', 
+            role: 'client', 
+            plan: 'Débutant',
+            id: 'client-3'
+        }
+    ]
+};
+
+// Role-based permissions
+const PERMISSIONS = {
+    admin: {
+        all: ['dashboard', 'users', 'transactions', 'investments', 'wallets', 'reports', 'settings'],
+        users: ['users', 'dashboard'],
+        transactions: ['transactions', 'dashboard'],
+        support: ['users', 'transactions', 'dashboard']
+    },
+    client: ['dashboard', 'wallets', 'transactions', 'investments', 'profile', 'support']
+};
+
+// Authentication Functions
+function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    if (!email || !password) {
+        showAlert('Veuillez saisir votre email et mot de passe', 'error');
+        return;
+    }
+    
+    // Check admin credentials
+    const admin = AUTH_CONFIG.admins.find(a => a.email === email && a.password === password);
+    if (admin) {
+        const user = {
+            id: admin.id,
+            email: admin.email,
+            name: admin.name,
+            role: admin.role,
+            permissions: admin.permissions,
+            loginTime: new Date().toISOString()
+        };
+        
+        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('authToken', generateAuthToken(user));
+        
+        showAlert('Connexion admin réussie', 'success');
+        setTimeout(() => {
+            window.location.href = 'admin.html';
+        }, 1000);
+        return;
+    }
+    
+    // Check client credentials
+    const client = AUTH_CONFIG.clients.find(c => c.email === email && c.password === password);
+    if (client) {
+        const user = {
+            id: client.id,
+            email: client.email,
+            name: client.name,
+            role: client.role,
+            plan: client.plan,
+            loginTime: new Date().toISOString()
+        };
+        
+        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('authToken', generateAuthToken(user));
+        
+        showAlert('Connexion réussie', 'success');
+        hideLogin();
+        showDashboard();
+        return;
+    }
+    
+    // Try dynamic users from storage (GitHub DB via Netlify function)
+    fetch('/.netlify/functions/github-db?collection=users&email=' + encodeURIComponent(email))
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            const arr = Array.isArray(data) ? data : (data ? [data] : []);
+            const found = arr.find(u => u && u.email === email && u.password === password);
+
+            if (found) {
+                // Create user object with all necessary fields
+                const user = {
+                    id: found.id || `user_${Date.now()}`,
+                    email: found.email,
+                    name: found.full_name || found.name || found.email.split('@')[0],
+                    role: found.role || 'client',
+                    plan: found.plan || null,
+                    loginTime: new Date().toISOString(),
+                    lastActivity: new Date().toISOString(),
+                    status: found.status || 'active'
+                };
+
+                // Validate user object before saving
+                if (!user.id || !user.email || !user.name || !user.role) {
+                    throw new Error('Invalid user data received');
+                }
+
+                // Save user data
+                try {
+                    localStorage.setItem('user', JSON.stringify(user));
+                    localStorage.setItem('authToken', generateAuthToken(user));
+
+                    console.log('User logged in successfully:', user.email);
+
+                    if (typeof showAlert === 'function') {
+                        showAlert('Connexion réussie', 'success');
+                    }
+
+                    if (typeof hideLogin === 'function') {
+                        hideLogin();
+                    }
+
+                    if (typeof showDashboard === 'function') {
+                        showDashboard();
+                    } else {
+                        // Fallback redirect
+                        setTimeout(() => {
+                            window.location.href = user.role === 'admin' ? 'admin.html' : '#dashboard';
+                        }, 1000);
+                    }
+                } catch (storageError) {
+                    console.log('Storage error:', storageError);
+                    if (typeof showAlert === 'function') {
+                        showAlert('Erreur de sauvegarde de session', 'error');
+                    }
+                }
+            } else {
+                console.log('User not found or invalid credentials');
+                if (typeof showAlert === 'function') {
+                    showAlert('Email ou mot de passe incorrect', 'error');
+                }
+            }
+        })
+        .catch(error => {
+            console.log('Login error:', error);
+            if (typeof showAlert === 'function') {
+                showAlert('Erreur de connexion. Veuillez réessayer.', 'error');
+            }
+        });
+}
+
+function generateAuthToken(user) {
+    return btoa(JSON.stringify({
+        userId: user.id,
+        role: user.role,
+        timestamp: Date.now(),
+        expires: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+    }));
+}
+
+function validateAuth() {
+    try {
+        const user = getCurrentUser();
+        const token = localStorage.getItem('authToken');
+
+        if (!user || !token || !user.id || !user.email) {
+            console.log('Session validation failed: missing user data');
+            return false;
+        }
+
+        // Check token validity
+        try {
+            const tokenData = JSON.parse(atob(token));
+            if (!tokenData.userId || !tokenData.expires || tokenData.userId !== user.id) {
+                console.log('Session validation failed: invalid token');
+                logout();
+                return false;
+            }
+
+            if (tokenData.expires < Date.now()) {
+                console.log('Session expired');
+                logout();
+                return false;
+            }
+
+            // Validate user role
+            if (!user.role || !['admin', 'client'].includes(user.role)) {
+                console.log('Session validation failed: invalid user role');
+                logout();
+                return false;
+            }
+
+            return true;
+        } catch (tokenError) {
+            console.log('Session validation failed: token parsing error', tokenError);
+            logout();
+            return false;
+        }
+    } catch (error) {
+        console.log('Session validation error:', error);
+        logout();
+        return false;
+    }
+}
+
+function getCurrentUser() {
+    try {
+        const userStr = localStorage.getItem('user');
+        if (!userStr) {
+            console.log('No user data found in localStorage');
+            return null;
+        }
+
+        const user = JSON.parse(userStr);
+
+        // Validate user object structure
+        if (!user || typeof user !== 'object') {
+            console.log('Invalid user data structure');
+            return null;
+        }
+
+        // Ensure required fields exist
+        if (!user.id || !user.email || !user.role) {
+            console.log('Missing required user fields');
+            return null;
+        }
+
+        // Add session info if missing
+        if (!user.loginTime) {
+            user.loginTime = new Date().toISOString();
+        }
+
+        // Update last activity
+        user.lastActivity = new Date().toISOString();
+
+        // Persist updated user data
+        try {
+            localStorage.setItem('user', JSON.stringify(user));
+        } catch (storageError) {
+            console.log('Failed to update user session data');
+        }
+
+        return user;
+    } catch (error) {
+        console.log('Error getting current user:', error);
+        return null;
+    }
+}
+
+function hasPermission(permission) {
+    const user = getCurrentUser();
+    if (!user) return false;
+    
+    if (user.role === 'admin') {
+        if (user.permissions.includes('all')) {
+            return true;
+        }
+        
+        // Check specific admin permissions
+        for (const perm of user.permissions) {
+            if (PERMISSIONS.admin[perm] && PERMISSIONS.admin[perm].includes(permission)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    if (user.role === 'client') {
+        return PERMISSIONS.client.includes(permission);
+    }
+    
+    return false;
+}
+
+function requireAuth(redirectUrl = 'index.html') {
+    if (!validateAuth()) {
+        window.location.href = redirectUrl;
+        return false;
+    }
+    return true;
+}
+
+function requireRole(requiredRole) {
+    const user = getCurrentUser();
+    if (!user || user.role !== requiredRole) {
+        showAlert('Accès non autorisé', 'error');
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 2000);
+        return false;
+    }
+    return true;
+}
+
+function requirePermission(permission) {
+    if (!hasPermission(permission)) {
+        showAlert('Vous n\'avez pas les permissions nécessaires', 'error');
+        return false;
+    }
+    return true;
+}
+
+function logout() {
+    try {
+        // Clear all user-related data from localStorage
+        const keysToRemove = ['user', 'authToken', 'cryptoboost_admin', 'cryptoboost_user_data'];
+        keysToRemove.forEach(key => {
+            localStorage.removeItem(key);
+        });
+
+        // Clear sessionStorage as well
+        sessionStorage.clear();
+
+        console.log('User logged out successfully');
+
+        // Show success message
+        if (typeof showAlert === 'function') {
+            showAlert('Déconnexion réussie', 'success');
+        }
+
+        // Redirect with small delay to allow alert to show
+        setTimeout(() => {
+            try {
+                // Force redirect to home page
+                window.location.href = 'index.html';
+                // If redirect doesn't work, try reload
+                setTimeout(() => {
+                    if (window.location.pathname !== '/index.html') {
+                        window.location.reload();
+                    }
+                }, 500);
+            } catch (redirectError) {
+                console.log('Redirect error, forcing reload');
+                window.location.reload();
+            }
+        }, typeof showAlert === 'function' ? 1000 : 100);
+    } catch (error) {
+        console.log('Logout error:', error);
+        // Force reload as fallback
+        window.location.reload();
+    }
+}
+
+// Page Protection
+function protectPage(requiredRole = null, requiredPermission = null) {
+    try {
+        // Check authentication first
+        if (!validateAuth()) {
+            console.log('Page protection: authentication failed');
+            redirectToLogin();
+            return false;
+        }
+
+        // Get current user
+        const user = getCurrentUser();
+        if (!user) {
+            console.log('Page protection: no user found');
+            redirectToLogin();
+            return false;
+        }
+
+        // Check role if specified
+        if (requiredRole && user.role !== requiredRole) {
+            console.log(`Page protection: role ${user.role} does not match required ${requiredRole}`);
+            if (typeof showAlert === 'function') {
+                showAlert('Accès non autorisé', 'error');
+            }
+            setTimeout(() => {
+                window.location.href = user.role === 'admin' ? 'admin.html' : 'index.html';
+            }, 2000);
+            return false;
+        }
+
+        // Check permission if specified
+        if (requiredPermission && !hasPermission(requiredPermission)) {
+            console.log(`Page protection: permission ${requiredPermission} denied`);
+            if (typeof showAlert === 'function') {
+                showAlert('Vous n\'avez pas les permissions nécessaires', 'error');
+            }
+            return false;
+        }
+
+        // Update user activity
+        try {
+            user.lastActivity = new Date().toISOString();
+            localStorage.setItem('user', JSON.stringify(user));
+        } catch (updateError) {
+            console.log('Failed to update user activity');
+        }
+
+        console.log('Page protection: access granted');
+        return true;
+    } catch (error) {
+        console.log('Page protection error:', error);
+        redirectToLogin();
+        return false;
+    }
+}
+
+function redirectToLogin() {
+    try {
+        // Clear any corrupted session data
+        localStorage.removeItem('user');
+        localStorage.removeItem('authToken');
+
+        // Show message if possible
+        if (typeof showAlert === 'function') {
+            showAlert('Votre session a expiré. Veuillez vous reconnecter.', 'warning');
+        }
+
+        // Redirect to login
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, typeof showAlert === 'function' ? 1500 : 100);
+    } catch (redirectError) {
+        console.log('Redirect error:', redirectError);
+        window.location.reload();
+    }
+}
+
+// UI Helper Functions
+function showAlert(message, type = 'info') {
+    // Create alert element
+    const alert = document.createElement('div');
+    alert.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 ${
+        type === 'success' ? 'bg-green-600 text-white' :
+        type === 'error' ? 'bg-red-600 text-white' :
+        type === 'warning' ? 'bg-yellow-600 text-white' :
+        'bg-blue-600 text-white'
+    }`;
+    alert.textContent = message;
+    
+    document.body.appendChild(alert);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        alert.style.opacity = '0';
+        alert.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            document.body.removeChild(alert);
+        }, 300);
+    }, 3000);
+}
+
+function updateUserDisplay() {
+    const user = getCurrentUser();
+    if (!user) return;
+    
+    // Update user name displays
+    const userNameElements = document.querySelectorAll('.user-name');
+    userNameElements.forEach(el => {
+        el.textContent = user.name;
+    });
+    
+    // Update user email displays
+    const userEmailElements = document.querySelectorAll('.user-email');
+    userEmailElements.forEach(el => {
+        el.textContent = user.email;
+    });
+    
+    // Update role displays
+    const userRoleElements = document.querySelectorAll('.user-role');
+    userRoleElements.forEach(el => {
+        el.textContent = user.role === 'admin' ? 'Administrateur' : 'Client';
+    });
+    
+    // Update plan displays for clients
+    if (user.role === 'client' && user.plan) {
+        const userPlanElements = document.querySelectorAll('.user-plan');
+        userPlanElements.forEach(el => {
+            el.textContent = user.plan;
+        });
+    }
+}
+
+// Initialize auth system when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Update user display if logged in
+    if (getCurrentUser()) {
+        updateUserDisplay();
+    }
+    
+    // Add logout handlers
+    const logoutButtons = document.querySelectorAll('[onclick="logout()"]');
+    logoutButtons.forEach(btn => {
+        btn.addEventListener('click', logout);
+    });
+});
+
+// Export functions for global use
+window.login = login;
+window.logout = logout;
+window.getCurrentUser = getCurrentUser;
+window.hasPermission = hasPermission;
+window.requireAuth = requireAuth;
+window.requireRole = requireRole;
+window.requirePermission = requirePermission;
+window.protectPage = protectPage;
+window.showAlert = showAlert;
+window.updateUserDisplay = updateUserDisplay;

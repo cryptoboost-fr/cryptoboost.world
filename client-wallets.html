@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portefeuilles - CryptoBoost</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="auth.js"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="crypto-logo mr-3">₿</div>
+                    <div class="text-2xl font-bold brand-text">CryptoBoost</div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="user-name text-sm"></span>
+                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg">Déconnexion</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800 min-h-screen">
+            <nav class="p-6">
+                <ul class="space-y-2">
+                    <li><a href="client-dashboard.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Dashboard</a></li>
+                    <li><a href="client-wallets.html" class="nav-btn bg-blue-600 text-white block px-4 py-2 rounded">Portefeuilles</a></li>
+                    <li><a href="client-transactions.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Transactions</a></li>
+                    <li><a href="client-investments.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Investissements</a></li>
+                    <li><a href="client-profile.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Profil</a></li>
+                    <li><a href="client-support.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Support</a></li>
+                    <li><a href="client-notifications.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Notifications</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold">Mes Portefeuilles</h1>
+                <div class="space-x-4">
+                    <button onclick="showDepositModal()" class="btn-primary px-6 py-2 rounded-lg">💰 Déposer</button>
+                    <button onclick="showWithdrawModal()" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg">💸 Retirer</button>
+                    <button onclick="showExchangeModal()" class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg">🔄 Échanger</button>
+                </div>
+            </div>
+
+            <!-- Wallet Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect card-hover">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="crypto-icon btc-icon">₿</div>
+                        <span class="text-2xl font-bold">BTC</span>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-2xl font-bold" id="btc-balance">0.2845 BTC</p>
+                        <p class="text-gray-400" id="btc-value">≈ €8,450.30</p>
+                        <p class="text-green-400 text-sm" id="btc-change">+2.45% (24h)</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect card-hover">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="crypto-icon eth-icon">Ξ</div>
+                        <span class="text-2xl font-bold">ETH</span>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-2xl font-bold" id="eth-balance">1.5678 ETH</p>
+                        <p class="text-gray-400" id="eth-value">≈ €2,890.45</p>
+                        <p class="text-green-400 text-sm" id="eth-change">+1.85% (24h)</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect card-hover">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="crypto-icon usdt-icon">₮</div>
+                        <span class="text-2xl font-bold">USDT</span>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-2xl font-bold" id="usdt-balance">850.00 USDT</p>
+                        <p class="text-gray-400" id="usdt-value">≈ €850.00</p>
+                        <p class="text-gray-400 text-sm" id="usdt-change">0.00% (24h)</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect card-hover">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="crypto-icon usdc-icon">$</div>
+                        <span class="text-2xl font-bold">USDC</span>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-2xl font-bold" id="usdc-balance">259.25 USDC</p>
+                        <p class="text-gray-400" id="usdc-value">≈ €259.25</p>
+                        <p class="text-gray-400 text-sm" id="usdc-change">0.00% (24h)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portfolio Distribution -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h2 class="text-xl font-bold mb-4">Répartition du Portefeuille</h2>
+                    <div class="chart-container">
+                        <canvas id="portfolioChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h2 class="text-xl font-bold mb-4">Performance 7 Jours</h2>
+                    <div class="chart-container">
+                        <canvas id="performanceChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction History -->
+            <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold">Historique des Transactions</h2>
+                    <div class="flex space-x-2">
+                        <select id="filter-type" class="form-input">
+                            <option value="">Tous les types</option>
+                            <option value="deposit">Dépôts</option>
+                            <option value="withdraw">Retraits</option>
+                            <option value="exchange">Échanges</option>
+                        </select>
+                        <select id="filter-crypto" class="form-input">
+                            <option value="">Toutes les cryptos</option>
+                            <option value="BTC">Bitcoin</option>
+                            <option value="ETH">Ethereum</option>
+                            <option value="USDT">Tether</option>
+                            <option value="USDC">USD Coin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="data-table w-full">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Crypto</th>
+                                <th>Montant</th>
+                                <th>Valeur EUR</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transaction-history">
+                            <tr>
+                                <td>2024-01-15 14:30</td>
+                                <td><span class="status-badge status-active">Dépôt</span></td>
+                                <td>BTC</td>
+                                <td>0.0345 BTC</td>
+                                <td>€1,000.00</td>
+                                <td><span class="status-badge status-completed">Confirmé</span></td>
+                                <td>
+                                    <button onclick="viewTransaction('tx1')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2024-01-14 09:15</td>
+                                <td><span class="status-badge status-pending">Échange</span></td>
+                                <td>ETH → BTC</td>
+                                <td>0.5 ETH</td>
+                                <td>€890.50</td>
+                                <td><span class="status-badge status-completed">Confirmé</span></td>
+                                <td>
+                                    <button onclick="viewTransaction('tx2')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Deposit Modal -->
+    <div id="depositModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Effectuer un Dépôt</h2>
+                <button onclick="closeModal('depositModal')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <form onsubmit="processDeposit(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Cryptomonnaie</label>
+                        <select id="deposit-crypto" class="form-input w-full" required>
+                            <option value="">Sélectionner une crypto</option>
+                            <option value="BTC">Bitcoin (BTC)</option>
+                            <option value="ETH">Ethereum (ETH)</option>
+                            <option value="USDT">Tether (USDT)</option>
+                            <option value="USDC">USD Coin (USDC)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Montant</label>
+                        <input type="number" id="deposit-amount" class="form-input w-full" step="0.00000001" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Adresse de Dépôt</label>
+                        <div class="flex">
+                            <input type="text" id="deposit-address" class="form-input flex-1" readonly>
+                            <button type="button" onclick="copyAddress()" class="btn-secondary ml-2">Copier</button>
+                        </div>
+                    </div>
+                    <div class="flex space-x-4">
+                        <button type="submit" class="btn-primary flex-1">Confirmer le Dépôt</button>
+                        <button type="button" onclick="closeModal('depositModal')" class="btn-secondary flex-1">Annuler</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div id="withdrawModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Effectuer un Retrait</h2>
+                <button onclick="closeModal('withdrawModal')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <form onsubmit="processWithdraw(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Cryptomonnaie</label>
+                        <select id="withdraw-crypto" class="form-input w-full" required>
+                            <option value="">Sélectionner une crypto</option>
+                            <option value="BTC">Bitcoin (BTC)</option>
+                            <option value="ETH">Ethereum (ETH)</option>
+                            <option value="USDT">Tether (USDT)</option>
+                            <option value="USDC">USD Coin (USDC)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Montant</label>
+                        <input type="number" id="withdraw-amount" class="form-input w-full" step="0.00000001" required>
+                        <p class="text-sm text-gray-400 mt-1">Solde disponible: <span id="available-balance">0</span></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Adresse de Destination</label>
+                        <input type="text" id="withdraw-address" class="form-input w-full" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Frais de Transaction</label>
+                        <p class="text-sm text-gray-400">Frais estimés: <span id="transaction-fee">0.0001 BTC</span></p>
+                    </div>
+                    <div class="flex space-x-4">
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 flex-1 py-2 rounded">Confirmer le Retrait</button>
+                        <button type="button" onclick="closeModal('withdrawModal')" class="btn-secondary flex-1">Annuler</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Exchange Modal -->
+    <div id="exchangeModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Échanger des Cryptos</h2>
+                <button onclick="closeModal('exchangeModal')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <form onsubmit="processExchange(event)">
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">De</label>
+                            <select id="exchange-from" class="form-input w-full" required>
+                                <option value="BTC">Bitcoin (BTC)</option>
+                                <option value="ETH">Ethereum (ETH)</option>
+                                <option value="USDT">Tether (USDT)</option>
+                                <option value="USDC">USD Coin (USDC)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Vers</label>
+                            <select id="exchange-to" class="form-input w-full" required>
+                                <option value="BTC">Bitcoin (BTC)</option>
+                                <option value="ETH">Ethereum (ETH)</option>
+                                <option value="USDT">Tether (USDT)</option>
+                                <option value="USDC">USD Coin (USDC)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Montant à échanger</label>
+                        <input type="number" id="exchange-amount" class="form-input w-full" step="0.00000001" required>
+                    </div>
+                    <div class="bg-gray-700 p-4 rounded-lg">
+                        <p class="text-sm">Taux de change: <span id="exchange-rate">1 BTC = 15.5 ETH</span></p>
+                        <p class="text-sm">Vous recevrez: <span id="exchange-result">~0 ETH</span></p>
+                        <p class="text-sm text-gray-400">Frais: 0.1%</p>
+                    </div>
+                    <div class="flex space-x-4">
+                        <button type="submit" class="bg-purple-600 hover:bg-purple-700 flex-1 py-2 rounded">Confirmer l'Échange</button>
+                        <button type="button" onclick="closeModal('exchangeModal')" class="btn-secondary flex-1">Annuler</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!protectPage('client')) return;
+            updateUserDisplay();
+            loadWalletData();
+            setupEventListeners();
+        });
+
+        function loadWalletData() {
+            // Load wallet balances and transaction history
+            updateBalances();
+            loadTransactionHistory();
+        }
+
+        function updateBalances() {
+            // Update crypto balances from API or localStorage
+        }
+
+        function loadTransactionHistory() {
+            // Load transaction history
+        }
+
+        function setupEventListeners() {
+            document.getElementById('filter-type').addEventListener('change', filterTransactions);
+            document.getElementById('filter-crypto').addEventListener('change', filterTransactions);
+        }
+
+        function showDepositModal() {
+            document.getElementById('depositModal').classList.remove('hidden');
+        }
+
+        function showWithdrawModal() {
+            document.getElementById('withdrawModal').classList.remove('hidden');
+        }
+
+        function showExchangeModal() {
+            document.getElementById('exchangeModal').classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function processDeposit(event) {
+            event.preventDefault();
+            const crypto = document.getElementById('deposit-crypto').value;
+            const amount = document.getElementById('deposit-amount').value;
+            
+            showAlert('Dépôt initié avec succès. Veuillez envoyer vos fonds à l\'adresse fournie.', 'success');
+            closeModal('depositModal');
+        }
+
+        function processWithdraw(event) {
+            event.preventDefault();
+            const crypto = document.getElementById('withdraw-crypto').value;
+            const amount = document.getElementById('withdraw-amount').value;
+            const address = document.getElementById('withdraw-address').value;
+            
+            showAlert('Demande de retrait soumise. Elle sera traitée sous 24h.', 'success');
+            closeModal('withdrawModal');
+        }
+
+        function processExchange(event) {
+            event.preventDefault();
+            const fromCrypto = document.getElementById('exchange-from').value;
+            const toCrypto = document.getElementById('exchange-to').value;
+            const amount = document.getElementById('exchange-amount').value;
+            
+            showAlert('Échange effectué avec succès!', 'success');
+            closeModal('exchangeModal');
+        }
+
+        function copyAddress() {
+            const address = document.getElementById('deposit-address');
+            address.select();
+            document.execCommand('copy');
+            showAlert('Adresse copiée!', 'success');
+        }
+
+        function filterTransactions() {
+            // Filter transaction history based on selected filters
+        }
+
+        function viewTransaction(txId) {
+            showAlert('Détails de la transaction: ' + txId, 'info');
+        }
+    </script>
+</body>
+</html>

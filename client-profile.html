@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil - CryptoBoost</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="auth.js"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="crypto-logo mr-3">₿</div>
+                    <div class="text-2xl font-bold brand-text">CryptoBoost</div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="user-name text-sm"></span>
+                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg">Déconnexion</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800 min-h-screen">
+            <nav class="p-6">
+                <ul class="space-y-2">
+                    <li><a href="client-dashboard.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Dashboard</a></li>
+                    <li><a href="client-wallets.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Portefeuilles</a></li>
+                    <li><a href="client-transactions.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Transactions</a></li>
+                    <li><a href="client-investments.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Investissements</a></li>
+                    <li><a href="client-profile.html" class="nav-btn bg-blue-600 text-white block px-4 py-2 rounded">Profil</a></li>
+                    <li><a href="client-support.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Support</a></li>
+                    <li><a href="client-notifications.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Notifications</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <h1 class="text-3xl font-bold mb-8">Mon Profil</h1>
+
+            <!-- Profile Overview -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <div class="text-center">
+                        <div class="crypto-logo-large mx-auto mb-4">👤</div>
+                        <h2 class="text-xl font-bold user-name mb-2">John Doe</h2>
+                        <p class="text-gray-400 user-email mb-4">client@cryptoboost.com</p>
+                        <span class="status-badge status-active user-plan">Standard</span>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400 mb-4">Statistiques du Compte</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span>Membre depuis:</span>
+                            <span class="font-semibold">Mars 2023</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Dernière connexion:</span>
+                            <span class="font-semibold">Aujourd'hui</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Transactions totales:</span>
+                            <span class="font-semibold">127</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Investissements actifs:</span>
+                            <span class="font-semibold">3</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400 mb-4">Niveau de Vérification</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span>Email</span>
+                            <span class="status-badge status-completed">✓ Vérifié</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Téléphone</span>
+                            <span class="status-badge status-completed">✓ Vérifié</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Identité</span>
+                            <span class="status-badge status-pending">En attente</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Adresse</span>
+                            <span class="status-badge status-failed">Non vérifié</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Tabs -->
+            <div class="bg-gray-800 rounded-lg glass-effect">
+                <div class="border-b border-gray-700">
+                    <nav class="flex space-x-8 px-6">
+                        <button onclick="showTab('personal')" class="tab-btn active py-4 px-2 border-b-2 border-blue-500 text-blue-400">Informations Personnelles</button>
+                        <button onclick="showTab('security')" class="tab-btn py-4 px-2 border-b-2 border-transparent hover:text-blue-400">Sécurité</button>
+                        <button onclick="showTab('preferences')" class="tab-btn py-4 px-2 border-b-2 border-transparent hover:text-blue-400">Préférences</button>
+                        <button onclick="showTab('verification')" class="tab-btn py-4 px-2 border-b-2 border-transparent hover:text-blue-400">Vérification</button>
+                    </nav>
+                </div>
+
+                <!-- Personal Information Tab -->
+                <div id="personal-tab" class="tab-content p-6">
+                    <h2 class="text-xl font-bold mb-6">Informations Personnelles</h2>
+                    <form onsubmit="updatePersonalInfo(event)">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Prénom</label>
+                                <input type="text" id="first-name" class="form-input w-full" value="John" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Nom</label>
+                                <input type="text" id="last-name" class="form-input w-full" value="Doe" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Email</label>
+                                <input type="email" id="email" class="form-input w-full" value="client@cryptoboost.com" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Téléphone</label>
+                                <input type="tel" id="phone" class="form-input w-full" value="+33 6 12 34 56 78">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Date de Naissance</label>
+                                <input type="date" id="birth-date" class="form-input w-full" value="1990-01-15">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Nationalité</label>
+                                <select id="nationality" class="form-input w-full">
+                                    <option value="FR" selected>France</option>
+                                    <option value="BE">Belgique</option>
+                                    <option value="CH">Suisse</option>
+                                    <option value="CA">Canada</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium mb-2">Adresse</label>
+                                <input type="text" id="address" class="form-input w-full" value="123 Rue de la Paix">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Ville</label>
+                                <input type="text" id="city" class="form-input w-full" value="Paris">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Code Postal</label>
+                                <input type="text" id="postal-code" class="form-input w-full" value="75001">
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <button type="submit" class="btn-primary px-6 py-2 rounded-lg">Sauvegarder</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Security Tab -->
+                <div id="security-tab" class="tab-content p-6 hidden">
+                    <h2 class="text-xl font-bold mb-6">Sécurité</h2>
+                    
+                    <!-- Change Password -->
+                    <div class="bg-gray-700 rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-semibold mb-4">Changer le Mot de Passe</h3>
+                        <form onsubmit="changePassword(event)">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Mot de passe actuel</label>
+                                    <input type="password" id="current-password" class="form-input w-full" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Nouveau mot de passe</label>
+                                    <input type="password" id="new-password" class="form-input w-full" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Confirmer le nouveau mot de passe</label>
+                                    <input type="password" id="confirm-password" class="form-input w-full" required>
+                                </div>
+                                <button type="submit" class="btn-primary px-6 py-2 rounded-lg">Changer le Mot de Passe</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Two-Factor Authentication -->
+                    <div class="bg-gray-700 rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-semibold mb-4">Authentification à Deux Facteurs (2FA)</h3>
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <p class="font-medium">Authentification par SMS</p>
+                                <p class="text-sm text-gray-400">Recevez un code par SMS lors de la connexion</p>
+                            </div>
+                            <button onclick="toggle2FA('sms')" class="btn-primary px-4 py-2 rounded-lg">Activer</button>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="font-medium">Application d'Authentification</p>
+                                <p class="text-sm text-gray-400">Utilisez Google Authenticator ou similaire</p>
+                            </div>
+                            <button onclick="toggle2FA('app')" class="btn-secondary px-4 py-2 rounded-lg">Configurer</button>
+                        </div>
+                    </div>
+
+                    <!-- Login History -->
+                    <div class="bg-gray-700 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4">Historique des Connexions</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="font-medium">Paris, France</p>
+                                    <p class="text-sm text-gray-400">Chrome sur Windows • IP: 192.168.1.1</p>
+                                </div>
+                                <span class="text-sm text-green-400">Maintenant</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="font-medium">Paris, France</p>
+                                    <p class="text-sm text-gray-400">Mobile Safari sur iPhone • IP: 192.168.1.2</p>
+                                </div>
+                                <span class="text-sm text-gray-400">Il y a 2h</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preferences Tab -->
+                <div id="preferences-tab" class="tab-content p-6 hidden">
+                    <h2 class="text-xl font-bold mb-6">Préférences</h2>
+                    
+                    <!-- Notification Settings -->
+                    <div class="bg-gray-700 rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-semibold mb-4">Notifications</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">Notifications Email</p>
+                                    <p class="text-sm text-gray-400">Recevez des mises à jour par email</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="email-notifications" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">Notifications SMS</p>
+                                    <p class="text-sm text-gray-400">Recevez des alertes importantes par SMS</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="sms-notifications">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">Notifications Push</p>
+                                    <p class="text-sm text-gray-400">Notifications dans le navigateur</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="push-notifications" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Display Settings -->
+                    <div class="bg-gray-700 rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-semibold mb-4">Affichage</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Langue</label>
+                                <select id="language" class="form-input w-full">
+                                    <option value="fr" selected>Français</option>
+                                    <option value="en">English</option>
+                                    <option value="es">Español</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Devise</label>
+                                <select id="currency" class="form-input w-full">
+                                    <option value="EUR" selected>Euro (€)</option>
+                                    <option value="USD">Dollar US ($)</option>
+                                    <option value="GBP">Livre Sterling (£)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Fuseau Horaire</label>
+                                <select id="timezone" class="form-input w-full">
+                                    <option value="Europe/Paris" selected>Europe/Paris (CET)</option>
+                                    <option value="America/New_York">America/New_York (EST)</option>
+                                    <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Format de Date</label>
+                                <select id="date-format" class="form-input w-full">
+                                    <option value="DD/MM/YYYY" selected>DD/MM/YYYY</option>
+                                    <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                    <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trading Preferences -->
+                    <div class="bg-gray-700 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4">Préférences de Trading</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">Trading Automatique</p>
+                                    <p class="text-sm text-gray-400">Permettre au bot de trader automatiquement</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="auto-trading" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Niveau de Risque</label>
+                                <select id="risk-level" class="form-input w-full">
+                                    <option value="low">Faible</option>
+                                    <option value="medium" selected>Modéré</option>
+                                    <option value="high">Élevé</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verification Tab -->
+                <div id="verification-tab" class="tab-content p-6 hidden">
+                    <h2 class="text-xl font-bold mb-6">Vérification d'Identité</h2>
+                    
+                    <!-- Verification Steps -->
+                    <div class="space-y-6">
+                        <div class="bg-gray-700 rounded-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold">1. Vérification Email</h3>
+                                <span class="status-badge status-completed">✓ Complété</span>
+                            </div>
+                            <p class="text-gray-400">Votre adresse email a été vérifiée avec succès.</p>
+                        </div>
+
+                        <div class="bg-gray-700 rounded-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold">2. Vérification Téléphone</h3>
+                                <span class="status-badge status-completed">✓ Complété</span>
+                            </div>
+                            <p class="text-gray-400">Votre numéro de téléphone a été vérifié.</p>
+                        </div>
+
+                        <div class="bg-gray-700 rounded-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold">3. Vérification d'Identité</h3>
+                                <span class="status-badge status-pending">En attente</span>
+                            </div>
+                            <p class="text-gray-400 mb-4">Téléchargez une pièce d'identité valide pour augmenter vos limites.</p>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Type de Document</label>
+                                    <select id="document-type" class="form-input w-full">
+                                        <option value="">Sélectionner un type</option>
+                                        <option value="passport">Passeport</option>
+                                        <option value="id-card">Carte d'Identité</option>
+                                        <option value="driving-license">Permis de Conduire</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Recto du Document</label>
+                                    <input type="file" id="document-front" class="form-input w-full" accept="image/*">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Verso du Document</label>
+                                    <input type="file" id="document-back" class="form-input w-full" accept="image/*">
+                                </div>
+                                <button onclick="submitVerification()" class="btn-primary px-6 py-2 rounded-lg">Soumettre pour Vérification</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-700 rounded-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold">4. Vérification d'Adresse</h3>
+                                <span class="status-badge status-failed">Non vérifié</span>
+                            </div>
+                            <p class="text-gray-400 mb-4">Téléchargez un justificatif de domicile récent (moins de 3 mois).</p>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Type de Justificatif</label>
+                                    <select id="address-document-type" class="form-input w-full">
+                                        <option value="">Sélectionner un type</option>
+                                        <option value="utility-bill">Facture d'Électricité/Gaz</option>
+                                        <option value="bank-statement">Relevé Bancaire</option>
+                                        <option value="tax-notice">Avis d'Imposition</option>
+                                        <option value="rent-receipt">Quittance de Loyer</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Document</label>
+                                    <input type="file" id="address-document" class="form-input w-full" accept="image/*,application/pdf">
+                                </div>
+                                <button onclick="submitAddressVerification()" class="btn-primary px-6 py-2 rounded-lg">Soumettre pour Vérification</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!protectPage('client')) return;
+            updateUserDisplay();
+            loadProfileData();
+        });
+
+        function loadProfileData() {
+            const user = getCurrentUser();
+            if (user) {
+                document.getElementById('first-name').value = user.name.split(' ')[0] || '';
+                document.getElementById('last-name').value = user.name.split(' ')[1] || '';
+                document.getElementById('email').value = user.email || '';
+            }
+        }
+
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'border-blue-500', 'text-blue-400');
+                btn.classList.add('border-transparent');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+            
+            // Add active class to selected button
+            event.target.classList.add('active', 'border-blue-500', 'text-blue-400');
+            event.target.classList.remove('border-transparent');
+        }
+
+        function updatePersonalInfo(event) {
+            event.preventDefault();
+            showAlert('Informations personnelles mises à jour avec succès!', 'success');
+        }
+
+        function changePassword(event) {
+            event.preventDefault();
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (newPassword !== confirmPassword) {
+                showAlert('Les mots de passe ne correspondent pas!', 'error');
+                return;
+            }
+            
+            showAlert('Mot de passe changé avec succès!', 'success');
+            event.target.reset();
+        }
+
+        function toggle2FA(type) {
+            if (type === 'sms') {
+                showAlert('2FA par SMS activé. Un code de vérification a été envoyé.', 'success');
+            } else {
+                showAlert('Configuration de l\'application d\'authentification...', 'info');
+            }
+        }
+
+        function submitVerification() {
+            const documentType = document.getElementById('document-type').value;
+            const frontFile = document.getElementById('document-front').files[0];
+            const backFile = document.getElementById('document-back').files[0];
+            
+            if (!documentType || !frontFile) {
+                showAlert('Veuillez sélectionner un type de document et télécharger au moins le recto.', 'error');
+                return;
+            }
+            
+            showAlert('Documents soumis pour vérification. Vous recevrez une réponse sous 24-48h.', 'success');
+        }
+
+        function submitAddressVerification() {
+            const documentType = document.getElementById('address-document-type').value;
+            const file = document.getElementById('address-document').files[0];
+            
+            if (!documentType || !file) {
+                showAlert('Veuillez sélectionner un type de document et télécharger le fichier.', 'error');
+                return;
+            }
+            
+            showAlert('Justificatif de domicile soumis pour vérification.', 'success');
+        }
+    </script>
+
+    <style>
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #374151;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #3B82F6;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .tab-btn.active {
+            border-color: #3B82F6 !important;
+            color: #60A5FA !important;
+        }
+    </style>
+</body>
+</html>

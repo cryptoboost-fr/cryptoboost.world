@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investissements - CryptoBoost</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="auth.js"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="crypto-logo mr-3">₿</div>
+                    <div class="text-2xl font-bold brand-text">CryptoBoost</div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="user-name text-sm"></span>
+                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg">Déconnexion</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800 min-h-screen">
+            <nav class="p-6">
+                <ul class="space-y-2">
+                    <li><a href="client-dashboard.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Dashboard</a></li>
+                    <li><a href="client-wallets.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Portefeuilles</a></li>
+                    <li><a href="client-transactions.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Transactions</a></li>
+                    <li><a href="client-investments.html" class="nav-btn bg-blue-600 text-white block px-4 py-2 rounded">Investissements</a></li>
+                    <li><a href="client-profile.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Profil</a></li>
+                    <li><a href="client-support.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Support</a></li>
+                    <li><a href="client-notifications.html" class="nav-btn hover:bg-gray-700 block px-4 py-2 rounded">Notifications</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold">Mes Investissements</h1>
+                <button onclick="showNewInvestmentModal()" class="btn-primary px-6 py-2 rounded-lg">📈 Nouvel Investissement</button>
+            </div>
+
+            <!-- Investment Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">Capital Investi</h3>
+                    <p class="text-3xl font-bold text-blue-400" id="total-invested">€8,500.00</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">Valeur Actuelle</h3>
+                    <p class="text-3xl font-bold text-green-400" id="current-value">€10,075.50</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">Gains Totaux</h3>
+                    <p class="text-3xl font-bold text-purple-400" id="total-gains">+€1,575.50</p>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                    <h3 class="text-lg font-semibold text-gray-400">ROI Moyen</h3>
+                    <p class="text-3xl font-bold text-yellow-400" id="average-roi">+18.5%</p>
+                </div>
+            </div>
+
+            <!-- Investment Plans -->
+            <div class="bg-gray-800 rounded-lg p-6 mb-8 glass-effect">
+                <h2 class="text-xl font-bold mb-6">Plans d'Investissement Disponibles</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-gray-700 rounded-lg p-6 card-hover border-2 border-transparent hover:border-green-500">
+                        <div class="text-center">
+                            <h3 class="text-xl font-bold text-green-400 mb-2">Débutant</h3>
+                            <p class="text-3xl font-bold mb-4">5-8%</p>
+                            <p class="text-gray-300 mb-4">Rendement annuel</p>
+                            <div class="space-y-2 text-sm text-gray-400 mb-6">
+                                <p>• Minimum: €250</p>
+                                <p>• Durée: 3-6 mois</p>
+                                <p>• Risque: Faible</p>
+                                <p>• Retrait: Flexible</p>
+                            </div>
+                            <button onclick="selectPlan('debutant')" class="btn-primary w-full">Choisir</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-700 rounded-lg p-6 card-hover border-2 border-transparent hover:border-blue-500">
+                        <div class="text-center">
+                            <h3 class="text-xl font-bold text-blue-400 mb-2">Standard</h3>
+                            <p class="text-3xl font-bold mb-4">8-12%</p>
+                            <p class="text-gray-300 mb-4">Rendement annuel</p>
+                            <div class="space-y-2 text-sm text-gray-400 mb-6">
+                                <p>• Minimum: €1,000</p>
+                                <p>• Durée: 6-12 mois</p>
+                                <p>• Risque: Modéré</p>
+                                <p>• Retrait: 30 jours</p>
+                            </div>
+                            <button onclick="selectPlan('standard')" class="btn-primary w-full">Choisir</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-700 rounded-lg p-6 card-hover border-2 border-transparent hover:border-purple-500">
+                        <div class="text-center">
+                            <h3 class="text-xl font-bold text-purple-400 mb-2">Premium</h3>
+                            <p class="text-3xl font-bold mb-4">12-18%</p>
+                            <p class="text-gray-300 mb-4">Rendement annuel</p>
+                            <div class="space-y-2 text-sm text-gray-400 mb-6">
+                                <p>• Minimum: €5,000</p>
+                                <p>• Durée: 12-24 mois</p>
+                                <p>• Risque: Élevé</p>
+                                <p>• Retrait: 60 jours</p>
+                            </div>
+                            <button onclick="selectPlan('premium')" class="btn-primary w-full">Choisir</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-700 rounded-lg p-6 card-hover border-2 border-transparent hover:border-yellow-500">
+                        <div class="text-center">
+                            <h3 class="text-xl font-bold text-yellow-400 mb-2">VIP</h3>
+                            <p class="text-3xl font-bold mb-4">18-25%</p>
+                            <p class="text-gray-300 mb-4">Rendement annuel</p>
+                            <div class="space-y-2 text-sm text-gray-400 mb-6">
+                                <p>• Minimum: €25,000</p>
+                                <p>• Durée: 24+ mois</p>
+                                <p>• Risque: Très élevé</p>
+                                <p>• Retrait: 90 jours</p>
+                            </div>
+                            <button onclick="selectPlan('vip')" class="btn-primary w-full">Choisir</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Investments -->
+            <div class="bg-gray-800 rounded-lg p-6 mb-8 glass-effect">
+                <h2 class="text-xl font-bold mb-4">Investissements Actifs</h2>
+                <div class="overflow-x-auto">
+                    <table class="data-table w-full">
+                        <thead>
+                            <tr>
+                                <th>Plan</th>
+                                <th>Montant Initial</th>
+                                <th>Valeur Actuelle</th>
+                                <th>Gains</th>
+                                <th>ROI</th>
+                                <th>Date Début</th>
+                                <th>Date Fin</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="active-investments">
+                            <tr>
+                                <td><span class="status-badge status-active">Standard</span></td>
+                                <td>€3,000.00</td>
+                                <td>€3,450.00</td>
+                                <td class="text-green-400">+€450.00</td>
+                                <td class="text-green-400">+15.0%</td>
+                                <td>2023-07-15</td>
+                                <td>2024-07-15</td>
+                                <td><span class="status-badge status-completed">Actif</span></td>
+                                <td>
+                                    <div class="flex space-x-2">
+                                        <button onclick="viewInvestment('INV001')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                        <button onclick="withdrawInvestment('INV001')" class="text-red-400 hover:text-red-300">Retirer</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="status-badge status-pending">Premium</span></td>
+                                <td>€5,000.00</td>
+                                <td>€6,125.50</td>
+                                <td class="text-green-400">+€1,125.50</td>
+                                <td class="text-green-400">+22.5%</td>
+                                <td>2023-03-10</td>
+                                <td>2025-03-10</td>
+                                <td><span class="status-badge status-completed">Actif</span></td>
+                                <td>
+                                    <div class="flex space-x-2">
+                                        <button onclick="viewInvestment('INV002')" class="text-blue-400 hover:text-blue-300">Voir</button>
+                                        <button onclick="withdrawInvestment('INV002')" class="text-red-400 hover:text-red-300">Retirer</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Investment History -->
+            <div class="bg-gray-800 rounded-lg p-6 glass-effect">
+                <h2 class="text-xl font-bold mb-4">Historique des Investissements</h2>
+                <div class="overflow-x-auto">
+                    <table class="data-table w-full">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Plan</th>
+                                <th>Montant</th>
+                                <th>Gains Finaux</th>
+                                <th>ROI Final</th>
+                                <th>Date Début</th>
+                                <th>Date Fin</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody id="investment-history">
+                            <tr>
+                                <td>#INV003</td>
+                                <td><span class="status-badge status-active">Débutant</span></td>
+                                <td>€500.00</td>
+                                <td class="text-green-400">+€35.00</td>
+                                <td class="text-green-400">+7.0%</td>
+                                <td>2023-01-15</td>
+                                <td>2023-07-15</td>
+                                <td><span class="status-badge status-completed">Terminé</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Investment Modal -->
+    <div id="newInvestmentModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Nouvel Investissement</h2>
+                <button onclick="closeModal('newInvestmentModal')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <form onsubmit="createInvestment(event)">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Plan d'Investissement</label>
+                        <select id="investment-plan" class="form-input w-full" required>
+                            <option value="">Sélectionner un plan</option>
+                            <option value="debutant">Débutant (5-8% annuel)</option>
+                            <option value="standard">Standard (8-12% annuel)</option>
+                            <option value="premium">Premium (12-18% annuel)</option>
+                            <option value="vip">VIP (18-25% annuel)</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Montant d'Investissement</label>
+                        <input type="number" id="investment-amount" class="form-input w-full" min="250" step="0.01" required>
+                        <p class="text-sm text-gray-400 mt-1">Montant minimum: <span id="min-amount">€250</span></p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Durée d'Investissement</label>
+                        <select id="investment-duration" class="form-input w-full" required>
+                            <option value="">Sélectionner la durée</option>
+                            <option value="3">3 mois</option>
+                            <option value="6">6 mois</option>
+                            <option value="12">12 mois</option>
+                            <option value="24">24 mois</option>
+                        </select>
+                    </div>
+                    
+                    <div class="bg-gray-700 p-4 rounded-lg">
+                        <h3 class="font-bold mb-2">Estimation des Gains</h3>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-gray-400">Rendement estimé:</p>
+                                <p class="font-bold text-green-400" id="estimated-return">€0.00</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-400">ROI estimé:</p>
+                                <p class="font-bold text-blue-400" id="estimated-roi">0%</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" id="accept-terms" class="mr-3" required>
+                        <label for="accept-terms" class="text-sm">
+                            J'accepte les <a href="#" class="text-blue-400 hover:text-blue-300">conditions d'investissement</a> et je comprends les risques associés.
+                        </label>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <button type="submit" class="btn-primary flex-1">Créer l'Investissement</button>
+                        <button type="button" onclick="closeModal('newInvestmentModal')" class="btn-secondary flex-1">Annuler</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Investment Detail Modal -->
+    <div id="investmentDetailModal" class="modal-overlay hidden">
+        <div class="modal-content max-w-3xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Détails de l'Investissement</h2>
+                <button onclick="closeModal('investmentDetailModal')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <div id="investment-details" class="space-y-6">
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">ID Investissement</label>
+                            <p class="text-lg font-semibold" id="detail-inv-id">#INV001</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Plan</label>
+                            <p class="text-lg font-semibold" id="detail-inv-plan">Standard</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Montant Initial</label>
+                            <p class="text-lg font-semibold" id="detail-inv-amount">€3,000.00</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Date de Début</label>
+                            <p class="text-lg font-semibold" id="detail-inv-start">2023-07-15</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Valeur Actuelle</label>
+                            <p class="text-lg font-semibold text-green-400" id="detail-inv-current">€3,450.00</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Gains Actuels</label>
+                            <p class="text-lg font-semibold text-green-400" id="detail-inv-gains">+€450.00</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">ROI Actuel</label>
+                            <p class="text-lg font-semibold text-green-400" id="detail-inv-roi">+15.0%</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400">Date de Fin</label>
+                            <p class="text-lg font-semibold" id="detail-inv-end">2024-07-15</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Performance Historique</h3>
+                    <div class="chart-container">
+                        <canvas id="investmentChart" width="600" height="300"></canvas>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <button onclick="downloadInvestmentReport()" class="btn-primary flex-1">Télécharger le Rapport</button>
+                    <button onclick="closeModal('investmentDetailModal')" class="btn-secondary flex-1">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!protectPage('client')) return;
+            updateUserDisplay();
+            loadInvestments();
+            setupEventListeners();
+        });
+
+        function loadInvestments() {
+            // Load investment data
+            updateInvestmentStats();
+        }
+
+        function updateInvestmentStats() {
+            // Update investment statistics
+        }
+
+        function setupEventListeners() {
+            document.getElementById('investment-plan').addEventListener('change', updateInvestmentEstimation);
+            document.getElementById('investment-amount').addEventListener('input', updateInvestmentEstimation);
+            document.getElementById('investment-duration').addEventListener('change', updateInvestmentEstimation);
+        }
+
+        function selectPlan(planType) {
+            showNewInvestmentModal();
+            document.getElementById('investment-plan').value = planType;
+            updateInvestmentEstimation();
+        }
+
+        function showNewInvestmentModal() {
+            document.getElementById('newInvestmentModal').classList.remove('hidden');
+        }
+
+        function updateInvestmentEstimation() {
+            const plan = document.getElementById('investment-plan').value;
+            const amount = parseFloat(document.getElementById('investment-amount').value) || 0;
+            const duration = parseInt(document.getElementById('investment-duration').value) || 0;
+            
+            const rates = {
+                debutant: { min: 5, max: 8, minAmount: 250 },
+                standard: { min: 8, max: 12, minAmount: 1000 },
+                premium: { min: 12, max: 18, minAmount: 5000 },
+                vip: { min: 18, max: 25, minAmount: 25000 }
+            };
+            
+            if (plan && rates[plan]) {
+                document.getElementById('min-amount').textContent = `€${rates[plan].minAmount}`;
+                
+                if (amount >= rates[plan].minAmount && duration > 0) {
+                    const avgRate = (rates[plan].min + rates[plan].max) / 2;
+                    const estimatedReturn = (amount * avgRate / 100) * (duration / 12);
+                    const roi = (estimatedReturn / amount) * 100;
+                    
+                    document.getElementById('estimated-return').textContent = `€${estimatedReturn.toFixed(2)}`;
+                    document.getElementById('estimated-roi').textContent = `${roi.toFixed(1)}%`;
+                }
+            }
+        }
+
+        function createInvestment(event) {
+            event.preventDefault();
+            
+            const plan = document.getElementById('investment-plan').value;
+            const amount = document.getElementById('investment-amount').value;
+            const duration = document.getElementById('investment-duration').value;
+            
+            showAlert('Investissement créé avec succès!', 'success');
+            closeModal('newInvestmentModal');
+            
+            // Reload investments
+            setTimeout(() => {
+                loadInvestments();
+            }, 1000);
+        }
+
+        function viewInvestment(invId) {
+            // Load investment details
+            document.getElementById('investmentDetailModal').classList.remove('hidden');
+        }
+
+        function withdrawInvestment(invId) {
+            if (confirm('Êtes-vous sûr de vouloir retirer cet investissement? Des frais peuvent s\'appliquer.')) {
+                showAlert('Demande de retrait soumise. Elle sera traitée sous 24-48h.', 'success');
+            }
+        }
+
+        function downloadInvestmentReport() {
+            showAlert('Téléchargement du rapport d\'investissement...', 'info');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
