@@ -1,4 +1,4 @@
-// CoinAPI Integration for CryptoBoost
+// Enhanced CoinAPI Integration
 const COINAPI_KEY = process.env.COINAPI_KEY;
 const COINAPI_BASE = 'https://rest.coinapi.io/v1';
 
@@ -8,6 +8,37 @@ let ratesCache = {
     timestamp: 0,
     ttl: 5 * 60 * 1000 // 5 minutes
 };
+
+class CryptoBoostApp {
+    constructor() {
+        this.currentUser = null;
+        this.isAuthenticated = false;
+        this.lastActivity = Date.now();
+    }
+
+    showDashboard() {
+        if (!this.isAuthenticated) {
+            throw new Error('Not authenticated');
+        }
+        return {
+            user: this.currentUser,
+            status: 'success',
+            data: this.currentUser ? this.currentUser.dashboard : null
+        };
+    }
+
+    validateAuth(token) {
+        // Méthode pour valider l'authentification
+        return token && token.length > 0;
+    }
+
+    getCurrentUser() {
+        // Méthode pour obtenir l'utilisateur courant
+        return this.currentUser;
+    }
+}
+
+const app = new CryptoBoostApp();
 
 exports.handler = async (event, context) => {
     const headers = {

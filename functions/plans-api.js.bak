@@ -1,0 +1,104 @@
+// Plans API Entry Point
+const router = require('./plans-routing');
+const { getCachedData, updateCache, CACHE_KEYS } = require('./local-cache');
+
+// Default plans for initialization
+const DEFAULT_PLANS = {
+    "beginner": {
+        id: "beginner",
+        name: "Débutant",
+        returns: "5-8%",
+        features: [
+            "Trading automatique",
+            "Support 24/7",
+            "Rapports mensuels"
+        ],
+        minInvestment: 100
+    },
+    "standard": {
+        id: "standard",
+        name: "Standard",
+        returns: "8-12%",
+        features: [
+            "IA avancée",
+            "Multi-crypto",
+            "Analytics détaillés"
+        ],
+        minInvestment: 1000
+    },
+    "premium": {
+        id: "premium",
+        name: "Premium",
+        returns: "12-18%",
+        features: [
+            "Stratégies premium",
+            "Gestionnaire dédié",
+            "Accès prioritaire"
+        ],
+        minInvestment: 5000
+    },
+    "vip": {
+        id: "vip",
+        name: "VIP",
+        returns: "18-25%",
+        features: [
+            "Algorithmes exclusifs",
+            "Support VIP",
+            "Formations privées"
+        ],
+        minInvestment: 25000
+    }
+};
+
+exports.handler = async (event, context) => {
+    const headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Content-Type': 'application/json'
+    };
+
+    if (event.httpMethod === 'OPTIONS') {
+        return { statusCode: 200, headers, body: '' };
+    }
+
+    try {
+        if (event.httpMethod === 'GET') {
+            // Check cache first
+            const cachedPlans = await getCachedData(CACHE_KEYS.PLANS);
+            if (cachedPlans) {
+                return {
+                    statusCode: 200,
+                    headers,
+                    body: JSON.stringify(cachedPlans)
+                };
+            }
+
+            // If no cache, return default plans and update cache
+            await updateCache(CACHE_KEYS.PLANS, PLANS);
+            
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify(PLANS)
+            };
+        }
+
+        return {
+            statusCode: 405,
+            headers,
+            body: JSON.stringify({ error: 'Method not allowed' })
+        };
+    } catch (error) {
+        console.error('Plans API Error:', error);
+        
+        return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({ 
+                error: 'Internal server error',
+                message: process.env.NODE_ENV === 'development' ? error.message : undefined
+            })
+        };
+    }
+};
