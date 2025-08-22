@@ -3,9 +3,11 @@
     "full_name": "Test User",
     "email": "testuser@example.com",
     "password": "TestPass123",
-    "role": "client",
+    "role": "admin",
     "status": "active",
     "id": "users-1755848973840",
-    "created_at": "2025-08-22T07:49:33.840Z"
+    "created_at": "2025-08-22T07:49:33.840Z",
+    "phone": "",
+    "updated_at": "2025-08-22T10:44:15.758Z"
   }
 ]
