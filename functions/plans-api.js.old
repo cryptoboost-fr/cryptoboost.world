@@ -1,0 +1,109 @@
+// Plans API v2 - Simplified and robust
+const { getCachedData, updateCache, CACHE_KEYS } = require('./local-cache');
+
+// Default plans configuration
+const DEFAULT_PLANS = {
+    "beginner": {
+        id: "beginner",
+        name: "Débutant",
+        returns: "5-8%",
+        features: ["Trading automatique", "Support 24/7", "Rapports mensuels"],
+        minInvestment: 100,
+        active: true
+    },
+    "standard": {
+        id: "standard",
+        name: "Standard",
+        returns: "8-12%",
+        features: ["IA avancée", "Multi-crypto", "Analytics détaillés"],
+        minInvestment: 1000,
+        active: true
+    },
+    "premium": {
+        id: "premium",
+        name: "Premium",
+        returns: "12-18%",
+        features: ["Stratégies premium", "Gestionnaire dédié", "Accès prioritaire"],
+        minInvestment: 5000,
+        active: true
+    },
+    "vip": {
+        id: "vip",
+        name: "VIP",
+        returns: "18-25%",
+        features: ["Algorithmes exclusifs", "Support VIP", "Formations privées"],
+        minInvestment: 25000
+    }
+};
+
+// Response formatter utility
+const formatResponse = (statusCode, data, error = null) => ({
+    statusCode,
+    headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(error ? { error } : data)
+});
+
+exports.handler = async function(event, context) {
+    // Handle CORS preflight
+    if (event.httpMethod === 'OPTIONS') {
+        return formatResponse(204);
+    }
+
+    try {
+        if (event.httpMethod === 'GET') {
+            // Get the plan ID from the path
+            const planId = event.path.split('/').pop();
+            
+            // Get cached plans or use defaults
+            const plans = await getCachedData(CACHE_KEYS.PLANS) || DEFAULT_PLANS;
+            
+            // If a specific plan is requested
+            if (planId && planId !== 'plans') {
+                const plan = plans[planId];
+                if (!plan) {
+                    return {
+                        statusCode: 404,
+                        headers,
+                        body: JSON.stringify({ error: 'Plan not found' })
+                    };
+                }
+                return {
+                    statusCode: 200,
+                    headers,
+                    body: JSON.stringify(plan)
+                };
+            }
+            
+            // Return all plans
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify(plans)
+            };
+        }
+
+        // Handle unsupported methods
+        return {
+            statusCode: 405,
+            headers,
+            body: JSON.stringify({ error: 'Method not allowed' })
+        };
+
+    } catch (error) {
+        console.error('Plans API Error:', error);
+        
+        return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({
+                error: 'Internal server error',
+                message: process.env.NODE_ENV === 'development' ? error.message : undefined
+            })
+        };
+    }
+};

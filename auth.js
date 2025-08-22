@@ -1,6 +1,9 @@
 // CryptoBoost Authentication & Authorization System - Version 2.0
 
-// Global Application Class
+/**
+ * @class CryptoBoostApp
+ * @description Main application class for CryptoBoost authentication and authorization
+ */
 class CryptoBoostApp {
     constructor() {
         this.currentUser = null;
@@ -45,6 +48,15 @@ class CryptoBoostApp {
             this.logout();
             throw new Error('Session expired');
         }
+    }
+    
+    protectPage(route) {
+        this.checkSession();
+        if (!this.isAuthenticated) {
+            window.location.href = '/login.html?redirect=' + encodeURIComponent(route);
+            return false;
+        }
+        return true;
         this.lastActivity = Date.now();
         return true;
     }

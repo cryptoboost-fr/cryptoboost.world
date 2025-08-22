@@ -1,0 +1,502 @@
+// CryptoBoost Vanilla JS Application
+class CryptoBoostApp {
+    constructor() {
+        // Données de base avec monitoring de performance
+        this.currentUser = null;
+        this.cryptoRates = {};
+        this.transactions = [];
+        this.charts = {};
+        
+        // Configuration des frais avec cache intelligent
+        this.settings = {
+            exchange_fee_pct: 0.2,
+            fees: { 
+                BTC: 0.0002, 
+                ETH: 0.003, 
+                USDT: 2, 
+                USDC: 2 
+            }
+        };
+        
+        // État de l'application avec monitoring
+        this.appState = {
+            isLoading: false,
+            lastError: null,
+            notifications: [],
+            connectionStatus: 'online',
+            performance: {
+                lastUpdate: Date.now(),
+                metrics: {}
+            }
+        };
+
+        // Initialisation des gestionnaires
+        this.cache = window.cacheManager;
+        this.monitor = window.performanceMonitor;
+
+        this.init();
+    }
+
+    async init() {
+        try {
+            console.log('Initialisation de CryptoBoost...');
+            
+            // Configuration de base
+            await this.setupUI();
+            await this.setupEventListeners();
+            await this.loadInitialData();
+            
+            // Initialisation des prix crypto
+            await this.updatePrices();
+            
+            // Démarrage des mises à jour périodiques
+            this.startPeriodicUpdates();
+            
+            // Initialisation des graphiques
+            this.setupCharts();
+            
+            // Démarrage des websockets pour les mises à jour en temps réel
+            this.initializeRealtimeUpdates();
+            
+            console.log('Initialisation terminée');
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation:', error);
+            this.showNotification('Erreur lors du chargement de l\'application', 'error');
+        }
+    }
+
+    async setupUI() {
+        // Configuration des éléments d'interface
+        this.setupForms();
+        this.setupCharts();
+        this.setupNavigation();
+        this.initializeCalculator();
+    }
+
+    setupForms() {
+        // Formulaire d'échange
+        const exchangeForm = document.getElementById('exchange-form');
+        if (exchangeForm) {
+            exchangeForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (this.validateForm('exchange-form')) {
+                    const formData = new FormData(exchangeForm);
+                    await this.handleExchange({
+                        fromCurrency: formData.get('from'),
+                        toCurrency: formData.get('to'),
+                        amount: parseFloat(formData.get('amount'))
+                    });
+                }
+            });
+        }
+
+        // Formulaire de contact
+        const contactForm = document.getElementById('contact-form');
+        if (contactForm) {
+            contactForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (this.validateForm('contact-form')) {
+                    await this.handleContactSubmission(new FormData(contactForm));
+                }
+            });
+        }
+    }
+
+    setupCharts() {
+        // Graphique des prix
+        const priceChart = document.getElementById('price-chart');
+        if (priceChart) {
+            this.initializePriceChart();
+        }
+
+        // Graphique du portfolio
+        const portfolioChart = document.getElementById('portfolio-chart');
+        if (portfolioChart) {
+            this.initializePortfolioChart();
+        }
+
+        // Mise à jour automatique des graphiques
+        setInterval(() => {
+            this.updateCharts();
+        }, 30000); // Mise à jour toutes les 30 secondes
+    }
+
+    async updatePrices() {
+        const startTime = performance.now();
+        try {
+            // Vérifier le cache d'abord
+            const cachedRates = this.cache.get('rates', 'current');
+            if (cachedRates) {
+                this.cryptoRates = cachedRates;
+                this.updatePriceDisplays();
+                if (this.charts.price) {
+                    this.updatePriceChart();
+                }
+                this.monitor.trackMetric('cache', 'priceUpdate', 'hit');
+                return this.cryptoRates;
+            }
+
+            const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether,usd-coin&vs_currencies=eur');
+            const data = await response.json();
+            
+            this.cryptoRates = {
+                BTC: data.bitcoin.eur,
+                ETH: data.ethereum.eur,
+                USDT: data.tether.eur,
+                USDC: data['usd-coin'].eur
+            };
+
+            // Mettre en cache les nouveaux taux
+            this.cache.set('rates', 'current', this.cryptoRates);
+            
+            // Mise à jour de l'affichage des prix
+            this.updatePriceDisplays();
+            
+            // Mise à jour des graphiques si disponibles
+            if (this.charts.price) {
+                this.updatePriceChart();
+            }
+
+            // Tracker la performance
+            const duration = performance.now() - startTime;
+            this.monitor.trackApiCall('updatePrices', duration, true);
+            this.monitor.trackMetric('responseTime', 'priceUpdate', duration);
+
+            return this.cryptoRates;
+        } catch (error) {
+            const duration = performance.now() - startTime;
+            this.monitor.trackApiCall('updatePrices', duration, false);
+            this.monitor.trackError('api', error);
+            
+            console.error('Erreur lors de la mise à jour des prix:', error);
+            this.showNotification('Erreur de mise à jour des prix', 'error');
+            throw error;
+        }
+    }
+
+    updatePriceDisplays() {
+        Object.entries(this.cryptoRates).forEach(([currency, rate]) => {
+            const elements = document.querySelectorAll(`[data-price="${currency}"]`);
+            elements.forEach(element => {
+                element.textContent = this.formatFiatAmount(rate);
+            });
+        });
+    }
+
+    async handleTransaction(data) {
+        try {
+            this.appState.isLoading = true;
+            this.showNotification('Transaction en cours...', 'info');
+
+            // Validation de la transaction
+            if (!this.validateTransaction(data)) {
+                throw new Error('Transaction invalide');
+            }
+
+            // Calcul des frais
+            const fees = this.calculateFees(data.amount, data.fromCurrency);
+            const totalAmount = data.amount + fees;
+
+            // Vérification du solde
+            if (!this.checkBalance(data.fromCurrency, totalAmount)) {
+                throw new Error('Solde insuffisant');
+            }
+
+            // Exécution de la transaction
+            const result = await this.executeTransaction(data);
+            
+            // Mise à jour des soldes
+            if (result.success) {
+                await this.updateBalances(data);
+                this.showNotification('Transaction réussie !', 'success');
+            } else {
+                throw new Error(result.message || 'Échec de la transaction');
+            }
+
+            return result;
+        } catch (error) {
+            this.showNotification(error.message, 'error');
+            throw error;
+        } finally {
+            this.appState.isLoading = false;
+        }
+    }
+
+    validateTransaction(data) {
+        return (
+            data.amount > 0 &&
+            this.cryptoRates[data.fromCurrency] &&
+            this.cryptoRates[data.toCurrency] &&
+            data.amount <= this.wallets[data.fromCurrency]
+        );
+    }
+
+    calculateFees(amount, currency) {
+        const percentageFee = amount * (this.settings.exchange_fee_pct / 100);
+        const fixedFee = this.settings.fees[currency];
+        return percentageFee + fixedFee;
+    }
+
+    async executeTransaction(data) {
+        try {
+            const response = await fetch('/.netlify/functions/transaction', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            return await response.json();
+        } catch (error) {
+            console.error('Erreur lors de l\'exécution de la transaction:', error);
+            throw new Error('Erreur de communication avec le serveur');
+        }
+    }
+
+    async updateBalances(data) {
+        try {
+            const response = await fetch('/.netlify/functions/balances', {
+                method: 'GET'
+            });
+            
+            const balances = await response.json();
+            this.wallets = balances;
+            
+            // Mise à jour de l'affichage des soldes
+            this.updateWalletDisplays();
+            
+            // Mise à jour du graphique du portfolio si disponible
+            if (this.charts.portfolio) {
+                this.updatePortfolioChart();
+            }
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour des soldes:', error);
+            throw error;
+        }
+    }
+
+    initializeRealtimeUpdates() {
+        // Connexion WebSocket pour les mises à jour en temps réel
+        const ws = new WebSocket('wss://api.cryptoboost.world/realtime');
+        
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            
+            switch (data.type) {
+                case 'price':
+                    this.handlePriceUpdate(data);
+                    break;
+                case 'transaction':
+                    this.handleTransactionUpdate(data);
+                    break;
+                case 'balance':
+                    this.handleBalanceUpdate(data);
+                    break;
+            }
+        };
+
+        ws.onerror = (error) => {
+            console.error('Erreur WebSocket:', error);
+            this.showNotification('Erreur de connexion temps réel', 'error');
+        };
+    }
+
+    handlePriceUpdate(data) {
+        this.cryptoRates[data.currency] = data.price;
+        this.updatePriceDisplays();
+        if (this.charts.price) {
+            this.updatePriceChart();
+        }
+    }
+
+    handleTransactionUpdate(data) {
+        this.transactions.unshift(data);
+        this.updateTransactionHistory();
+    }
+
+    handleBalanceUpdate(data) {
+        this.wallets[data.currency] = data.balance;
+        this.updateWalletDisplays();
+        if (this.charts.portfolio) {
+            this.updatePortfolioChart();
+        }
+    }
+
+    updateCharts() {
+        if (this.charts.price) {
+            this.updatePriceChart();
+        }
+        if (this.charts.portfolio) {
+            this.updatePortfolioChart();
+        }
+    }
+
+    initializePriceChart() {
+        const ctx = document.getElementById('price-chart').getContext('2d');
+        this.charts.price = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Prix BTC/EUR',
+                    data: [],
+                    borderColor: '#F7931A',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    }
+
+    initializePortfolioChart() {
+        const ctx = document.getElementById('portfolio-chart').getContext('2d');
+        this.charts.portfolio = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['BTC', 'ETH', 'USDT', 'USDC'],
+                datasets: [{
+                    data: [0, 0, 0, 0],
+                    backgroundColor: ['#F7931A', '#627EEA', '#26A17B', '#2775CA']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    }
+
+    async handleExchange(data) {
+        try {
+            this.appState.isLoading = true;
+            this.showNotification('Traitement de l\'échange...', 'info');
+
+            // Validation des montants
+            if (!this.validateExchange(data)) {
+                throw new Error('Montant invalide pour l\'échange');
+            }
+
+            // Calcul des frais
+            const fees = this.calculateFees(data.amount, data.fromCurrency);
+            const totalAmount = data.amount + fees;
+
+            // Vérification du solde
+            if (!this.checkBalance(data.fromCurrency, totalAmount)) {
+                throw new Error('Solde insuffisant');
+            }
+
+            // Exécution de l'échange
+            const result = await this.executeExchange(data);
+            
+            // Mise à jour des soldes
+            await this.updateBalances(data, result);
+
+            this.showNotification('Échange réussi !', 'success');
+            return result;
+
+        } catch (error) {
+            this.showNotification(error.message, 'error');
+            throw error;
+        } finally {
+            this.appState.isLoading = false;
+        }
+    }
+
+    validateExchange(data) {
+        return (
+            data.amount > 0 &&
+            this.settings.fees[data.fromCurrency] !== undefined &&
+            this.settings.fees[data.toCurrency] !== undefined
+        );
+    }
+
+    calculateFees(amount, currency) {
+        return amount * (this.settings.exchange_fee_pct / 100) + this.settings.fees[currency];
+    }
+
+    checkBalance(currency, amount) {
+        return this.wallets[currency] >= amount;
+    }
+
+    async executeExchange(data) {
+        // Simulation d'un appel API
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve({
+                    success: true,
+                    txId: 'TX_' + Date.now(),
+                    timestamp: new Date().toISOString()
+                });
+            }, 1000);
+        });
+    }
+
+    async updateBalances(data, result) {
+        if (result.success) {
+            this.wallets[data.fromCurrency] -= (data.amount + this.calculateFees(data.amount, data.fromCurrency));
+            const convertedAmount = await this.convertCrypto(data.amount, data.fromCurrency, data.toCurrency);
+            this.wallets[data.toCurrency] += convertedAmount;
+
+            // Mise à jour de l'interface
+            this.updateWalletDisplays();
+            this.updatePortfolioChart();
+        }
+    }
+
+    updateWalletDisplays() {
+        Object.entries(this.wallets).forEach(([currency, amount]) => {
+            const element = document.querySelector(`[data-wallet="${currency}"]`);
+            if (element) {
+                element.textContent = this.formatCryptoAmount(currency, amount);
+            }
+        });
+    }
+
+    async convertCrypto(amount, fromCurrency, toCurrency) {
+        if (!this.cryptoRates[fromCurrency] || !this.cryptoRates[toCurrency]) {
+            throw new Error('Taux de change non disponible');
+        }
+        const eurAmount = amount * this.cryptoRates[fromCurrency];
+        return eurAmount / this.cryptoRates[toCurrency];
+    }
+
+    formatCryptoAmount(currency, amount) {
+        const decimals = currency === 'BTC' ? 8 : 6;
+        return amount.toFixed(decimals);
+    }
+
+    showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">${message}</div>
+            <button class="notification-close">&times;</button>
+        `;
+
+        const container = document.querySelector('.notifications-container') 
+            || document.createElement('div');
+        
+        if (!container.classList.contains('notifications-container')) {
+            container.className = 'notifications-container';
+            document.body.appendChild(container);
+        }
+
+        container.appendChild(notification);
+
+        setTimeout(() => {
+            notification.remove();
+            if (container.children.length === 0) {
+                container.remove();
+            }
+        }, 5000);
+    }
+}
+
+// Initialisation de l'application
+document.addEventListener('DOMContentLoaded', () => {
+    window.app = new CryptoBoostApp();
+});
