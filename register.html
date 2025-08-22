@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - CryptoBoost</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8 glass-card p-8 rounded-xl">
+            <div>
+                <img class="mx-auto h-12 w-auto" src="assets/logo.svg" alt="CryptoBoost">
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-white">
+                    Créez votre compte
+                </h2>
+                <p class="mt-2 text-center text-sm text-gray-400">
+                    Ou
+                    <a href="login.html" class="font-medium text-indigo-400 hover:text-indigo-300">
+                        connectez-vous à votre compte existant
+                    </a>
+                </p>
+            </div>
+            <form class="mt-8 space-y-6" id="register-form" onsubmit="return handleRegister(event)">
+                <div class="rounded-md shadow-sm -space-y-px">
+                    <div>
+                        <label for="fullname" class="sr-only">Nom complet</label>
+                        <input id="fullname" name="fullname" type="text" required 
+                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white placeholder-gray-400 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                               placeholder="Nom complet">
+                    </div>
+                    <div>
+                        <label for="email" class="sr-only">Adresse email</label>
+                        <input id="email" name="email" type="email" autocomplete="email" required 
+                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                               placeholder="Adresse email">
+                    </div>
+                    <div>
+                        <label for="phone" class="sr-only">Numéro de téléphone</label>
+                        <input id="phone" name="phone" type="tel" 
+                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                               placeholder="Numéro de téléphone">
+                    </div>
+                    <div>
+                        <label for="password" class="sr-only">Mot de passe</label>
+                        <input id="password" name="password" type="password" required 
+                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                               placeholder="Mot de passe">
+                    </div>
+                    <div>
+                        <label for="confirm-password" class="sr-only">Confirmez le mot de passe</label>
+                        <input id="confirm-password" name="confirm-password" type="password" required 
+                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white placeholder-gray-400 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                               placeholder="Confirmez le mot de passe">
+                    </div>
+                </div>
+
+                <div class="flex items-center">
+                    <input id="terms" name="terms" type="checkbox" required
+                           class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-700 bg-gray-800 rounded">
+                    <label for="terms" class="ml-2 block text-sm text-gray-400">
+                        J'accepte les <a href="cgu.html" class="text-indigo-400 hover:text-indigo-300">conditions générales</a>
+                    </label>
+                </div>
+
+                <div>
+                    <button type="submit" 
+                            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                            <svg class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-2a6 6 0 100-12 6 6 0 000 12zm-1-5a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                        Créer mon compte
+                    </button>
+                </div>
+            </form>
+
+            <!-- Notification container -->
+            <div id="notification" class="hidden fixed bottom-4 right-4 p-4 rounded-md text-white"></div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        async function handleRegister(event) {
+            event.preventDefault();
+            
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const terms = document.getElementById('terms').checked;
+
+            // Validation
+            if (!terms) {
+                showNotification('Veuillez accepter les conditions générales', 'error');
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                showNotification('Les mots de passe ne correspondent pas', 'error');
+                return false;
+            }
+
+            try {
+                const result = await register({ fullname, email, phone, password });
+                if (result.success) {
+                    showNotification('Compte créé avec succès ! Redirection...', 'success');
+                    setTimeout(() => window.location.href = 'login.html', 2000);
+                } else {
+                    showNotification(result.message || 'Erreur lors de l\'inscription', 'error');
+                }
+            } catch (error) {
+                showNotification('Erreur lors de l\'inscription', 'error');
+            }
+
+            return false;
+        }
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `fixed bottom-4 right-4 p-4 rounded-md text-white ${
+                type === 'error' ? 'bg-red-500' : 'bg-green-500'
+            }`;
+            notification.classList.remove('hidden');
+            setTimeout(() => notification.classList.add('hidden'), 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,13 +1,13 @@
 // CryptoBoost Vanilla JS Application
 class CryptoBoostApp {
     constructor() {
-        // Données de base
+        // Données de base avec monitoring de performance
         this.currentUser = null;
         this.cryptoRates = {};
         this.transactions = [];
         this.charts = {};
         
-        // Configuration des frais
+        // Configuration des frais avec cache intelligent
         this.settings = {
             exchange_fee_pct: 0.2,
             fees: { 
@@ -18,13 +18,21 @@ class CryptoBoostApp {
             }
         };
         
-        // État de l'application
+        // État de l'application avec monitoring
         this.appState = {
             isLoading: false,
             lastError: null,
             notifications: [],
-            connectionStatus: 'online'
+            connectionStatus: 'online',
+            performance: {
+                lastUpdate: Date.now(),
+                metrics: {}
+            }
         };
+
+        // Initialisation des gestionnaires
+        this.cache = window.cacheManager;
+        this.monitor = window.performanceMonitor;
 
         this.init();
     }
@@ -38,8 +46,17 @@ class CryptoBoostApp {
             await this.setupEventListeners();
             await this.loadInitialData();
             
+            // Initialisation des prix crypto
+            await this.updatePrices();
+            
             // Démarrage des mises à jour périodiques
             this.startPeriodicUpdates();
+            
+            // Initialisation des graphiques
+            this.setupCharts();
+            
+            // Démarrage des websockets pour les mises à jour en temps réel
+            this.initializeRealtimeUpdates();
             
             console.log('Initialisation terminée');
         } catch (error) {
@@ -96,6 +113,222 @@ class CryptoBoostApp {
         const portfolioChart = document.getElementById('portfolio-chart');
         if (portfolioChart) {
             this.initializePortfolioChart();
+        }
+
+        // Mise à jour automatique des graphiques
+        setInterval(() => {
+            this.updateCharts();
+        }, 30000); // Mise à jour toutes les 30 secondes
+    }
+
+    async updatePrices() {
+        const startTime = performance.now();
+        try {
+            // Vérifier le cache d'abord
+            const cachedRates = this.cache.get('rates', 'current');
+            if (cachedRates) {
+                this.cryptoRates = cachedRates;
+                this.updatePriceDisplays();
+                if (this.charts.price) {
+                    this.updatePriceChart();
+                }
+                this.monitor.trackMetric('cache', 'priceUpdate', 'hit');
+                return this.cryptoRates;
+            }
+
+            const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether,usd-coin&vs_currencies=eur');
+            const data = await response.json();
+            
+            this.cryptoRates = {
+                BTC: data.bitcoin.eur,
+                ETH: data.ethereum.eur,
+                USDT: data.tether.eur,
+                USDC: data['usd-coin'].eur
+            };
+
+            // Mettre en cache les nouveaux taux
+            this.cache.set('rates', 'current', this.cryptoRates);
+            
+            // Mise à jour de l'affichage des prix
+            this.updatePriceDisplays();
+            
+            // Mise à jour des graphiques si disponibles
+            if (this.charts.price) {
+                this.updatePriceChart();
+            }
+
+            // Tracker la performance
+            const duration = performance.now() - startTime;
+            this.monitor.trackApiCall('updatePrices', duration, true);
+            this.monitor.trackMetric('responseTime', 'priceUpdate', duration);
+
+            return this.cryptoRates;
+        } catch (error) {
+            const duration = performance.now() - startTime;
+            this.monitor.trackApiCall('updatePrices', duration, false);
+            this.monitor.trackError('api', error);
+            
+            console.error('Erreur lors de la mise à jour des prix:', error);
+            this.showNotification('Erreur de mise à jour des prix', 'error');
+            throw error;
+        }
+    }
+
+    updatePriceDisplays() {
+        Object.entries(this.cryptoRates).forEach(([currency, rate]) => {
+            const elements = document.querySelectorAll(`[data-price="${currency}"]`);
+            elements.forEach(element => {
+                element.textContent = this.formatFiatAmount(rate);
+            });
+        });
+    }
+
+    async handleTransaction(data) {
+        try {
+            this.appState.isLoading = true;
+            this.showNotification('Transaction en cours...', 'info');
+
+            // Validation de la transaction
+            if (!this.validateTransaction(data)) {
+                throw new Error('Transaction invalide');
+            }
+
+            // Calcul des frais
+            const fees = this.calculateFees(data.amount, data.fromCurrency);
+            const totalAmount = data.amount + fees;
+
+            // Vérification du solde
+            if (!this.checkBalance(data.fromCurrency, totalAmount)) {
+                throw new Error('Solde insuffisant');
+            }
+
+            // Exécution de la transaction
+            const result = await this.executeTransaction(data);
+            
+            // Mise à jour des soldes
+            if (result.success) {
+                await this.updateBalances(data);
+                this.showNotification('Transaction réussie !', 'success');
+            } else {
+                throw new Error(result.message || 'Échec de la transaction');
+            }
+
+            return result;
+        } catch (error) {
+            this.showNotification(error.message, 'error');
+            throw error;
+        } finally {
+            this.appState.isLoading = false;
+        }
+    }
+
+    validateTransaction(data) {
+        return (
+            data.amount > 0 &&
+            this.cryptoRates[data.fromCurrency] &&
+            this.cryptoRates[data.toCurrency] &&
+            data.amount <= this.wallets[data.fromCurrency]
+        );
+    }
+
+    calculateFees(amount, currency) {
+        const percentageFee = amount * (this.settings.exchange_fee_pct / 100);
+        const fixedFee = this.settings.fees[currency];
+        return percentageFee + fixedFee;
+    }
+
+    async executeTransaction(data) {
+        try {
+            const response = await fetch('/.netlify/functions/transaction', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            return await response.json();
+        } catch (error) {
+            console.error('Erreur lors de l\'exécution de la transaction:', error);
+            throw new Error('Erreur de communication avec le serveur');
+        }
+    }
+
+    async updateBalances(data) {
+        try {
+            const response = await fetch('/.netlify/functions/balances', {
+                method: 'GET'
+            });
+            
+            const balances = await response.json();
+            this.wallets = balances;
+            
+            // Mise à jour de l'affichage des soldes
+            this.updateWalletDisplays();
+            
+            // Mise à jour du graphique du portfolio si disponible
+            if (this.charts.portfolio) {
+                this.updatePortfolioChart();
+            }
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour des soldes:', error);
+            throw error;
+        }
+    }
+
+    initializeRealtimeUpdates() {
+        // Connexion WebSocket pour les mises à jour en temps réel
+        const ws = new WebSocket('wss://api.cryptoboost.world/realtime');
+        
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            
+            switch (data.type) {
+                case 'price':
+                    this.handlePriceUpdate(data);
+                    break;
+                case 'transaction':
+                    this.handleTransactionUpdate(data);
+                    break;
+                case 'balance':
+                    this.handleBalanceUpdate(data);
+                    break;
+            }
+        };
+
+        ws.onerror = (error) => {
+            console.error('Erreur WebSocket:', error);
+            this.showNotification('Erreur de connexion temps réel', 'error');
+        };
+    }
+
+    handlePriceUpdate(data) {
+        this.cryptoRates[data.currency] = data.price;
+        this.updatePriceDisplays();
+        if (this.charts.price) {
+            this.updatePriceChart();
+        }
+    }
+
+    handleTransactionUpdate(data) {
+        this.transactions.unshift(data);
+        this.updateTransactionHistory();
+    }
+
+    handleBalanceUpdate(data) {
+        this.wallets[data.currency] = data.balance;
+        this.updateWalletDisplays();
+        if (this.charts.portfolio) {
+            this.updatePortfolioChart();
+        }
+    }
+
+    updateCharts() {
+        if (this.charts.price) {
+            this.updatePriceChart();
+        }
+        if (this.charts.portfolio) {
+            this.updatePortfolioChart();
         }
     }
 

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphiques Avancés - CryptoBoost</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="assets/enhanced-animations.css">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <nav class="w-64 bg-gray-800 p-6">
+            <div class="mb-8">
+                <img src="assets/logo.svg" alt="CryptoBoost" class="h-8">
+            </div>
+            <!-- Navigation items -->
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 overflow-auto">
+            <!-- Time Frame Selection -->
+            <div class="mb-6">
+                <div class="chart-time-controls">
+                    <button class="chart-time-button active" data-timeframe="1h">1H</button>
+                    <button class="chart-time-button" data-timeframe="4h">4H</button>
+                    <button class="chart-time-button" data-timeframe="1d">1J</button>
+                    <button class="chart-time-button" data-timeframe="1w">1S</button>
+                    <button class="chart-time-button" data-timeframe="1m">1M</button>
+                </div>
+            </div>
+
+            <!-- Main Chart -->
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                <!-- Price Chart -->
+                <div class="xl:col-span-2">
+                    <div class="chart-container">
+                        <div class="chart-controls">
+                            <button class="chart-control-button" id="toggleChartType">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                            </button>
+                            <button class="chart-control-button" id="toggleIndicators">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <canvas id="priceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Volume & Info -->
+                <div class="xl:col-span-1 space-y-6">
+                    <!-- Volume Chart -->
+                    <div class="chart-container h-64">
+                        <canvas id="volumeChart"></canvas>
+                    </div>
+
+                    <!-- Market Info -->
+                    <div class="bg-gray-800 rounded-lg p-6 space-y-4">
+                        <h3 class="text-lg font-semibold">Informations Marché</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-gray-400 text-sm">Prix</p>
+                                <p class="text-xl font-semibold" id="currentPrice">€ 45,123.45</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-400 text-sm">24h Variation</p>
+                                <p class="text-xl font-semibold text-green-500" id="priceChange">+5.67%</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-400 text-sm">Volume 24h</p>
+                                <p class="text-xl font-semibold" id="volume24h">€ 1.2B</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-400 text-sm">Market Cap</p>
+                                <p class="text-xl font-semibold" id="marketCap">€ 856.4B</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Technical Indicators -->
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4">Indicateurs Techniques</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span>RSI (14)</span>
+                                <span id="rsiValue" class="font-semibold">65.4</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>MACD</span>
+                                <span id="macdValue" class="font-semibold text-green-500">Bullish</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>MA (200)</span>
+                                <span id="maValue" class="font-semibold">€ 44,250</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Charts -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <!-- Order Book Depth -->
+                <div class="chart-container">
+                    <h3 class="text-lg font-semibold mb-4">Profondeur du Carnet d'Ordres</h3>
+                    <canvas id="depthChart"></canvas>
+                </div>
+
+                <!-- Trading Activity -->
+                <div class="chart-container">
+                    <h3 class="text-lg font-semibold mb-4">Activité de Trading</h3>
+                    <canvas id="activityChart"></canvas>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="functions/trading-system.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize charts
+            const charts = new EnhancedCharts();
+            
+            // Price chart configuration
+            const priceChartData = {
+                labels: generateTimeLabels(100),
+                values: generatePriceData(100)
+            };
+            
+            const priceChart = charts.createChart('priceChart', 'line', {
+                label: 'BTC/EUR',
+                ...priceChartData
+            }, {
+                interactions: {
+                    zoom: true,
+                    pan: true
+                }
+            });
+
+            // Volume chart configuration
+            const volumeChartData = {
+                labels: generateTimeLabels(24),
+                values: generateVolumeData(24)
+            };
+            
+            const volumeChart = charts.createChart('volumeChart', 'volume', {
+                label: 'Volume',
+                ...volumeChartData
+            });
+
+            // Depth chart configuration
+            const depthChartData = {
+                bids: generateDepthData(20, 'bids'),
+                asks: generateDepthData(20, 'asks')
+            };
+            
+            const depthChart = charts.createChart('depthChart', 'area', {
+                labels: generatePriceLabels(40),
+                datasets: [
+                    {
+                        label: 'Bids',
+                        values: depthChartData.bids
+                    },
+                    {
+                        label: 'Asks',
+                        values: depthChartData.asks
+                    }
+                ]
+            });
+
+            // Activity chart configuration
+            const activityChartData = {
+                labels: generateTimeLabels(50),
+                values: generateTradeData(50)
+            };
+            
+            const activityChart = charts.createChart('activityChart', 'candlestick', {
+                label: 'Trades',
+                ...activityChartData
+            });
+
+            // Update charts periodically
+            setInterval(() => {
+                updateCharts(charts, {
+                    priceChart,
+                    volumeChart,
+                    depthChart,
+                    activityChart
+                });
+            }, 5000);
+
+            // Time frame buttons
+            document.querySelectorAll('.chart-time-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('.chart-time-button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    // Update charts with new timeframe
+                    const timeframe = button.dataset.timeframe;
+                    updateChartsTimeframe(charts, timeframe, {
+                        priceChart,
+                        volumeChart,
+                        depthChart,
+                        activityChart
+                    });
+                });
+            });
+
+            // Chart type toggle
+            document.getElementById('toggleChartType').addEventListener('click', () => {
+                const types = ['line', 'candlestick'];
+                const currentType = priceChart.config.type;
+                const newType = types[(types.indexOf(currentType) + 1) % types.length];
+                
+                charts.updateChartType('priceChart', newType);
+            });
+
+            // Indicators toggle
+            document.getElementById('toggleIndicators').addEventListener('click', () => {
+                const indicators = priceChart.config.options.plugins.indicators || [];
+                const available = ['rsi', 'macd', 'ma'];
+                
+                if (indicators.length === 0) {
+                    charts.addIndicators('priceChart', available);
+                } else {
+                    charts.removeIndicators('priceChart');
+                }
+            });
+        });
+
+        // Helper functions for generating mock data
+        function generateTimeLabels(count) {
+            const labels = [];
+            const now = Date.now();
+            for (let i = count - 1; i >= 0; i--) {
+                labels.push(new Date(now - i * 300000));
+            }
+            return labels;
+        }
+
+        function generatePriceData(count) {
+            const data = [];
+            let price = 45000;
+            for (let i = 0; i < count; i++) {
+                price += (Math.random() - 0.5) * 100;
+                data.push(price);
+            }
+            return data;
+        }
+
+        function generateVolumeData(count) {
+            return Array(count).fill(0).map(() => Math.random() * 1000 + 500);
+        }
+
+        function generateDepthData(count, type) {
+            const data = [];
+            let cumulative = 0;
+            const basePrice = type === 'bids' ? 44800 : 45200;
+            
+            for (let i = 0; i < count; i++) {
+                const amount = Math.random() * 10 + 5;
+                cumulative += amount;
+                data.push({
+                    price: basePrice + (type === 'bids' ? -i * 10 : i * 10),
+                    amount: cumulative
+                });
+            }
+            
+            return data;
+        }
+
+        function generateTradeData(count) {
+            const data = [];
+            let price = 45000;
+            
+            for (let i = 0; i < count; i++) {
+                const open = price;
+                const close = price + (Math.random() - 0.5) * 100;
+                const high = Math.max(open, close) + Math.random() * 50;
+                const low = Math.min(open, close) - Math.random() * 50;
+                
+                data.push({
+                    time: Date.now() - (count - i) * 300000,
+                    open,
+                    high,
+                    low,
+                    close
+                });
+                
+                price = close;
+            }
+            
+            return data;
+        }
+
+        function updateCharts(charts, { priceChart, volumeChart, depthChart, activityChart }) {
+            // Update price chart
+            const newPrice = priceChart.data.datasets[0].data[priceChart.data.datasets[0].data.length - 1] +
+                (Math.random() - 0.5) * 100;
+            
+            priceChart.data.labels.push(new Date());
+            priceChart.data.labels.shift();
+            priceChart.data.datasets[0].data.push(newPrice);
+            priceChart.data.datasets[0].data.shift();
+            priceChart.update('none');
+
+            // Update other charts similarly
+            // ...
+
+            // Update market info
+            updateMarketInfo(newPrice);
+        }
+
+        function updateMarketInfo(price) {
+            document.getElementById('currentPrice').textContent = `€ ${price.toFixed(2)}`;
+            const change = ((Math.random() - 0.5) * 10).toFixed(2);
+            const changeElement = document.getElementById('priceChange');
+            changeElement.textContent = `${change > 0 ? '+' : ''}${change}%`;
+            changeElement.className = `text-xl font-semibold ${change > 0 ? 'text-green-500' : 'text-red-500'}`;
+        }
+
+        function updateChartsTimeframe(charts, timeframe, chartInstances) {
+            // Update data according to new timeframe
+            const intervals = {
+                '1h': 60,
+                '4h': 240,
+                '1d': 1440,
+                '1w': 10080,
+                '1m': 43200
+            };
+
+            const interval = intervals[timeframe];
+            // Fetch and update data for the new timeframe
+            // ...
+        }
+    </script>
+</body>
+</html>

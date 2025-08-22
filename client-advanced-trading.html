@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Avancé - CryptoBoost</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800 p-6">
+            <div class="mb-8">
+                <img src="assets/logo.svg" alt="CryptoBoost" class="h-8">
+            </div>
+            <nav class="space-y-2">
+                <!-- Navigation items -->
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <div class="grid grid-cols-12 gap-6">
+                <!-- Trading Chart -->
+                <div class="col-span-8 bg-gray-800 rounded-lg p-6">
+                    <div class="h-96" id="tradingChart"></div>
+                    
+                    <!-- Trading Controls -->
+                    <div class="mt-6 grid grid-cols-2 gap-4">
+                        <div class="p-4 bg-gray-700 rounded-lg">
+                            <h3 class="text-lg font-semibold mb-4">Ordre Limit</h3>
+                            <form id="limitOrderForm" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300">Prix Limit</label>
+                                    <input type="number" id="limitPrice" class="mt-1 block w-full bg-gray-600 border-gray-500 rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300">Montant</label>
+                                    <input type="number" id="limitAmount" class="mt-1 block w-full bg-gray-600 border-gray-500 rounded-md">
+                                </div>
+                                <button type="submit" class="w-full bg-indigo-600 text-white rounded-md py-2 hover:bg-indigo-700">
+                                    Placer l'ordre
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <div class="p-4 bg-gray-700 rounded-lg">
+                            <h3 class="text-lg font-semibold mb-4">Stop Loss</h3>
+                            <form id="stopLossForm" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300">Prix Stop</label>
+                                    <input type="number" id="stopPrice" class="mt-1 block w-full bg-gray-600 border-gray-500 rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300">Montant</label>
+                                    <input type="number" id="stopAmount" class="mt-1 block w-full bg-gray-600 border-gray-500 rounded-md">
+                                </div>
+                                <button type="submit" class="w-full bg-red-600 text-white rounded-md py-2 hover:bg-red-700">
+                                    Placer le stop
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Book & History -->
+                <div class="col-span-4 space-y-6">
+                    <!-- Order Book -->
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4">Carnet d'ordres</h3>
+                        <div class="space-y-4" id="orderBook">
+                            <!-- Order book items -->
+                        </div>
+                    </div>
+
+                    <!-- Trade History -->
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4">Historique</h3>
+                        <div class="space-y-4" id="tradeHistory">
+                            <!-- Trade history items -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="functions/trading-system.js" type="module"></script>
+    <script src="functions/ui-manager.js" type="module"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize TradingView chart
+            new TradingView.widget({
+                "container_id": "tradingChart",
+                "symbol": "BINANCE:BTCEUR",
+                "interval": "15",
+                "timezone": "Europe/Paris",
+                "theme": "dark",
+                "style": "1",
+                "locale": "fr",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "hide_side_toolbar": false,
+                "allow_symbol_change": true,
+                "studies": [
+                    "MASimple@tv-basicstudies",
+                    "RSI@tv-basicstudies",
+                    "MACD@tv-basicstudies"
+                ]
+            });
+
+            // Initialize forms
+            initializeTradingForms();
+        });
+
+        function initializeTradingForms() {
+            const limitOrderForm = document.getElementById('limitOrderForm');
+            const stopLossForm = document.getElementById('stopLossForm');
+
+            limitOrderForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const price = document.getElementById('limitPrice').value;
+                const amount = document.getElementById('limitAmount').value;
+
+                try {
+                    const order = await window.tradingSystem.createLimitOrder({
+                        userId: getCurrentUserId(),
+                        fromCurrency: 'BTC',
+                        toCurrency: 'EUR',
+                        amount: parseFloat(amount),
+                        limitPrice: parseFloat(price)
+                    });
+
+                    window.ui.showNotification('Ordre limit placé avec succès', 'success');
+                    updateOrderBook();
+                } catch (error) {
+                    window.ui.showNotification(error.message, 'error');
+                }
+            });
+
+            stopLossForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const price = document.getElementById('stopPrice').value;
+                const amount = document.getElementById('stopAmount').value;
+
+                try {
+                    const order = await window.tradingSystem.createStopLossOrder({
+                        userId: getCurrentUserId(),
+                        fromCurrency: 'BTC',
+                        toCurrency: 'EUR',
+                        amount: parseFloat(amount),
+                        stopPrice: parseFloat(price)
+                    });
+
+                    window.ui.showNotification('Stop loss placé avec succès', 'success');
+                    updateOrderBook();
+                } catch (error) {
+                    window.ui.showNotification(error.message, 'error');
+                }
+            });
+        }
+
+        async function updateOrderBook() {
+            const orderBook = document.getElementById('orderBook');
+            const orders = await window.tradingSystem.getActiveOrders(getCurrentUserId());
+            
+            orderBook.innerHTML = orders.map(order => `
+                <div class="flex justify-between items-center p-2 bg-gray-700 rounded">
+                    <div>
+                        <span class="text-sm font-medium">${order.type}</span>
+                        <span class="text-xs text-gray-400">${order.fromCurrency}/${order.toCurrency}</span>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm">${order.amount} ${order.fromCurrency}</div>
+                        <div class="text-xs text-gray-400">@${order.price} ${order.toCurrency}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getCurrentUserId() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            return user?.id;
+        }
+
+        // Update order book and history every 10 seconds
+        setInterval(updateOrderBook, 10000);
+    </script>
+</body>
+</html>
