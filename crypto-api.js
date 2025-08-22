@@ -1,12 +1,30 @@
-// CryptoBoost API Client for Real-time Crypto Rates
+// CryptoBoost API Client
 class CryptoAPI {
     constructor() {
         this.baseUrl = '/.netlify/functions/coinapi';
         this.cache = new Map();
         this.cacheTimeout = 30000; // 30 seconds
+        this.supportedPairs = ['BTC/EUR', 'ETH/EUR', 'USDT/EUR', 'USDC/EUR'];
+        this.callbacks = new Map();
+        
+        // Démarrer les mises à jour en temps réel
+        this.startRealtimeUpdates();
     }
 
-    // Get all crypto rates
+    // Configuration des callbacks
+    onPriceUpdate(callback) {
+        if (typeof callback === 'function') {
+            this.callbacks.set('priceUpdate', callback);
+        }
+    }
+
+    onError(callback) {
+        if (typeof callback === 'function') {
+            this.callbacks.set('error', callback);
+        }
+    }
+
+    // Obtenir tous les taux
     async getRates() {
         const cacheKey = 'rates';
         const cached = this.getFromCache(cacheKey);
@@ -19,225 +37,152 @@ class CryptoAPI {
             if (data.success) {
                 this.setCache(cacheKey, data.data);
                 return data.data;
+            } else {
+                throw new Error(data.message || 'Échec de récupération des taux');
             }
-            throw new Error(data.error || 'Failed to fetch rates');
         } catch (error) {
-            console.error('Error fetching crypto rates:', error);
-            return this.getFallbackRates();
-        }
-    }
-
-    // Get specific crypto price
-    async getPrice(symbol) {
-        try {
-            const response = await fetch(`${this.baseUrl}?action=price&from=${symbol}&quote=EUR`);
-            const data = await response.json();
-            
-            if (data.success) {
-                return data.data;
-            }
-            throw new Error(data.error || 'Failed to fetch price');
-        } catch (error) {
-            console.error(`Error fetching ${symbol} price:`, error);
-            const fallback = this.getFallbackRates();
-            return {
-                symbol: symbol,
-                price: fallback[symbol]?.price || 0,
-                change_24h: fallback[symbol]?.change_24h || 0,
-                last_updated: new Date().toISOString()
-            };
-        }
-    }
-
-    // Convert between cryptocurrencies
-    async convert(from, to, amount) {
-        try {
-            const response = await fetch(`${this.baseUrl}?action=convert&from=${from}&to=${to}&amount=${amount}&quote=EUR`);
-            const data = await response.json();
-            
-            if (data.success) {
-                return data.data;
-            }
-            throw new Error(data.error || 'Failed to convert');
-        } catch (error) {
-            console.error(`Error converting ${from} to ${to}:`, error);
-            // Fallback conversion using cached rates
-            const rates = await this.getRates();
-            const fromRate = rates[from.toUpperCase()];
-            const toRate = rates[to.toUpperCase()];
-            
-            if (fromRate && toRate) {
-                const fromUSD = amount * fromRate.price;
-                const result = fromUSD / toRate.price;
-                
-                return {
-                    from: from.toUpperCase(),
-                    to: to.toUpperCase(),
-                    amount: amount,
-                    result: result,
-                    rate: fromRate.price / toRate.price,
-                    usd_value: fromUSD,
-                    timestamp: new Date().toISOString()
-                };
-            }
-            
+            this.handleError(error);
             throw error;
         }
     }
 
-    // Update crypto rates in UI elements
-    async updateRatesInUI() {
+    // Obtenir le taux pour une paire spécifique
+    async getRate(pair) {
+        if (!this.supportedPairs.includes(pair)) {
+            throw new Error(`Paire de trading non supportée: ${pair}`);
+        }
+
+        const cacheKey = `rate_${pair}`;
+        const cached = this.getFromCache(cacheKey);
+        if (cached) return cached;
+
         try {
-            const rates = await this.getRates();
+            const response = await fetch(`${this.baseUrl}?action=rate&pair=${pair}`);
+            const data = await response.json();
             
-            // Update price displays
-            Object.entries(rates).forEach(([symbol, data]) => {
-                const priceElements = document.querySelectorAll(`[data-crypto="${symbol}"]`);
-                priceElements.forEach(element => {
-                    if (element.dataset.field === 'price') {
-                        element.textContent = this.formatPrice(data.price);
-                    } else if (element.dataset.field === 'change') {
-                        element.textContent = this.formatChange(data.change_24h);
-                        element.className = element.className.replace(/text-(red|green)-\d+/, '');
-                        element.classList.add(data.change_24h >= 0 ? 'text-green-400' : 'text-red-400');
-                    }
-                });
-            });
-
-            // Update portfolio values
-            this.updatePortfolioValues(rates);
-            
-            // Update last updated timestamp
-            const timestampElements = document.querySelectorAll('.crypto-last-updated');
-            timestampElements.forEach(element => {
-                const anyFallback = Object.values(rates).some(r => r.source === 'fallback');
-                const label = anyFallback ? 'Dernier taux connu' : 'Mis à jour';
-                element.textContent = `${label}: ${new Date().toLocaleTimeString('fr-FR')}`;
-            });
-
+            if (data.success) {
+                this.setCache(cacheKey, data.data);
+                return data.data;
+            } else {
+                throw new Error(data.message || 'Échec de récupération du taux');
+            }
         } catch (error) {
-            console.error('Error updating rates in UI:', error);
+            this.handleError(error);
+            throw error;
         }
     }
 
-    // Update portfolio values based on current rates
-    updatePortfolioValues(rates) {
-        const portfolioElements = document.querySelectorAll('[data-portfolio-crypto]');
-        portfolioElements.forEach(element => {
-            const crypto = element.dataset.portfolioCrypto;
-            const balance = parseFloat(element.dataset.balance || 0);
-            const rate = rates[crypto];
+    // Obtenir l'historique des prix
+    async getPriceHistory(pair, period = '24h') {
+        if (!this.supportedPairs.includes(pair)) {
+            throw new Error(`Paire de trading non supportée: ${pair}`);
+        }
+
+        const cacheKey = `history_${pair}_${period}`;
+        const cached = this.getFromCache(cacheKey);
+        if (cached) return cached;
+
+        try {
+            const response = await fetch(`${this.baseUrl}?action=history&pair=${pair}&period=${period}`);
+            const data = await response.json();
             
-            if (rate && balance) {
-                const value = balance * rate.price;
-                element.textContent = this.formatCurrency(value);
+            if (data.success) {
+                this.setCache(cacheKey, data.data);
+                return data.data;
+            } else {
+                throw new Error(data.message || 'Échec de récupération de l\'historique');
             }
-        });
+        } catch (error) {
+            this.handleError(error);
+            throw error;
+        }
     }
 
-    // Cache management
+    // Gestion du cache
     getFromCache(key) {
         const cached = this.cache.get(key);
-        if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
-            return cached.data;
+        if (!cached) return null;
+        
+        if (Date.now() - cached.timestamp > this.cacheTimeout) {
+            this.cache.delete(key);
+            return null;
         }
-        return null;
+        
+        return cached.data;
     }
 
     setCache(key, data) {
         this.cache.set(key, {
-            data: data,
+            data,
             timestamp: Date.now()
         });
     }
 
-    // Fallback rates for offline mode
-    getFallbackRates() {
-        return {
-            BTC: { price: 43000, change_24h: 2.5, last_updated: new Date().toISOString() },
-            ETH: { price: 2800, change_24h: -1.2, last_updated: new Date().toISOString() },
-            USDT: { price: 1.0, change_24h: 0.0, last_updated: new Date().toISOString() },
-            USDC: { price: 1.0, change_24h: 0.0, last_updated: new Date().toISOString() }
-        };
+    clearCache() {
+        this.cache.clear();
     }
 
-    // Formatting helpers
-    formatPrice(price) {
-        if (price >= 1000) {
-            return new Intl.NumberFormat('fr-FR', {
-                style: 'currency',
-                currency: 'EUR',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(price);
-        } else {
-            return new Intl.NumberFormat('fr-FR', {
-                style: 'currency',
-                currency: 'EUR',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 4
-            }).format(price);
+    // Mise à jour en temps réel
+    startRealtimeUpdates() {
+        setInterval(async () => {
+            try {
+                const rates = await this.getRates();
+                const callback = this.callbacks.get('priceUpdate');
+                if (callback) callback(rates);
+            } catch (error) {
+                this.handleError(error);
+            }
+        }, this.cacheTimeout);
+    }
+
+    // Gestion des erreurs
+    handleError(error) {
+        console.error('CryptoAPI Error:', error);
+        const callback = this.callbacks.get('error');
+        if (callback) callback(error);
+    }
+
+    // Calcul de conversion
+    async calculateExchange(amount, fromCurrency, toCurrency) {
+        try {
+            const rates = await this.getRates();
+            const fromRate = rates[fromCurrency];
+            const toRate = rates[toCurrency];
+            
+            if (!fromRate || !toRate) {
+                throw new Error('Paire de devises invalide');
+            }
+            
+            const result = (amount * fromRate) / toRate;
+            return {
+                amount: result,
+                rate: toRate / fromRate,
+                timestamp: Date.now()
+            };
+        } catch (error) {
+            this.handleError(error);
+            throw error;
         }
     }
 
-    formatChange(change) {
-        const sign = change >= 0 ? '+' : '';
-        return `${sign}${change.toFixed(2)}%`;
-    }
-
-    formatCurrency(amount) {
-        return new Intl.NumberFormat('fr-FR', {
-            style: 'currency',
-            currency: 'EUR'
-        }).format(amount);
-    }
-
-    formatCrypto(amount, symbol) {
-        const decimals = ['BTC', 'ETH'].includes(symbol) ? 8 : 2;
-        return `${amount.toFixed(decimals)} ${symbol}`;
-    }
-
-    // Start auto-refresh
-    startAutoRefresh(interval = 60000) { // 1 minute default
-        this.stopAutoRefresh(); // Clear any existing interval
-        
-        this.refreshInterval = setInterval(() => {
-            this.updateRatesInUI();
-        }, interval);
-        
-        // Initial update
-        this.updateRatesInUI();
-    }
-
-    // Stop auto-refresh
-    stopAutoRefresh() {
-        if (this.refreshInterval) {
-            clearInterval(this.refreshInterval);
-            this.refreshInterval = null;
+    // Obtenir les frais de réseau estimés
+    async getNetworkFees(currency) {
+        try {
+            const response = await fetch(`${this.baseUrl}?action=fees&currency=${currency}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                return data.data;
+            } else {
+                throw new Error(data.message || 'Échec de récupération des frais');
+            }
+        } catch (error) {
+            this.handleError(error);
+            throw error;
         }
     }
 }
 
-// Global instance
-window.cryptoAPI = new CryptoAPI();
-
-// Auto-start refresh when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    // Start auto-refresh on pages with crypto data
-    const hasCryptoData = document.querySelector('[data-crypto], [data-portfolio-crypto]');
-    if (hasCryptoData) {
-        window.cryptoAPI.startAutoRefresh();
-    }
-});
-
-// Stop refresh when page is hidden (performance optimization)
-document.addEventListener('visibilitychange', function() {
-    if (document.hidden) {
-        window.cryptoAPI.stopAutoRefresh();
-    } else {
-        const hasCryptoData = document.querySelector('[data-crypto], [data-portfolio-crypto]');
-        if (hasCryptoData) {
-            window.cryptoAPI.startAutoRefresh();
-        }
-    }
-});
+// Créer une instance unique de l'API
+const cryptoApi = new CryptoAPI();
+export default cryptoApi;
