@@ -183,6 +183,54 @@ class CryptoBoostApp {
         document.body.appendChild(notification);
         setTimeout(() => notification.remove(), 5000);
     }
+
+    async login() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        try {
+            const response = await fetch('/.netlify/functions/auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await response.json();
+            if (response.ok && data.token) {
+                localStorage.setItem('auth_token', data.token);
+                this.currentUser = data.user;
+                document.getElementById('loginModal').classList.add('hidden');
+                this.showDashboard();
+            } else {
+                this.showError(data.error || 'Erreur de connexion');
+            }
+        } catch (error) {
+            this.showError('Erreur serveur');
+        }
+    }
+
+    async handleRegister(event) {
+        event.preventDefault();
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPassword').value;
+        try {
+            const response = await fetch('/.netlify/functions/auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password, register: true })
+            });
+            const data = await response.json();
+            if (response.ok && data.token) {
+                localStorage.setItem('auth_token', data.token);
+                this.currentUser = data.user;
+                document.getElementById('registerModal').classList.add('hidden');
+                this.showDashboard();
+            } else {
+                this.showError(data.error || 'Erreur d\'inscription');
+            }
+        } catch (error) {
+            this.showError('Erreur serveur');
+        }
+    }
 }
 
 // Instance globale
@@ -190,3 +238,19 @@ const app = new CryptoBoostApp();
 
 // Export pour utilisation dans d'autres modules
 export { app as CryptoBoostApp };
+// Expose les méthodes pour le HTML
+window.showLogin = () => app.showLogin();
+window.showRegister = () => app.showRegister();
+window.showDashboard = () => app.showDashboard();
+window.showDeposit = () => app.showDeposit();
+window.showWithdraw = () => app.showWithdraw();
+window.showExchange = () => app.showExchange();
+window.logout = () => app.logout();
+window.protectPage = () => app.protectPage();
+window.getCurrentUser = () => app.getCurrentUser();
+// Expose toutes les méthodes modales et utilitaires si elles existent
+['confirmExchange','confirmWithdraw','confirmDeposit','copyDepositAddress','closeDepositModal','closeWithdrawModal','closeExchangeModal','hideLogin','hideRegister'].forEach(fn => {
+  if (typeof app[fn] === 'function') window[fn] = (...args) => app[fn](...args);
+});
+if (typeof app.login === 'function') window.login = (...args) => app.login(...args);
+if (typeof app.handleRegister === 'function') window.handleRegister = (...args) => app.handleRegister(...args);

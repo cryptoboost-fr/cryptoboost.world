@@ -784,4 +784,16 @@ function cancelEditPlan(id) { adminApp.cancelEditPlan(id); }
 // Initialize admin app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     adminApp = new CryptoBoostAdmin();
+    window.showAdminPage = showAdminPage;
+    window.rejectTransaction = rejectTransaction;
+    window.showAddUserModal = showAddUserModal;
+    window.createPlan = createPlan;
+    window.editPlan = editPlan;
+    window.togglePlan = togglePlan;
+    window.deletePlan = deletePlan;
+    window.closeSubscription = closeSubscription;
+    window.processAccruals = processAccruals;
+    window.showEditPlan = showEditPlan;
+    window.savePlan = savePlan;
+    window.cancelEditPlan = cancelEditPlan;
 });
